@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Themes/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,9 +12,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text("Libry",style: TextStyle(fontSize: 20),),
-      ),
+      backgroundColor: primaryColor,
+      body: Image.asset("name")
     );
   }
 }
