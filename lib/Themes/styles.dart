@@ -1,3 +1,5 @@
 import 'package:flutter/material.dart';
 
-const
+class SplashScreenStyles {
+  final TextStyle splashScreenTextStyle = TextStyle(fontSize: 82,fontFamily: "Lobster");
+}
