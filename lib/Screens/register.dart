@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: bottomNavBar(),
+      // bottomNavigationBar: bottomNavBar(selected: null, method: (int? index) {  }),
     );
   }
 }
