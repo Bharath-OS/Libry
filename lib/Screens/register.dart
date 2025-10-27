@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Models/userdata.dart';
 import 'package:libry/Widgets/bottom_navbar.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
@@ -19,6 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     r"^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
   );
   final RegExp _passwordExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
+  late Map<String, String> userDataMap;
 
   @override
   void initState() {
@@ -121,12 +123,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         MyButton.primaryButton(
-                          method: () {
-                            print(controllers[0].text);
-                            print(controllers[3].text);
-                            print(controllers[1].text);
-                            _formKey.currentState!.validate();
-                            FocusScope.of(context).unfocus();
+                          method: () async {
+                            if (_formKey.currentState!.validate()) {
+                              userDataMap = {
+                                "LibId": controllers[0].text,
+                                "Username": controllers[1].text,
+                                "Email": controllers[2].text,
+                                "Password": controllers[3].text,
+                              };
+                              bool result = await UserData.saveData(
+                                userdata: userDataMap,
+                              );
+                              FocusScope.of(context).unfocus();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    result
+                                        ? "Account created!"
+                                        : "Something went wrong. Try again.",
+                                  ),
+                                ),
+                              );
+                              print(userDataMap);
+                            } else {}
                           },
                           text: "Register",
                         ),

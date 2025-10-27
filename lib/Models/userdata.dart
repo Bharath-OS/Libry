@@ -37,7 +37,6 @@ class UserData {
     }
   }
 
-  /// Optional: Clear saved user data
   static Future<bool> clearData() async {
     try {
       final pref = await _instance;

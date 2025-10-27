@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
+  late Map<String, String> userDataMap;
 
   @override
   void initState() {
