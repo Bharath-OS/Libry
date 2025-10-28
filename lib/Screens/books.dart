@@ -16,14 +16,7 @@ class _BooksScreenState extends State<BooksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: Text("Books screen")),
-      bottomNavigationBar: bottomNavBar(
-        selected: currentIndex,
-        method: (int? index) {
-          setState(() {
-            currentIndex = index!;
-          });
-        },
-      ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }

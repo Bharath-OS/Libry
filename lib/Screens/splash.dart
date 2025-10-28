@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:libry/Models/userdata.dart';
 import 'package:libry/Screens/books.dart';
 import 'package:libry/Screens/login.dart';
 import 'package:libry/Screens/register.dart';
@@ -48,14 +49,25 @@ class _SplashScreenState extends State<SplashScreen> {
     setState(() {
       _isVisible = true;
     });
+    late Widget childWidget;
+    bool? isLogged = await UserData.isLogged ?? false;
+    bool? isRegistered = await UserData.isRegistered ?? false;
+
+    if (isLogged) {
+      childWidget = BooksScreen();
+    } else if (!isLogged && isRegistered) {
+      childWidget = LoginScreen();
+    } else {
+      childWidget = RegisterScreen();
+    }
     await Future.delayed(Duration(seconds: 2));
     Navigator.pushReplacement(
       context,
       PageTransition(
         type: PageTransitionType.fade,
         curve: Curves.easeIn,
-        child: BooksScreen(),
-        duration: Duration(milliseconds: 300)
+        child: childWidget,
+        duration: Duration(milliseconds: 300),
       ),
     );
   }

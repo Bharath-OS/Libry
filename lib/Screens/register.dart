@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Models/userdata.dart';
+import 'package:libry/Screens/login.dart';
 import 'package:libry/Widgets/bottom_navbar.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../Widgets/buttons.dart';
 
@@ -78,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Field cannot be empty";
-                            } else if (value.length < 6) {
+                            } else if (value.length > 6) {
                               return "Id should be less than 6 characters";
                             }
                             return null;
@@ -134,17 +136,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               bool result = await UserData.saveData(
                                 userdata: userDataMap,
                               );
+                              String message;
                               FocusScope.of(context).unfocus();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    result
-                                        ? "Account created!"
-                                        : "Something went wrong. Try again.",
+                              if (result) {
+                                message = "Account created!";
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.fade,
+                                    curve: Curves.easeIn,
+                                    child: LoginScreen(),
+                                    duration: Duration(milliseconds: 300),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                message = "Something went wrong. Try again";
+                              }
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(message)));
                               print(userDataMap);
+                              await UserData.setLogValue(result);
                             } else {}
                           },
                           text: "Register",
