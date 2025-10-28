@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/books.dart';
 import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../Models/userdata.dart';
+import 'home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,12 +26,20 @@ class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late Map<String, String> userDataMap;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
   }
 
   @override
@@ -57,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Form(
+                      key: _formKey,
                       child: Column(
                         spacing: 25,
                         children: [
@@ -70,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               } else if (!_emailRegExp.hasMatch(value)) {
                                 return 'Enter a valid email address';
                               }
-                              return null; // input is valid
+                              return null;
                             },
                           ),
                           customTextField(
@@ -87,7 +101,56 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
-                          MyButton.primaryButton(method: () {}, text: "Login"),
+                          MyButton.primaryButton(
+                            method: () async {
+                              if (_formKey.currentState!.validate()) {
+                                bool? isLogged =
+                                    await UserData.isLogged ?? false;
+                                if (isLogged) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      curve: Curves.easeIn,
+                                      child: BooksScreen(),
+                                      duration: Duration(milliseconds: 300),
+                                    ),
+                                  );
+                                }
+                                final Map<String, String>? userData =
+                                    await UserData.getData();
+                                bool? result = await validateUser(userData);
+                                if (result == true) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreen(),
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Logged In Successfully!"),
+                                    ),
+                                  );
+                                } else if (result == false) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Incorrect credentials!"),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "Something went wrong. Please Try Again!",
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            text: "Login",
+                          ),
                         ],
                       ),
                     ),
@@ -99,5 +162,20 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool?> validateUser(Map<String, String>? userData) async {
+    if (userData == null || userData.isEmpty) {
+      return null;
+    } else {
+      String? userEmail = userData?["email"] ?? "";
+      String? password = userData?["password"] ?? "";
+      if (userEmail == emailController.text &&
+          password == passwordController.text) {
+        await UserData.setLogValue(true);
+        return true;
+      }
+    }
+    return false;
   }
 }

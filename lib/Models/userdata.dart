@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData {
-
   static SharedPreferences? _pref;
   static const String _userKey = "user_data";
   static const String _logKey = 'logKey';
@@ -43,22 +42,26 @@ class UserData {
   static Future<bool> clearData() async {
     try {
       final pref = await _instance;
-      return await pref.remove(_userKey);
+      await pref.remove(_userKey);
+      await setLogValue(false);
+      await setRegisterValue(false);
+      print("Successfully cleared the data");
+      return true;
     } catch (e) {
       print("Error clearing data: $e");
       return false;
     }
   }
 
-  static Future<bool?> get isLogged async{
-    try{
+  static Future<bool?> get isLogged async {
+    try {
       final pref = await _instance;
-      return pref.getBool(_logKey)??false;
-    }
-    catch(e){
+      return pref.getBool(_logKey) ?? false;
+    } catch (e) {
       return null;
     }
   }
+
   static Future<void> setLogValue(bool value) async {
     try {
       final pref = await _instance;
@@ -68,22 +71,20 @@ class UserData {
     }
   }
 
-  static Future<bool?> get isRegistered async{
-    try{
+  static Future<bool?> get isRegistered async {
+    try {
       final pref = await _instance;
-      return pref.getBool(_registerKey)??false;
-    }
-    catch(e){
+      return pref.getBool(_registerKey) ?? false;
+    } catch (e) {
       print(e);
     }
   }
 
-  static Future<void> setRegisterValue(bool value) async{
-    try{
+  static Future<void> setRegisterValue(bool value) async {
+    try {
       final pref = await _instance;
       await pref.setBool(_registerKey, value);
-    }
-    catch(e){
+    } catch (e) {
       print(e);
     }
   }
