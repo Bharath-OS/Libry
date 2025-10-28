@@ -18,31 +18,41 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return StylishBottomBar(
+      elevation: 3,
+      notchStyle: NotchStyle.square,
       items: [
         BottomBarItem(
           icon: svgIcon(path: "assets/icons/home-icon.svg", index: 0),
+          selectedColor: selectedColor,
           title: const Text('Home'),
         ),
         BottomBarItem(
           icon: svgIcon(path: "assets/icons/books-icon.svg", index: 1),
+          selectedColor: selectedColor,
           title: const Text('Books'),
         ),
         BottomBarItem(
           icon: svgIcon(path: "assets/icons/members-icon.svg", index: 2),
+          selectedColor: selectedColor,
           title: const Text('Members'),
         ),
         BottomBarItem(
           icon: svgIcon(path: "assets/icons/transactions-icon.svg", index: 3),
+          selectedColor: selectedColor,
           title: const Text('Transactions'),
         ),
         BottomBarItem(
           icon: svgIcon(path: "assets/icons/settings-icon.svg", index: 4),
+          selectedColor: selectedColor,
           title: const Text('Settings'),
         ),
       ],
-      option: DotBarOptions(
-        dotStyle: DotStyle.circle,
-        inkColor: MyColors.primaryButtonColor,
+
+      option: AnimatedBarOptions(
+        iconSize: 32,
+        barAnimation: BarAnimation.fade,
+        iconStyle: IconStyle.simple,
+        opacity: 0.3,
       ),
       currentIndex: selected,
       onTap: (index) {
@@ -54,6 +64,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget svgIcon({required String path, required index}) {
     return SvgPicture.asset(
       path,
+      width: 24,
+      height: 24,
+
       colorFilter: ColorFilter.mode(
         selected == index ? selectedColor : unSelectedColor,
         BlendMode.srcIn,
