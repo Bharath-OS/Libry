@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:libry/Models/userdata.dart';
 import 'package:libry/Screens/books.dart';
+import 'package:libry/Screens/main_screen.dart';
 import 'package:libry/Screens/login.dart';
 import 'package:libry/Screens/register.dart';
 import 'package:libry/Themes/styles.dart';
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     bool? isRegistered = await UserData.isRegistered ?? false;
 
     if (isLogged) {
-      childWidget = BooksScreen();
+      childWidget = MainScreen();
     } else if (!isLogged && isRegistered) {
       childWidget = LoginScreen();
     } else {

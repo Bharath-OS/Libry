@@ -27,7 +27,7 @@ class _BooksScreenState extends State<BooksScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      // bottomNavigationBar: BottomNavBar(),
     );
   }
 }

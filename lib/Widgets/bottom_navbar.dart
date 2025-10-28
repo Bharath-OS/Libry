@@ -14,6 +14,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   final selectedColor = MyColors.primaryButtonColor;
   final unSelectedColor = Color(0xff000000);
+  final controller = PageController();
   int selected = 0;
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       currentIndex: selected,
       onTap: (index) {
         setState(() => selected = index);
+        controller.jumpToPage(index);
       },
     );
   }
