@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Models/userdata.dart';
-
-import '../Widgets/bottom_navbar.dart';
+import 'package:libry/Screens/register.dart';
+import '../Database/userdata.dart';
 
 class BooksScreen extends StatefulWidget {
   BooksScreen({super.key});
@@ -23,11 +22,13 @@ class _BooksScreenState extends State<BooksScreen> {
             Text("Books screen"),
             ElevatedButton(onPressed: () {
               UserData.clearData();
+              UserData.setRegisterValue(false);
+              UserData.setLogValue(false);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>RegisterScreen()));
             }, child: Text("Sign out")),
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavBar(),
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/books.dart';
+import 'package:libry/Screens/main_screen.dart';
 import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../Models/userdata.dart';
+import '../Database/userdata.dart';
 import 'home.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -79,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: Icons.email_outlined,
                             inputController: emailController,
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
+                              if (value == null || value.isEmpty || value == " ") {
                                 return 'Please enter your email';
                               } else if (!_emailRegExp.hasMatch(value)) {
                                 return 'Enter a valid email address';
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             inputController: passwordController,
                             isObscure: true,
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
+                              if (value == null || value.isEmpty || value == " ") {
                                 return "Field cannot be empty";
                               } else if (value.length <= 5) {
                                 return "Password should atleast have 6 characters";
@@ -124,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
+                                      builder: (context) => MainScreen(),
                                     ),
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Models/userdata.dart';
+import 'package:libry/Database/userdata.dart';
 import 'package:libry/Screens/login.dart';
-import 'package:libry/Widgets/bottom_navbar.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
 import 'package:page_transition/page_transition.dart';
@@ -78,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.perm_identity_outlined,
                           inputController: controllers[0],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.isEmpty || value == " ") {
                               return "Field cannot be empty";
                             } else if (value.length > 6) {
                               return "Id should be less than 6 characters";
@@ -91,7 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.person_outlined,
                           inputController: controllers[1],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.isEmpty || value == " ") {
                               return "Field cannot be empty";
                             }
                             return null;
@@ -102,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.email_outlined,
                           inputController: controllers[2],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.isEmpty || value == " ") {
                               return "Field cannot be empty";
                             } else if (!_emailRegExp.hasMatch(value)) {
                               return 'Enter a valid email address';
@@ -116,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           isObscure: true,
                           inputController: controllers[3],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.isEmpty || value == " ") {
                               return "Field cannot be empty";
                             } else if (value.length <= 5) {
                               return "Password should atleast have 6 characters";
