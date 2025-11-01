@@ -24,13 +24,20 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             child: Padding(
               padding: EdgeInsets.all(20),
               child: Column(
+                spacing: 25,
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text("Verify Member", textAlign: TextAlign.center),
-                  Text("Enter the member ID to verify the member."),
-                  TextFormField(),
-                  MyButton.primaryButton(method: (){}, text: "Verify")
+                  Text("Verify Member", textAlign: TextAlign.center,style: Theme.of(context).textTheme.bodyLarge,),
+                  Text(
+                    "Enter the member ID to verify the member.",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(hintText: "Enter Member Name"),
+                  ),
+                  MyButton.primaryButton(method: () {}, text: "Verify"),
                 ],
               ),
             ),

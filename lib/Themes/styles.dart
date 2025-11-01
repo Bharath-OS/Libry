@@ -15,8 +15,10 @@ class SplashScreenStyles {
     fontWeight: FontWeight.w500,
   );
 }
+
 class CustomTheme {
   static const double cornerRadius = 20;
+  static const Color fillColor = Color(0xff3F5A7C);
 
   static final ThemeData myTheme = ThemeData(
     appBarTheme: AppBarTheme(
@@ -31,11 +33,13 @@ class CustomTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
+      fillColor: fillColor,
       hintStyle: TextStyle(
         color: MyColors.bgColor,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
+
       errorStyle: TextStyle(
         color: MyColors.warningColor,
         fontSize: 16,
@@ -43,7 +47,7 @@ class CustomTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide(color: Colors.black, width: 3),
+        borderSide: BorderSide(color: MyColors.bgColor, width: 3),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(cornerRadius),
@@ -56,6 +60,21 @@ class CustomTheme {
         borderRadius: BorderRadius.circular(cornerRadius),
         borderSide: BorderSide(color: MyColors.warningColor, width: 3),
       ),
+    ),
+    textTheme: TextTheme(
+      bodyLarge: TextStyle(
+        color: Colors.black,
+        fontSize: 32,
+        fontFamily: "Livvic",
+        fontWeight: FontWeight.bold,
+      ),
+      bodyMedium: TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+        fontFamily: "Livvic",
+        fontWeight: FontWeight.w500
+      ),
+
     ),
   );
 }
