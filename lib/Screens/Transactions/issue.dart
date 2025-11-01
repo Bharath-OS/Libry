@@ -35,7 +35,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   TextFormField(
-                    decoration: InputDecoration(hintText: "Enter Member Name"),
+                    decoration: InputDecoration(hintText: "Enter Member Name",),
                   ),
                   MyButton.primaryButton(method: () {}, text: "Verify"),
                 ],

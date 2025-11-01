@@ -74,7 +74,6 @@ class CustomTheme {
         fontFamily: "Livvic",
         fontWeight: FontWeight.w500
       ),
-
     ),
   );
 }
