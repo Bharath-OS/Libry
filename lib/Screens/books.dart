@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:libry/Screens/register.dart';
-import '../Database/userdata.dart';
+import 'package:libry/Screens/BooksScreens/bookdetails.dart';
 import '../Themes/styles.dart';
 import '../Utilities/constants.dart';
 import '../Widgets/buttons.dart';
 
 class BooksScreen extends StatefulWidget {
-  BooksScreen({super.key});
+  const BooksScreen({super.key});
 
   @override
   State<BooksScreen> createState() => _BooksScreenState();
@@ -92,7 +91,7 @@ class _BooksScreenState extends State<BooksScreen> {
                         bookName: "Book ${i + 1}",
                         author: "Author ${i + 1}",
                       ),
-                      separatorBuilder: (_, __) => SizedBox(height: 4),
+                      separatorBuilder: (_, _) => SizedBox(height: 4),
                       itemCount: 25,
                     ),
                   ),
@@ -107,7 +106,7 @@ class _BooksScreenState extends State<BooksScreen> {
 
   Widget bookTile({required String bookName, required String author}) {
     return GestureDetector(
-      onTap: () => print("Going to $bookName"),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>BookDetailScreen())),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(15),

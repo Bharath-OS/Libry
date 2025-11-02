@@ -55,7 +55,6 @@ class MyButton {
 
   static ElevatedButton backButton({
     required VoidCallback method,
-    required String text,
   }) {
     return ElevatedButton.icon(
       icon: Icon(Icons.arrow_back_ios),
@@ -69,7 +68,7 @@ class MyButton {
         ),
       ),
       label: Text(
-        text,
+        "Back",
         style: TextStyle(
           fontFamily: "Livvic",
           fontSize: 20,
