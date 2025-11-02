@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:libry/Screens/register.dart';
 import '../Database/userdata.dart';
+import '../Themes/styles.dart';
 import '../Utilities/constants.dart';
 import '../Widgets/buttons.dart';
 
@@ -12,75 +14,131 @@ class BooksScreen extends StatefulWidget {
 }
 
 class _BooksScreenState extends State<BooksScreen> {
+  int totalBooks = 223;
+  int availableBooks = 22;
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(
-              child: SizedBox(
-                child: Column(
-                  children: [
-                    SearchBar(
-                      leading: Icon(
-                        Icons.search_outlined
+      backgroundColor: MyColors.primaryColor,
+      appBar: AppBar(
+        title: Text("All Books"),
+        backgroundColor: Colors.transparent,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              // Header section
+              Column(
+                children: [
+                  SearchBar(
+                    elevation: WidgetStatePropertyAll(0),
+                    backgroundColor: WidgetStatePropertyAll(MyColors.whiteBG),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SvgPicture.asset("assets/icons/search-line.svg"),
+                    ),
+                    hintText: "Search Book",
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Total books : $totalBooks",
+                            style: BodyTextStyles.headingSmallStyle(
+                              MyColors.whiteBG,
+                            ),
+                          ),
+                          Text(
+                            "Available books : $availableBooks",
+                            style: BodyTextStyles.bodySmallStyle(
+                              MyColors.whiteBG,
+                            ),
+                          ),
+                        ],
                       ),
-                      hintText: "Search Book",
-                    ),
-                    Row(
-                      children: [
-                        Column(
-                          children: [
-                            Text("Total books : 221"),
-                            Text("Available books : 32"),
-                          ],
-                        ),
-                        MyButton.primaryButton(method: (){},text: "Filter")
-                      ],
-                    ),
-                  ],
-                ),
+                      MyButton.filterButton(method: () {}),
+                    ],
+                  ),
+                  SizedBox(height: 14),
+                ],
               ),
-            ),
-            Expanded(
-              flex: 6,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: MyColors.bgColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: ListView.separated(
-                    itemBuilder: (i, ctx) => bookTile(
-                      bookName: "Book $i",
-                      author: "Author $i",
-                      publishYear: "20$i",
+
+              // Scrollable book list
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
-                    separatorBuilder: (_, ctx) => SizedBox(height: 16),
-                    itemCount: 25,
+                    color: MyColors.bgColor,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: ListView.separated(
+                      itemBuilder: (ctx, i) => bookTile(
+                        bookName: "Book ${i + 1}",
+                        author: "Author ${i + 1}",
+                      ),
+                      separatorBuilder: (_, __) => SizedBox(height: 4),
+                      itemCount: 25,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget bookTile({
-    required String bookName,
-    required String author,
-    required String publishYear,
-  }) {
-    return ListTile(
-      title: Text(bookName),
-      subtitle: Text(author),
-      leading: Icon(Icons.delete_outline, color: MyColors.warningColor),
+  Widget bookTile({required String bookName, required String author}) {
+    return GestureDetector(
+      onTap: () => print("Going to $bookName"),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Row(
+            children: [
+              Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(color: Colors.grey),
+              ),
+              SizedBox(width: 14),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(bookName, style: CardStyles.cardTitleStyle),
+                    Text(author, style: CardStyles.cardSubTitleStyle),
+                    Text("Copy Available : 3/6"),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [MyButton.deleteButton(method: () {}, text: "")],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

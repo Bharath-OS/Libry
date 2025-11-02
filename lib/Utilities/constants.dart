@@ -8,4 +8,5 @@ class MyColors{
   static final warningColor = const Color(0xffFF6F5B);
   static final bgColor = const Color(0xffC1DCFF);
   static final bgColorDark = const Color(0xffC1DCFF);
+  static final whiteBG = const Color(0xffffffff);
 }

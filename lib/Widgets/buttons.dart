@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:libry/Utilities/constants.dart';
 
 class MyButton {
@@ -83,7 +84,7 @@ class MyButton {
     required String text,
   }) {
     return IconButton(
-      icon: Icon(Icons.delete_outline),
+      icon: SvgPicture.asset("assets/icons/delete-icon.svg"),
       onPressed: method,
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.warningColor,
@@ -94,5 +95,17 @@ class MyButton {
         ),
       ),
     );
+  }
+
+  static ElevatedButton filterButton({required VoidCallback method}){
+    return ElevatedButton(onPressed: method, child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 8),
+      child: Text("Filter",style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: Colors.black,
+        fontFamily: "Livvic"
+      ),),
+    ));
   }
 }
