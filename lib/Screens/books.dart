@@ -4,6 +4,7 @@ import 'package:libry/Screens/BooksScreens/bookdetails.dart';
 import '../Themes/styles.dart';
 import '../Utilities/constants.dart';
 import '../Widgets/buttons.dart';
+import '../Widgets/scaffold.dart';
 
 class BooksScreen extends StatefulWidget {
   const BooksScreen({super.key});
@@ -19,10 +20,9 @@ class _BooksScreenState extends State<BooksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColors.primaryColor,
+    return CustomScaffold(
       appBar: AppBar(
-        title: Text("All Books"),
+        title: Text("All Books",style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
