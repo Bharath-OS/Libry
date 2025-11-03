@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Screens/splash.dart';
+import 'Themes/styles.dart';
 
 void main(){
   runApp(LibryApp());
@@ -9,7 +10,8 @@ class LibryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: CustomTheme.myTheme,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );

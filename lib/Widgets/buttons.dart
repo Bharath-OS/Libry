@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:libry/Utilities/constants.dart';
 
 class MyButton {
+  //Primary Button
   static Widget primaryButton({
     required VoidCallback method,
     required String text,
@@ -27,7 +28,7 @@ class MyButton {
       ),
     );
   }
-
+  //Secondary action button
   static Widget secondaryButton({
     required VoidCallback method,
     required String text,
@@ -52,7 +53,7 @@ class MyButton {
       ),
     );
   }
-
+  //Back Button
   static ElevatedButton backButton({
     required VoidCallback method,
   }) {
@@ -78,6 +79,7 @@ class MyButton {
     );
   }
 
+  //Delete Button
   static IconButton deleteButton({
     required VoidCallback method,
     required String text,
@@ -96,14 +98,16 @@ class MyButton {
     );
   }
 
+  //Filter button.
   static ElevatedButton filterButton({required VoidCallback method}){
-    return ElevatedButton(onPressed: method, child: Padding(
+    return ElevatedButton(onPressed: method,child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 8),
       child: Text("Filter",style: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: Colors.black,
-        fontFamily: "Livvic"
+        fontFamily: "Livvic",
+        backgroundColor: MyColors.whiteBG,
       ),),
     ));
   }

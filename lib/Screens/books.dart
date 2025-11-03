@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:libry/Screens/BooksScreens/bookdetails.dart';
+import 'package:libry/Widgets/appbar.dart';
 import '../Themes/styles.dart';
 import '../Utilities/constants.dart';
 import '../Widgets/buttons.dart';
@@ -21,10 +22,8 @@ class _BooksScreenState extends State<BooksScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: AppBar(
-        title: Text("All Books",style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.transparent,
-      ),
+      // appBar: LibryAppBar.appBar(barTitle: "All Books"),
+      appBar: AppBar(title: Text("All Books")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
