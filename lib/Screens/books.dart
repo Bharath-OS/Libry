@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:libry/Models/books.dart';
 import 'package:libry/Screens/BooksScreens/bookdetails.dart';
 import 'package:libry/Widgets/appbar.dart';
 import '../Themes/styles.dart';
@@ -22,7 +23,6 @@ class _BooksScreenState extends State<BooksScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      // appBar: LibryAppBar.appBar(barTitle: "All Books"),
       appBar: AppBar(title: Text("All Books")),
       body: SafeArea(
         child: Padding(
@@ -86,10 +86,29 @@ class _BooksScreenState extends State<BooksScreen> {
                       right: 20,
                     ),
                     child: ListView.separated(
-                      itemBuilder: (ctx, i) => bookTile(
-                        bookName: "Book ${i + 1}",
-                        author: "Author ${i + 1}",
-                      ),
+                      itemBuilder: (ctx, i) {
+                        Books bookDetails = Books(
+                          title: "Book $i",
+                          author: "Author $i",
+                          year: "1999",
+                          language: "English",
+                          publisher: "Publisher",
+                          genre: "Fantasy",
+                          pages: 200 + i,
+                          totalCopies: 5,
+                          copiesAvailable: 3,
+                        );
+                        return GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BookDetailScreen(bookDetails: bookDetails),
+                            ),
+                          ),
+                          child: bookTile(bookDetails: bookDetails),
+                        );
+                      },
                       separatorBuilder: (_, _) => SizedBox(height: 4),
                       itemCount: 25,
                     ),
@@ -103,38 +122,35 @@ class _BooksScreenState extends State<BooksScreen> {
     );
   }
 
-  Widget bookTile({required String bookName, required String author}) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>BookDetailScreen())),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            children: [
-              Container(
-                width: 84,
-                height: 84,
-                decoration: BoxDecoration(color: Colors.grey),
+  Widget bookTile({required Books bookDetails}) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Container(
+              width: 84,
+              height: 84,
+              decoration: BoxDecoration(color: Colors.grey),
+            ),
+            SizedBox(width: 14),
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(bookDetails.title, style: CardStyles.cardTitleStyle),
+                  Text(bookDetails.author, style: CardStyles.cardSubTitleStyle),
+                  Text("Copy Available : 3/6"),
+                ],
               ),
-              SizedBox(width: 14),
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(bookName, style: CardStyles.cardTitleStyle),
-                    Text(author, style: CardStyles.cardSubTitleStyle),
-                    Text("Copy Available : 3/6"),
-                  ],
-                ),
+            ),
+            Expanded(
+              child: Column(
+                children: [MyButton.deleteButton(method: () {})],
               ),
-              Expanded(
-                child: Column(
-                  children: [MyButton.deleteButton(method: () {}, text: "")],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -36,9 +36,9 @@ class MyButton {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primaryButtonColor,
+        backgroundColor: MyColors.secondaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -82,7 +82,6 @@ class MyButton {
   //Delete Button
   static IconButton deleteButton({
     required VoidCallback method,
-    required String text,
   }) {
     return IconButton(
       icon: SvgPicture.asset("assets/icons/delete-icon.svg"),

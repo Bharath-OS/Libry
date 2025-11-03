@@ -9,4 +9,6 @@ class MyColors{
   static final bgColor = const Color(0xffC1DCFF);
   static final bgColorDark = const Color(0xffC1DCFF);
   static final whiteBG = const Color(0xffffffff);
+  static final darkGrey = const Color(0xff383838);
+  static final lightGrey = const Color(0xff717171);
 }

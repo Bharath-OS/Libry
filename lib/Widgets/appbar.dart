@@ -15,6 +15,7 @@ class LibryAppBar {
         ),
       ),
       backgroundColor: Colors.transparent,
+      leading: Icon(Icons.arrow_back_ios_new),
     );
   }
 }
