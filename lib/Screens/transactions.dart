@@ -14,14 +14,6 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  final List<Widget> _screens = [
-    HomeScreen(),
-    BooksScreen(),
-    MembersScreen(),
-    TransactionsScreen(),
-    SettingsScreen(),
-  ];
-
 
   @override
   Widget build(BuildContext context) {

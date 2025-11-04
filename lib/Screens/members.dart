@@ -1,18 +1,42 @@
+import '../Models/members.dart';
+import '../Widgets/list.dart';
 import 'package:flutter/material.dart';
+import 'MembersScreens/memberdetails.dart';
 
-class MembersScreen extends StatefulWidget {
+class MembersScreen extends StatelessWidget {
   const MembersScreen({super.key});
 
   @override
-  State<MembersScreen> createState() => _MembersScreenState();
-}
-
-class _MembersScreenState extends State<MembersScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("Members' Screen"),
+    final members = List.generate(
+      25,
+      (i) => Members(
+        name: "Member $i",
+        memberId: "MID${1000 + i}",
+        email: "member$i@example.com",
+        dob: "1990-01-${(i % 28) + 1}".padLeft(10, '0'),
+        address: "Address $i, City ${(i % 5) + 1}",
+        totalBorrow: (i % 10) + 1,
+        currentlyBorrow: (i % 3),
+        fine: (i % 5) * 10,
+        joined: "2023-01-${(i % 28) + 1}".padLeft(10, '0'),
+        expiry: "2026-01-${(i % 28) + 1}".padLeft(10, '0'),
+        phone: '9999999999',
+      ),
+    );
+
+    return ListScreen<Members>(
+      title: "All Member",
+      totalCount: 290,
+      availableCount: 20,
+      searchHint: "Search Member",
+      items: members,
+      tileBuilder: (member) => MemberTile(memberDetails: member),
+      onTap: (member) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MemberDetailsScreen(memberDetails: member),
+        ),
       ),
     );
   }

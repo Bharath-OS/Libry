@@ -1,0 +1,101 @@
+import 'package:flutter/material.dart';
+import 'package:libry/Widgets/appbar.dart';
+import 'package:libry/Widgets/scaffold.dart';
+import '../../Models/members.dart';
+import '../../Widgets/buttons.dart';
+
+class MemberDetailsScreen extends StatelessWidget {
+  final Members memberDetails;
+
+  const MemberDetailsScreen({super.key, required this.memberDetails});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScaffold(
+      appBar: LibryAppBar.appBar(barTitle: "Member detail",context: context),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeader(memberDetails),
+                const SizedBox(height: 10),
+                _buildMetadata(memberDetails),
+                const SizedBox(height: 20),
+                _buildActions(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(Members member) {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        text: "${member.name}\n",
+        style: const TextStyle(
+          fontSize: 32,
+          fontFamily: "Livvic",
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        children: [
+          TextSpan(
+            text: "Joined at ${member.joined}",
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: "Livvic",
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetadata(Members member) {
+    return RichText(
+      text: TextSpan(
+        text: "Email : ${member.email}",
+        style: const TextStyle(
+          fontFamily: "Livvic",
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+          height: 1.8,
+        ),
+        children: [
+          TextSpan(text: "\nPhone : ${member.phone}"),
+          TextSpan(text: "\nDob : ${member.dob}"),
+          TextSpan(text: "\nAddress : ${member.address}"),
+          TextSpan(text: "\nTotal borrowed : ${member.totalBorrow}"),
+          TextSpan(text: "\nCurrently borrowed : ${member.currentlyBorrow}/5"),
+          TextSpan(text: "\nFines owed : ${member.fine}\$"),
+          TextSpan(text: "\nValidity : Till ${member.expiry}"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MyButton.secondaryButton(method: () {}, text: "View History"),
+        const SizedBox(height: 10),
+        MyButton.primaryButton(method: () {}, text: "Edit Member"),
+      ],
+    );
+  }
+}

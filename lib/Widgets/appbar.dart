@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../Utilities/constants.dart';
 
 class LibryAppBar {
-  static AppBar appBar({required String barTitle}) {
+  static AppBar appBar({required String barTitle,required BuildContext context}) {
     return AppBar(
       title: Text(
         barTitle,
@@ -15,7 +15,7 @@ class LibryAppBar {
         ),
       ),
       backgroundColor: Colors.transparent,
-      leading: Icon(Icons.arrow_back_ios_new),
+      leading: IconButton(onPressed: ()=>Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new)),
     );
   }
 }
