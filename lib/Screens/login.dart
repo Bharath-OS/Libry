@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/books.dart';
 import 'package:libry/Screens/main_screen.dart';
+import 'package:libry/Screens/register.dart';
 import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -80,7 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: Icons.email_outlined,
                             inputController: emailController,
                             validator: (value) {
-                              if (value == null || value.isEmpty || value == " ") {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value == " ") {
                                 return 'Please enter your email';
                               } else if (!_emailRegExp.hasMatch(value)) {
                                 return 'Enter a valid email address';
@@ -94,7 +97,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             inputController: passwordController,
                             isObscure: true,
                             validator: (value) {
-                              if (value == null || value.isEmpty || value == " ") {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value == " ") {
                                 return "Field cannot be empty";
                               } else if (value.length <= 5) {
                                 return "Password should atleast have 6 characters";
@@ -151,6 +156,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             text: "Login",
+                          ),
+                          MyButton.secondaryButton(
+                            method: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterScreen(),
+                              ),
+                            ),
+                            text: "Go to register",
                           ),
                         ],
                       ),

@@ -77,7 +77,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.perm_identity_outlined,
                           inputController: controllers[0],
                           validator: (value) {
-                            if (value == null || value.isEmpty || value == " ") {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == " ") {
                               return "Field cannot be empty";
                             } else if (value.length > 6) {
                               return "Id should be less than 6 characters";
@@ -90,7 +92,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.person_outlined,
                           inputController: controllers[1],
                           validator: (value) {
-                            if (value == null || value.isEmpty || value == " ") {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == " ") {
                               return "Field cannot be empty";
                             }
                             return null;
@@ -101,7 +105,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icons.email_outlined,
                           inputController: controllers[2],
                           validator: (value) {
-                            if (value == null || value.isEmpty || value == " ") {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == " ") {
                               return "Field cannot be empty";
                             } else if (!_emailRegExp.hasMatch(value)) {
                               return 'Enter a valid email address';
@@ -115,7 +121,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           isObscure: true,
                           inputController: controllers[3],
                           validator: (value) {
-                            if (value == null || value.isEmpty || value == " ") {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == " ") {
                               return "Field cannot be empty";
                             } else if (value.length <= 5) {
                               return "Password should atleast have 6 characters";
@@ -159,6 +167,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             } else {}
                           },
                           text: "Register",
+                        ),
+                        MyButton.secondaryButton(
+                          method: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          ),
+                          text: "Go to Login",
                         ),
                       ],
                     ),

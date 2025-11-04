@@ -37,7 +37,7 @@ class MyButton {
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.primaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/homeScreens/dart/profile.dart';
+import 'package:libry/Widgets/scaffold.dart';
+
+import '../Utilities/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -26,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       text: TextSpan(
                         text: "Good Morning, \nBharath OS\n",
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: MyColors.whiteBG,
                           fontFamily: "Lobster",
                           fontSize: 26,
                         ),
@@ -34,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(
                             text: "Thursday 16, Oct 2025",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: MyColors.whiteBG,
                               fontFamily: "Livvic",
                               fontSize: 16,
                               fontWeight: FontWeight.normal,
@@ -142,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget detailsCard({required int count, required String parameter}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: MyColors.whiteBG,
         borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
       ),
       child: Center(
