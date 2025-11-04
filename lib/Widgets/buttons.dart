@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:libry/Utilities/constants.dart';
 
 class MyButton {
-  //Primary Button
   static Widget primaryButton({
     required VoidCallback method,
     required String text,
@@ -28,7 +27,7 @@ class MyButton {
       ),
     );
   }
-  //Secondary action button
+
   static Widget secondaryButton({
     required VoidCallback method,
     required String text,
@@ -36,9 +35,9 @@ class MyButton {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.secondaryButtonColor,
+        backgroundColor: MyColors.primaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 18),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -53,17 +52,15 @@ class MyButton {
       ),
     );
   }
-  //Back Button
-  static ElevatedButton backButton({
-    required VoidCallback method,
-  }) {
+
+  static ElevatedButton backButton({required VoidCallback method}) {
     return ElevatedButton.icon(
       icon: Icon(Icons.arrow_back_ios),
       onPressed: method,
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.primaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.only(top: 9,bottom: 9,left: 20,right: 25),
+        padding: EdgeInsets.only(top: 9, bottom: 9, left: 20, right: 25),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -79,10 +76,7 @@ class MyButton {
     );
   }
 
-  //Delete Button
-  static IconButton deleteButton({
-    required VoidCallback method,
-  }) {
+  static IconButton deleteButton({required VoidCallback method}) {
     return IconButton(
       icon: SvgPicture.asset("assets/icons/delete-icon.svg"),
       onPressed: method,
@@ -97,17 +91,20 @@ class MyButton {
     );
   }
 
-  //Filter button.
-  static ElevatedButton filterButton({required VoidCallback method}){
-    return ElevatedButton(onPressed: method,child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 23,vertical: 8),
-      child: Text("Filter",style: TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: Colors.black,
-        fontFamily: "Livvic",
-        backgroundColor: MyColors.whiteBG,
-      ),),
-    ));
+  static ElevatedButton filterButton({required VoidCallback method}) {
+    return ElevatedButton(
+      onPressed: method,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        child: Text(
+          "Filter",
+          style: TextStyle(
+            fontFamily: "Livvic",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
   }
 }
