@@ -13,7 +13,7 @@ class LibryApp extends StatelessWidget {
     return MaterialApp(
       theme: CustomTheme.myTheme,
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

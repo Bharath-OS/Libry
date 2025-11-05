@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         spacing: 25,
                         children: [
                           customTextField(
-                            hintText: "email",
+                            hintText: "Email",
                             icon: Icons.email_outlined,
                             inputController: emailController,
                             validator: (value) {
