@@ -25,7 +25,7 @@ class _ReturnBookScreenState extends State<ReturnBookScreen> {
         child: Center(
           child: Container(
             decoration: BoxDecoration(
-              color: MyColors.whiteColor,
+              color: MyColors.whiteBG,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Padding(
