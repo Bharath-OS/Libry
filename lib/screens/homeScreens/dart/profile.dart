@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:libry/Screens/login.dart';
 import 'package:libry/Screens/register.dart';
 import 'package:libry/Utilities/constants.dart';
+import 'package:libry/Widgets/appbar.dart';
 import 'package:libry/Widgets/buttons.dart';
 
 import '../../../Database/userdata.dart';
@@ -15,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late final Map<String, String>? userData;
+  late Map<String, String>? userData = {};
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: AppBar(title: Text("User Profile")),
+      appBar: LibryAppBar.appBar(barTitle: "User Profile", context: context),
       body: userData == null
           ? Center(child: Text("No data"))
           : Padding(

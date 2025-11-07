@@ -5,6 +5,7 @@ import 'package:libry/Screens/register.dart';
 import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
 import 'package:libry/Widgets/textField.dart';
+import 'package:libry/main.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../Database/userdata.dart';
@@ -112,17 +113,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (_formKey.currentState!.validate()) {
                                 bool? isLogged =
                                     await UserData.isLogged ?? false;
-                                if (isLogged) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType.fade,
-                                      curve: Curves.easeIn,
-                                      child: BooksScreen(),
-                                      duration: Duration(milliseconds: 300),
-                                    ),
-                                  );
-                                }
+                                //TODO: Verify this line later
+                                // if (isLogged) {
+                                //   Navigator.pushReplacement(
+                                //     context,
+                                //     PageTransition(
+                                //       type: PageTransitionType.fade,
+                                //       curve: Curves.easeIn,
+                                //       child: BooksScreen(),
+                                //       duration: Duration(milliseconds: 300),
+                                //     ),
+                                //   );
+                                // }
                                 final Map<String, String>? userData =
                                     await UserData.getData();
                                 bool? result = await validateUser(userData);

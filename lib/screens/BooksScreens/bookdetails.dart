@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:libry/Widgets/appbar.dart';
 import 'package:libry/Widgets/buttons.dart';
 import '../../Models/books.dart';
-import '../../Themes/styles.dart';
 import '../../Utilities/constants.dart';
 import '../../Widgets/scaffold.dart';
+import '../../themes/styles.dart';
+
 class BookDetailScreen extends StatefulWidget {
   final Books bookDetails;
 
@@ -128,7 +129,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   //Book availability dropdown button
   Widget _buildStatusDropdown() {
     return Container(
-      color: Colors.grey[200],
+      color: selectedStatus == "Available"? MyColors.successColor : MyColors.warningColor,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: DropdownButton<String>(
         value: selectedStatus,

@@ -4,6 +4,7 @@ import 'package:libry/Widgets/glassmorphism.dart';
 
 import '../../Widgets/buttons.dart';
 import '../../Widgets/scaffold.dart';
+import '../../themes/styles.dart';
 
 class IssueBookScreen extends StatefulWidget {
   const IssueBookScreen({super.key});
@@ -35,7 +36,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   TextFormField(
-                    decoration: InputDecoration(hintText: "Enter Member Name",),
+                    decoration: InputDecoration(hintText: "Enter member id to verify")
                   ),
                   MyButton.primaryButton(method: () {}, text: "Verify"),
                 ],

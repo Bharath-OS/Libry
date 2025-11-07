@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Key;
 import 'package:libry/Database/userdata.dart';
 import 'package:libry/Screens/login.dart';
 import 'package:libry/Widgets/glassmorphism.dart';
@@ -6,6 +6,8 @@ import 'package:libry/Widgets/textField.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../Widgets/buttons.dart';
+import '../models/user.dart';
+import '../models/Keys/keys.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({super.key});
@@ -15,7 +17,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late final List<TextEditingController> controllers;
+  late final libIdController;
+  late final userNameController;
+  late final emailController;
+  late final passwordController;
   final _formKey = GlobalKey<FormState>();
   final RegExp _emailRegExp = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
@@ -27,9 +32,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controllers = List.generate(4, (_) {
-      return TextEditingController();
-    });
+    libIdController = TextEditingController();
+    userNameController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+
     // _formKey = GlobalKey<FormState>();
   }
 
@@ -37,9 +44,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    controllers.forEach((controller) {
-      controller.dispose();
-    });
+    libIdController.dispose();
+    userNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
   }
 
   @override
@@ -75,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         customTextField(
                           hintText: "Librarian ID",
                           icon: Icons.perm_identity_outlined,
-                          inputController: controllers[0],
+                          inputController: libIdController,
                           validator: (value) {
                             if (value == null ||
                                 value.isEmpty ||
@@ -90,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         customTextField(
                           hintText: "Full name",
                           icon: Icons.person_outlined,
-                          inputController: controllers[1],
+                          inputController: userNameController,
                           validator: (value) {
                             if (value == null ||
                                 value.isEmpty ||
@@ -103,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         customTextField(
                           hintText: "Email",
                           icon: Icons.email_outlined,
-                          inputController: controllers[2],
+                          inputController: emailController,
                           validator: (value) {
                             if (value == null ||
                                 value.isEmpty ||
@@ -119,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hintText: "Password",
                           icon: Icons.password_outlined,
                           isObscure: true,
-                          inputController: controllers[3],
+                          inputController: passwordController,
                           validator: (value) {
                             if (value == null ||
                                 value.isEmpty ||
@@ -134,12 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         MyButton.primaryButton(
                           method: () async {
                             if (_formKey.currentState!.validate()) {
-                              userDataMap = {
-                                "LibId": controllers[0].text,
-                                "Username": controllers[1].text,
-                                "Email": controllers[2].text,
-                                "Password": controllers[3].text,
-                              };
+
                               bool result = await UserData.saveData(
                                 userdata: userDataMap,
                               );

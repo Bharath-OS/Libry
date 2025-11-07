@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Utilities/constants.dart';
+import 'package:libry/utilities/constants.dart';
 import 'package:libry/Widgets/scaffold.dart';
 
 import '../../Widgets/buttons.dart';
+import '../../themes/styles.dart';
 
 class ReturnBookScreen extends StatefulWidget {
   const ReturnBookScreen({super.key});
@@ -31,6 +32,7 @@ class _ReturnBookScreenState extends State<ReturnBookScreen> {
             child: Padding(
               padding: const EdgeInsets.all(25),
               child: Column(
+                spacing: 20,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -42,7 +44,38 @@ class _ReturnBookScreenState extends State<ReturnBookScreen> {
                     ),
                   ),
                   Text("Enter the member ID to verify the member."),
-                  MyButton.primaryButton(method: (){}, text: "Verify")
+                  TextFormField(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: MyColors.textFieldFillColor,
+                      hintText: "Enter member id",
+                      hintStyle: TextStyle(
+                        color: MyColors.primaryButtonColor,
+                        fontSize: 18,
+                        fontFamily: "Livvic",
+                        fontWeight: FontWeight.w600
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: MyColors.primaryButtonColor,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: MyColors.warningColor,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                    ),
+                  ),
+                  MyButton.primaryButton(method: () {}, text: "Verify"),
                 ],
               ),
             ),

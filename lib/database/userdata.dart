@@ -1,91 +1,84 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:libry/models/user.dart';
+import 'package:libry/models/Keys/keys.dart';
 
 class UserData {
-  static SharedPreferences? _pref;
-  static const String _userKey = "user_data";
-  static const String _logKey = 'logKey';
-  static const String _registerKey = 'registerKey';
-
-  static Future<SharedPreferences> get _instance async {
-    _pref ??= await SharedPreferences.getInstance();
-    return _pref!;
-  }
-
-  static Future<bool> saveData({required Map<String, String> userdata}) async {
+  static bool saveData({required User user}) {
     try {
-      final pref = await _instance;
-      final encodedMap = jsonEncode(userdata);
-      await pref.setString(_userKey, encodedMap);
+      userDataBox.put(
+        UserDatabaseKey.userDataKey,
+        User(
+          name: user.name,
+          libId: user.libId,
+          email: user.email,
+          password: user.password,
+        ),
+      );
+      setRegisterValue(true);
       return true;
     } catch (e) {
-      print("Error saving data: $e");
+      debugPrint(e as String?);
       return false;
     }
   }
 
-  static Future<Map<String, String>?> getData() async {
+  static User? getData() {
     try {
-      final pref = await _instance;
-      final userData = pref.getString(_userKey);
-      if (userData == null) return null;
-
-      final decoded = jsonDecode(userData);
-      return Map<String, String>.from(decoded);
+      User userData = userDataBox.get(UserDatabaseKey.userDataKey);
+      return userData;
     } catch (e) {
-      print("Error retrieving data: $e");
+      debugPrint(e as String?);
       return null;
     }
   }
 
-  static Future<bool> clearData() async {
+  static bool? clearData() {
     try {
-      final pref = await _instance;
-      await pref.remove(_userKey);
-      await setLogValue(false);
-      await setRegisterValue(false);
+      userDataBox.clear();
       print("Successfully cleared the data");
       return true;
     } catch (e) {
-      print("Error clearing data: $e");
+      debugPrint(e as String?);
       return false;
     }
   }
 
-  static Future<bool?> get isLogged async {
+  static bool? get isLogged {
     try {
-      final pref = await _instance;
-      return pref.getBool(_logKey) ?? false;
+      return userDataBox.get(UserDatabaseKey.loginKey, defaultValue: false);
     } catch (e) {
+      debugPrint(e as String?);
       return null;
     }
   }
 
-  static Future<void> setLogValue(bool value) async {
+  static bool setLogValue(bool value) {
     try {
-      final pref = await _instance;
-      await pref.setBool(_logKey, value);
+      userDataBox.put(UserDatabaseKey.loginKey, value);
+      return true;
     } catch (e) {
-      print(e);
+      debugPrint(e as String?);
+      return false;
     }
   }
 
-  static Future<bool?> get isRegistered async {
+  static bool? get isRegistered {
+    // if(!Hive.isBoxOpen(UserDatabaseKey.userDataKey)) return null;
     try {
-      final pref = await _instance;
-      return pref.getBool(_registerKey) ?? false;
+      return userDataBox.get(UserDatabaseKey.registerKey, defaultValue: false);
     } catch (e) {
-      print(e);
+      debugPrint(e as String?);
+      return null;
     }
   }
 
-  static Future<void> setRegisterValue(bool value) async {
+  static bool setRegisterValue(bool value) {
     try {
-      final pref = await _instance;
-      await pref.setBool(_registerKey, value);
+      userDataBox.put(UserDatabaseKey.registerKey, value);
+      return true;
     } catch (e) {
-      print(e);
+      debugPrint(e as String?);
+      return false;
     }
   }
 }

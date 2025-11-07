@@ -11,4 +11,5 @@ class MyColors{
   static final whiteBG = const Color(0xffffffff);
   static final darkGrey = const Color(0xff383838);
   static final lightGrey = const Color(0xff717171);
+  static final textFieldFillColor = const Color(0xffdedede);
 }

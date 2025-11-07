@@ -88,27 +88,34 @@ class BodyTextStyles {
   );
 
   static TextStyle headingMediumStyle([Color color = Colors.black]) {
+    return TextStyle(fontSize: 25, color: color, fontWeight: FontWeight.w700);
+  }
+
+  static TextStyle headingSmallStyle([Color color = Colors.black]) {
+    return TextStyle(fontSize: 20, color: color, fontWeight: FontWeight.w700);
+  }
+
+  static TextStyle bodySmallStyle([Color color = Colors.black]) {
     return TextStyle(
-      fontSize: 25,
+      fontSize: 16,
       color: color,
-      fontWeight: FontWeight.w700,
+      fontFamily: "Livvic",
+      fontWeight: FontWeight.w500,
     );
   }
+}
 
-  static TextStyle headingSmallStyle([Color color = Colors.black]){
-    return TextStyle(
-        fontSize: 20,
-        color: color,
-        fontWeight: FontWeight.w700
-    );
-  }
-
-  static TextStyle bodySmallStyle([Color color = Colors.black]){
-    return TextStyle(
-        fontSize: 16,
-        color: color,
-        fontFamily: "Livvic",
-        fontWeight: FontWeight.w500
+class TextFieldStyle {
+  static textFieldStyle({required String hintText}) {
+    InputDecoration(
+      filled: true,
+      fillColor: MyColors.lightGrey,
+      hintText: hintText,
+      enabledBorder: InputBorder.none,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(width: 3, color: MyColors.primaryButtonColor),
+        borderRadius: BorderRadius.circular(20),
+      ),
     );
   }
 }

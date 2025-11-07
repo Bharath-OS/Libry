@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:libry/Models/books.dart';
-import 'package:libry/Screens/BooksScreens/bookdetails.dart';
-import 'package:libry/Widgets/appbar.dart';
 import '../Models/members.dart';
-import '../Themes/styles.dart';
+import '../themes/styles.dart';
 import '../Utilities/constants.dart';
 import '../Widgets/buttons.dart';
 import '../Widgets/scaffold.dart';
