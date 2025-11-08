@@ -13,6 +13,7 @@ void main() async{
 
   Hive.registerAdapter(UserAdapter());
   userDataBox = await Hive.openBox<User>('users');
+  statusBox = await Hive.openBox("status");
 
   // Run the app
   runApp(LibryApp());

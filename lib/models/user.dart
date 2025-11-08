@@ -16,6 +16,10 @@ class User{
   int bookIssued = 0;
   @HiveField(5)
   int fineCollected = 0;
+  @HiveField(6)
+  bool isLogged;
+  @HiveField(7)
+  bool isRegistered;
 
   User({
     required this.name,
@@ -24,7 +28,10 @@ class User{
     required this.password,
     this.bookIssued = 0,
     this.fineCollected = 0,
+    this.isLogged = false,
+    this.isRegistered = false,
   });
 }
 
 late Box userDataBox;
+late Box statusBox;
