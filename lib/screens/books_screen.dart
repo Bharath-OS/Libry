@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../Models/books.dart';
 import '../Widgets/list.dart';
-import 'BooksScreens/bookdetails.dart';
+import '../models/books.dart';
+import '../widgets/cards.dart';
+import 'books_screens/books_details.dart';
 
 class BooksScreen extends StatelessWidget {
   const BooksScreen({super.key});
@@ -30,7 +31,7 @@ class BooksScreen extends StatelessWidget {
       availableCount: 22,
       searchHint: "Search Book",
       items: books,
-      tileBuilder: (book) => BookTile(bookDetails: book),
+      tileBuilder: (book) => Cards.bookCard(bookDetails: book),
       onTap: (book) => Navigator.push(
         context,
         MaterialPageRoute(

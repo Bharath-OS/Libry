@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Widgets/appbar.dart';
-import 'package:libry/Widgets/buttons.dart';
-import '../../Models/books.dart';
-import '../../Utilities/constants.dart';
-import '../../Widgets/scaffold.dart';
+import 'package:libry/widgets/appbar.dart';
+import 'package:libry/widgets/buttons.dart';
+import '../../models/books.dart';
+import '../../utilities/constants.dart';
+import '../../widgets/scaffold.dart';
 import '../../themes/styles.dart';
 
 class BookDetailScreen extends StatefulWidget {

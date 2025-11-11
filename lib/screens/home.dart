@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/homeScreens/dart/profile.dart';
 import 'package:libry/Widgets/scaffold.dart';
-
+import 'package:intl/intl.dart';
 import '../Utilities/constants.dart';
+import '../database/userdata.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,7 +13,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
+  late DateTime time;
+  late String greeting;
+  var formatter = DateFormat('EEEE d, MMM y');
+  final _actionSectionBG = MyColors.bgColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _greeting();
+  }
+
+  void _greeting() {
+    time = DateTime.now();
+    if (time.hour >= 0 && time.hour < 12) {
+      greeting = "Good Morning";
+    } else if (time.hour >= 12 && time.hour < 17) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -22,120 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             spacing: 10,
             children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        text: "Good Morning, \nBharath OS\n",
-                        style: TextStyle(
-                          color: MyColors.whiteBG,
-                          fontFamily: "Lobster",
-                          fontSize: 26,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "Thursday 16, Oct 2025",
-                            style: TextStyle(
-                              color: MyColors.whiteBG,
-                              fontFamily: "Livvic",
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(),
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  child: Column(
-                    spacing: 10,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            Expanded(
-                              child: SizedBox.expand(
-                                child: detailsCard(
-                                  count: 199,
-                                  parameter: "Total Books",
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: SizedBox.expand(
-                                child: detailsCard(
-                                  count: 23,
-                                  parameter: "Total Members",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            Expanded(
-                              child: SizedBox.expand(
-                                child: detailsCard(
-                                  count: 12,
-                                  parameter: "Due Today",
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: SizedBox.expand(
-                                child: detailsCard(
-                                  count: 12,
-                                  parameter: "Over Due",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
+              _buildHeaderSection(),
+              _buildDetailsSection(),
+              _buildActionSection(),
+              _buildRecentActionsSection(),
             ],
           ),
         ),
@@ -166,11 +78,125 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontFamily: "Livvic",
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    String formattedDate = formatter.format(time);
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: "$greeting, \n${UserDatabase.getUserName}\n",
+              style: TextStyle(
+                color: MyColors.whiteBG,
+                fontFamily: "Lobster",
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+              children: [
+                TextSpan(
+                  text: formattedDate,
+                  style: TextStyle(
+                    color: MyColors.whiteBG,
+                    fontFamily: "Livvic",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
+            ),
+            child: CircleAvatar(radius: 45, backgroundColor: Colors.blue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailsSection() {
+    return Expanded(
+      flex: 2,
+      child: SizedBox(
+        child: Column(
+          spacing: 10,
+          children: [
+            Expanded(
+              child: Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: SizedBox.expand(
+                      child: detailsCard(count: 199, parameter: "Total Books"),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox.expand(
+                      child: detailsCard(count: 23, parameter: "Total Members"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: SizedBox.expand(
+                      child: detailsCard(count: 12, parameter: "Due Today"),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox.expand(
+                      child: detailsCard(count: 12, parameter: "Over Due"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionSection() {
+    return Expanded(
+      flex: 2,
+      child: Container(
+        width:double.infinity,
+        padding:EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: _actionSectionBG,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child:Text("Argent Actions")
+      ),
+    );
+  }
+
+  Widget _buildRecentActionsSection() {
+    return Expanded(
+      flex: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          color: _actionSectionBG,
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );

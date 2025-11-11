@@ -118,4 +118,10 @@ class TextFieldStyle {
       ),
     );
   }
+
+  static TextStyle inputTextStyle = TextStyle(
+    color: MyColors.bgColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
 }

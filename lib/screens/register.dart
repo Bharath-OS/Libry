@@ -48,11 +48,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      body: FormContainer(title:"Get Started",formWidget:_form())
+      body: FormContainer(title: "Get Started", formWidget: _form()),
     );
   }
 
-  Widget _form(){
+  Widget _form() {
     return Form(
       key: _formKey,
       child: Column(
@@ -109,9 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ..onTap = () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
                   text: "Login",
@@ -127,6 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
   void _userValidation() {
     FocusScope.of(context).unfocus();
     String message = "";
@@ -153,8 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } else {
         message = "Something went wrong. Try again";
       }
-      showSnackBar(text:message, context: context);
+      showSnackBar(text: message, context: context);
     }
-
   }
 }

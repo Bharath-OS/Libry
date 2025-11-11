@@ -6,6 +6,8 @@ import 'package:libry/Widgets/buttons.dart';
 import '../../../Widgets/scaffold.dart';
 import '../../../database/userdata.dart';
 import '../../../models/user.dart';
+import '../../../utilities/helpers.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -118,7 +120,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MyButton.secondaryButton(method: () {}, text: "Edit Profile"),
+        MyButton.secondaryButton(method: () {
+          Navigator.push(
+            context,
+            transition(child: EditProfileScreen())
+          );
+        }, text: "Edit Profile"),
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {

@@ -111,42 +111,6 @@ class ListScreen<T> extends StatelessWidget {
   }
 }
 
-class BookTile extends StatelessWidget {
-  final Books bookDetails;
-
-  const BookTile({super.key, required this.bookDetails});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          children: [
-            Container(width: 84, height: 84, color: Colors.grey),
-            const SizedBox(width: 14),
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(bookDetails.title, style: CardStyles.cardTitleStyle),
-                  Text(bookDetails.author, style: CardStyles.cardSubTitleStyle),
-                  Text("Copy Available : ${bookDetails.copiesAvailable}/${bookDetails.totalCopies}"),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [MyButton.deleteButton(method: () {})],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class MemberTile extends StatelessWidget {
   final Members memberDetails;

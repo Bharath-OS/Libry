@@ -13,23 +13,17 @@ class User{
   @HiveField(3)
   String password;
   @HiveField(4)
-  int bookIssued = 0;
+  int bookIssued;
   @HiveField(5)
-  int fineCollected = 0;
-  @HiveField(6)
-  bool isLogged;
-  @HiveField(7)
-  bool isRegistered;
+  int fineCollected;
 
   User({
     required this.name,
     required this.libId,
     required this.email,
-    required this.password,
+    this.password = "",
     this.bookIssued = 0,
     this.fineCollected = 0,
-    this.isLogged = false,
-    this.isRegistered = false,
   });
 }
 

@@ -43,6 +43,17 @@ class UserDatabase {
     }
   }
 
+  static String get getUserName {
+    try {
+      User UserDatabase = userDataBox.get(UserDatabaseKey.userDataKey);
+      return UserDatabase.name;
+    }
+    catch(e){
+      debugPrint("Exception: $e");
+      return "No Name";
+    }
+  }
+
   //Clears the user data from Hive Database
   static bool? clearData() {
     try {
@@ -83,6 +94,20 @@ class UserDatabase {
       return true;
     } catch (e) {
       debugPrint(e as String?);
+      return false;
+    }
+  }
+
+  static bool editData({required String libId, required String userName, required String email}){
+    User? user = getData();
+    if(user!=null){
+      user.libId = libId;
+      user.name = userName;
+      user.email = email;
+      userDataBox.put(UserDatabaseKey.userDataKey, user);
+      return true;
+    }
+    else{
       return false;
     }
   }

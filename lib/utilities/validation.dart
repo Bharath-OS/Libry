@@ -30,4 +30,17 @@ class Validator {
     }
     return null;
   }
+
+  static String? phoneValidator(String? phone){
+    if (phone == null || phone.isEmpty || phone == " ") {
+      return 'Phone number cannot be empty';
+    }
+    else if(phone.length != 10){
+      return 'Phone number should be 10 digit';
+    }
+    else if(phone.contains(RegExp(r'[a-zA-Z]'))){
+      return 'Phone number should not contain alphabets';
+    }
+    return null;
+  }
 }
