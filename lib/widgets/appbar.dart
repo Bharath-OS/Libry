@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../Utilities/constants.dart';
+import 'package:libry/constants/app_colors.dart';
 
 class LibryAppBar {
   static AppBar appBar({required String barTitle,required BuildContext context}) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../Utilities/constants.dart';
+import 'package:libry/constants/app_colors.dart';
 
 class SplashScreenStyles {
   static final textStyle = TextStyle(

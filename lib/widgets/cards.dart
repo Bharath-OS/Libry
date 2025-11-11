@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-
-import '../Models/books.dart';
-import '../Themes/styles.dart';
+import '../models/members_model.dart';
+import '../models/books_model.dart';
+import '../themes/styles.dart';
 import 'buttons.dart';
 
 class Cards {
-  static Widget bookCard ({required Books bookDetails}) {
+  static Widget bookCard({required Books bookDetails}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -34,4 +34,35 @@ class Cards {
       ),
     );
   }
+
+  static Widget memberCard({required Members memberDetails}) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          children: [
+            const SizedBox(width: 14),
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(memberDetails.name, style: CardStyles.cardTitleStyle),
+                  Text(
+                    memberDetails.memberId,
+                    style: CardStyles.cardSubTitleStyle,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(children: [MyButton.deleteButton(method: () {})]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 }

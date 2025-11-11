@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:libry/Screens/settings.dart';
-import 'package:libry/Screens/transactions.dart';
+import 'package:libry/screens/settings.dart';
+import 'package:libry/screens/transactions.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
-import '../Utilities/constants.dart';
+import '../constants/app_colors.dart';
 import 'books_screen.dart';
 import 'home.dart';
 import 'members.dart';

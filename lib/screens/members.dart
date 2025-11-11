@@ -1,7 +1,8 @@
-import '../Models/members.dart';
-import '../Widgets/list.dart';
+import '../models/members_model.dart';
+import '../widgets/cards.dart';
+import '../widgets/list.dart';
 import 'package:flutter/material.dart';
-import 'MembersScreens/memberdetails.dart';
+import 'members_screens/member_details.dart';
 
 class MembersScreen extends StatelessWidget {
   const MembersScreen({super.key});
@@ -31,7 +32,7 @@ class MembersScreen extends StatelessWidget {
       availableCount: 20,
       searchHint: "Search Member",
       items: members,
-      tileBuilder: (member) => MemberTile(memberDetails: member),
+      tileBuilder: (member) => Cards.memberCard(memberDetails: member),
       onTap: (member) => Navigator.push(
         context,
         MaterialPageRoute(

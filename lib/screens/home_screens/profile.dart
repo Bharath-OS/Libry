@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/register.dart';
-import 'package:libry/Utilities/constants.dart';
+import 'package:libry/constants/app_colors.dart';
 import 'package:libry/Widgets/appbar.dart';
 import 'package:libry/Widgets/buttons.dart';
 import '../../../Widgets/scaffold.dart';
 import '../../../database/userdata.dart';
-import '../../../models/user.dart';
+import '../../../models/user_model.dart';
 import '../../../utilities/helpers.dart';
 import 'edit_profile.dart';
 

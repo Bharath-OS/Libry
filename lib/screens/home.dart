@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Screens/homeScreens/dart/profile.dart';
-import 'package:libry/Widgets/scaffold.dart';
+import 'package:libry/screens/home_screens/profile.dart';
+import 'package:libry/widgets/scaffold.dart';
 import 'package:intl/intl.dart';
-import '../Utilities/constants.dart';
+import '../constants/app_colors.dart';
 import '../database/userdata.dart';
 
 class HomeScreen extends StatefulWidget {

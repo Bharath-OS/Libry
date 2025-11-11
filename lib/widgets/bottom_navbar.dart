@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
-import '../Utilities/constants.dart';
+import 'package:libry/constants/app_colors.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});

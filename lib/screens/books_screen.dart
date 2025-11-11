@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../Widgets/list.dart';
-import '../models/books.dart';
+import '../widgets/list.dart';
 import '../widgets/cards.dart';
 import 'books_screens/books_details.dart';
+import 'package:libry/models/books_model.dart';
 
 class BooksScreen extends StatelessWidget {
   const BooksScreen({super.key});

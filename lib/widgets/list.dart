@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:libry/Models/books.dart';
-import '../Models/members.dart';
+// import '../models/members_model.dart';
 import '../themes/styles.dart';
-import '../Utilities/constants.dart';
-import '../Widgets/buttons.dart';
-import '../Widgets/scaffold.dart';
+import 'package:libry/constants/app_colors.dart';
+import '../widgets/buttons.dart';
+import '../widgets/scaffold.dart';
 
 class ListScreen<T> extends StatelessWidget {
   final String title;
@@ -105,42 +104,6 @@ class ListScreen<T> extends StatelessWidget {
             },
             separatorBuilder: (_, __) => const SizedBox(height: 4),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class MemberTile extends StatelessWidget {
-  final Members memberDetails;
-
-  const MemberTile({super.key, required this.memberDetails});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          children: [
-            const SizedBox(width: 14),
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(memberDetails.name, style: CardStyles.cardTitleStyle),
-                  Text(memberDetails.memberId, style: CardStyles.cardSubTitleStyle),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [MyButton.deleteButton(method: () {})],
-              ),
-            ),
-          ],
         ),
       ),
     );

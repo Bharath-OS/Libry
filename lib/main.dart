@@ -3,7 +3,7 @@ import 'Screens/splash.dart';
 import 'Themes/styles.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'models/user.dart';
+import 'models/user_model.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

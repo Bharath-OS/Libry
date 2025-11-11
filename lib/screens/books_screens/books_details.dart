@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:libry/widgets/appbar.dart';
 import 'package:libry/widgets/buttons.dart';
-import '../../models/books.dart';
-import '../../utilities/constants.dart';
+import '../../models/books_model.dart';
+import '../../constants/app_colors.dart';
+import '../../widgets/fab.dart';
 import '../../widgets/scaffold.dart';
 import '../../themes/styles.dart';
+import 'book_history.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Books bookDetails;
@@ -46,6 +48,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           ],
         ),
       ),
+      floatingActionButton: fab((){})
     );
   }
   //Book Container
@@ -150,7 +153,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MyButton.secondaryButton(method: () {}, text: "View History"),
+        MyButton.secondaryButton(method: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>BookHistoryScreen())), text: "View History"),
         const SizedBox(height: 10),
         MyButton.primaryButton(method: () {}, text: "Edit Book"),
       ],

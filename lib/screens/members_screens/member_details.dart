@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Widgets/appbar.dart';
-import 'package:libry/Widgets/scaffold.dart';
-import '../../Models/members.dart';
-import '../../Widgets/buttons.dart';
+import 'package:libry/widgets/appbar.dart';
+import 'package:libry/widgets/scaffold.dart';
+import '../../models/members_model.dart';
+import '../../widgets/buttons.dart';
 
 class MemberDetailsScreen extends StatelessWidget {
   final Members memberDetails;

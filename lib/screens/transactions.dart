@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Utilities/constants.dart';
-import 'package:libry/Widgets/appbar.dart';
-import 'package:libry/Widgets/scaffold.dart';
+import 'package:libry/constants/app_colors.dart';
+import 'package:libry/widgets/appbar.dart';
+import 'package:libry/widgets/scaffold.dart';
 
-import 'Transactions/issue.dart';
-import 'Transactions/return.dart';
+import 'transactions_screens/issue.dart';
+import 'transactions_screens/return.dart';
 
 
 class TransactionsScreen extends StatefulWidget {

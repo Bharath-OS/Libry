@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../themes/styles.dart';
-import '../../../Utilities/constants.dart';
-import '../../../Widgets/appbar.dart';
-import '../../../Widgets/buttons.dart';
-import '../../../Widgets/scaffold.dart';
+import '../../../constants/app_colors.dart';
+import '../../../widgets/appbar.dart';
+import '../../../widgets/buttons.dart';
+import '../../../widgets/scaffold.dart';
 import '../../../database/userdata.dart';
-import '../../../models/user.dart';
+import '../../../models/user_model.dart';
 import '../../../widgets/form.dart';
 
 class EditProfileScreen extends StatefulWidget {
