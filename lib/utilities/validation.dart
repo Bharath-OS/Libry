@@ -14,7 +14,7 @@ class Validator {
     // if(!passwordRegex.hasMatch(password)){
     //   return "Invalid password";
     // }
-    else if (password.length >= 6) {
+    else if (password.length <= 6) {
       return "Password must be at least 6 characters";
     }
     return null;
