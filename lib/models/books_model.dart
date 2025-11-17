@@ -19,7 +19,7 @@ class Books {
     required this.pages,
     required this.totalCopies,
     required this.copiesAvailable,
-    required this.coverPicture
+    this.coverPicture = "assets/images/dummy_book_cover.png"
   });
 }
 

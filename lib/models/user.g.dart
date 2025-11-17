@@ -18,11 +18,10 @@ class UserAdapter extends TypeAdapter<User> {
     };
     return User(
       name: fields[0] as String,
-      libId: fields[1] as String,
-      email: fields[2] as String,
-      password: fields[3] as String,
-      bookIssued: fields[4] as int,
-      fineCollected: fields[5] as int,
+      email: fields[1] as String,
+      password: fields[2] as String,
+      bookIssued: fields[3] as int,
+      fineCollected: fields[4] as int,
     );
   }
 
@@ -33,14 +32,12 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.libId)
-      ..writeByte(2)
       ..write(obj.email)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.password)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.bookIssued)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.fineCollected);
   }
 

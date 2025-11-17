@@ -13,7 +13,7 @@ class CustomScaffold extends StatelessWidget {
     this.appBar,
     this.floatingActionButton,
     this.bottomNavigationBar,
-    this.backgroundImage = 'assets/images/splashBG.png',
+    this.backgroundImage = 'assets/images/splash_bg_resized.jpg',
   });
 
   @override

@@ -1,3 +1,7 @@
+import 'package:libry/database/userdata.dart';
+
+import '../models/user_model.dart';
+
 class Validator {
   static String? emptyValidator(String? value) {
     if (value == null || value.isEmpty || value == " ") {
@@ -21,24 +25,27 @@ class Validator {
   }
 
   static String? emailValidator(String? email) {
+    User? user = UserDatabase.getData();
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+      caseSensitive: false,
+    );
     if (email == null || email.isEmpty || email == " ") {
       return 'Email cannot be empty';
-    }
-    final emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-    if (!emailRegex.hasMatch(email)) {
+    } else if (user?.email == email) {
+      return "The email already existing.Try logging in instead.";
+    } else if (!emailRegex.hasMatch(email)) {
       return 'Enter a valid email address';
     }
     return null;
   }
 
-  static String? phoneValidator(String? phone){
+  static String? phoneValidator(String? phone) {
     if (phone == null || phone.isEmpty || phone == " ") {
       return 'Phone number cannot be empty';
-    }
-    else if(phone.length != 10){
+    } else if (phone.length != 10) {
       return 'Phone number should be 10 digit';
-    }
-    else if(phone.contains(RegExp(r'[a-zA-Z]'))){
+    } else if (phone.contains(RegExp(r'[a-zA-Z]'))) {
       return 'Phone number should not contain alphabets';
     }
     return null;

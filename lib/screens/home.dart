@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Themes/styles.dart';
 import 'package:libry/screens/home_screens/profile.dart';
 import 'package:libry/widgets/scaffold.dart';
 import 'package:intl/intl.dart';
@@ -121,7 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(builder: (context) => ProfileScreen()),
             ),
-            child: CircleAvatar(radius: 45, backgroundColor: Colors.blue),
+            child: CircleAvatar(
+              radius: 45,
+              backgroundColor: Colors.blue,
+              child: Center(
+                child: Text(
+                  UserDatabase.getUserName.trim()[0],
+                  style: BodyTextStyles.headingMediumStyle(MyColors.whiteBG).copyWith(fontSize: 40),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -179,13 +189,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Expanded(
       flex: 2,
       child: Container(
-        width:double.infinity,
-        padding:EdgeInsets.all(10),
+        width: double.infinity,
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: _actionSectionBG,
           borderRadius: BorderRadius.circular(20),
         ),
-        child:Text("Argent Actions")
+        child: Text("Argent Actions"),
       ),
     );
   }

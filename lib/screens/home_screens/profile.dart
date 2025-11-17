@@ -26,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void getUserData() {
-    user = UserDatabase.getData()?? User(name: '', libId: '', email: '', password: '');
+    user = UserDatabase.getData()?? User(name: '', email: '', password: '');
     setState(() {});
   }
 
@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         RichText(
                           text: TextSpan(
                             text:
-                            "Librarian ID : ${user.libId}\n",
+                            "",
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: "Livvic",

@@ -7,19 +7,16 @@ class User{
   @HiveField(0)
   String name;
   @HiveField(1)
-  String libId;
-  @HiveField(2)
   String email;
-  @HiveField(3)
+  @HiveField(2)
   String password;
-  @HiveField(4)
+  @HiveField(3)
   int bookIssued;
-  @HiveField(5)
+  @HiveField(4)
   int fineCollected;
 
   User({
     required this.name,
-    required this.libId,
     required this.email,
     this.password = "",
     this.bookIssued = 0,

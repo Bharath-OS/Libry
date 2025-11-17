@@ -19,7 +19,6 @@ class UserDatabase {
         UserDatabaseKey.userDataKey,
         User(
           name: user.name,
-          libId: user.libId,
           email: user.email,
           password: user.password,
         ),
@@ -45,8 +44,8 @@ class UserDatabase {
 
   static String get getUserName {
     try {
-      User UserDatabase = userDataBox.get(UserDatabaseKey.userDataKey);
-      return UserDatabase.name;
+      User user = userDataBox.get(UserDatabaseKey.userDataKey);
+      return user.name;
     }
     catch(e){
       debugPrint("Exception: $e");
@@ -98,10 +97,9 @@ class UserDatabase {
     }
   }
 
-  static bool editData({required String libId, required String userName, required String email}){
+  static bool editData({required String userName, required String email}){
     User? user = getData();
     if(user!=null){
-      user.libId = libId;
       user.name = userName;
       user.email = email;
       userDataBox.put(UserDatabaseKey.userDataKey, user);

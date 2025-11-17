@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:libry/provider/book_provider.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/appbar.dart';
 import 'package:libry/widgets/buttons.dart';
+import 'package:provider/provider.dart';
 import '../../models/books_model.dart';
 import '../../constants/app_colors.dart';
-import '../../widgets/fab.dart';
 import '../../widgets/scaffold.dart';
 import '../../themes/styles.dart';
 import 'book_history.dart';
@@ -24,7 +26,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: LibryAppBar.appBar(barTitle: "Books Details",context: context),
+      appBar: LibryAppBar.appBar(barTitle: "Books Details", context: context),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -48,9 +50,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           ],
         ),
       ),
-      floatingActionButton: fab((){})
     );
   }
+
   //Book Container
   Widget _buildBookDetailsCard() {
     final book = widget.bookDetails;
@@ -75,6 +77,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
+
   //Book Title
   Widget _buildTitleSection(Books book) {
     return Center(
@@ -107,6 +110,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
+
   //Book details
   Widget _buildMetadataSection(Books book) {
     return RichText(
@@ -129,10 +133,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
+
   //Book availability dropdown button
   Widget _buildStatusDropdown() {
     return Container(
-      color: selectedStatus == "Available"? MyColors.successColor : MyColors.warningColor,
+      color: selectedStatus == "Available"
+          ? MyColors.successColor
+          : MyColors.warningColor,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: DropdownButton<String>(
         value: selectedStatus,
@@ -148,17 +155,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
+
   //Book action buttons
   Widget _buildActionButtons() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MyButton.secondaryButton(method: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>BookHistoryScreen())), text: "View History"),
+        MyButton.secondaryButton(
+          method: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BookHistoryScreen()),
+          ),
+          text: "View History",
+        ),
         const SizedBox(height: 10),
-        MyButton.primaryButton(method: () {}, text: "Edit Book"),
+        MyButton.primaryButton(method: () {
+          context.read<BookProvider>().removeBook(0);
+        }, text: "Edit Book"),
       ],
     );
   }
+
   //Book cover image
   Widget _buildBookImage() {
     return Positioned(
@@ -168,7 +185,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         width: 170,
         height: 180,
         decoration: BoxDecoration(
-          color: Colors.grey,
           boxShadow: [
             BoxShadow(
               offset: const Offset(0, 7),
@@ -177,7 +193,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ),
           ],
         ),
+        child: Image.asset("assets/images/dummy_book_cover.png"),
       ),
     );
   }
+
 }

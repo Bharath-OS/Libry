@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/home.dart';
 import 'package:libry/screens/login.dart';
 import 'package:libry/widgets/textField.dart';
 import 'package:page_transition/page_transition.dart';
@@ -61,14 +62,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         spacing: 25,
         children: [
           customTextField(
-            hintText: "Librarian ID",
-            icon: Icons.perm_identity_outlined,
-            inputController: libIdController,
-            validator: (value) {
-              return Validator.emptyValidator(value);
-            },
-          ),
-          customTextField(
             hintText: "Full name",
             icon: Icons.person_outlined,
             inputController: userNameController,
@@ -109,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ..onTap = () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        transition(child: LoginScreen())
                       );
                     },
                   text: "Login",
@@ -132,7 +125,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       User user = User(
         name: userNameController.text,
-        libId: libIdController.text,
         email: emailController.text,
         password: passwordController.text,
       );
@@ -144,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           PageTransition(
             type: PageTransitionType.fade,
             curve: Curves.easeIn,
-            child: LoginScreen(),
+            child: HomeScreen(),
             duration: Duration(milliseconds: 300),
           ),
         );

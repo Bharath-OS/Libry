@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:libry/provider/book_provider.dart';
 import 'Screens/splash.dart';
 import 'Themes/styles.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'models/user_model.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,9 @@ void main() async{
   statusBox = await Hive.openBox("status");
 
   // Run the app
-  runApp(LibryApp());
+  runApp(MultiProvider(providers:[
+    ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
+  ],child: LibryApp()));
 }
 
 class LibryApp extends StatelessWidget {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../provider/book_provider.dart';
 import '../widgets/list.dart';
 import '../widgets/cards.dart';
 import 'books_screens/books_details.dart';
@@ -11,7 +13,7 @@ class BooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final books = List.generate(
-      25,
+      context.watch<BookProvider>().count,
           (i) => Books(
         title: "Book $i",
         author: "Author $i",
@@ -22,15 +24,16 @@ class BooksScreen extends StatelessWidget {
         pages: 200 + i,
         totalCopies: 6,
         copiesAvailable: 3,
+        coverPicture:"image/path/default.png"
       ),
     );
 
     return ListScreen<Books>(
       title: "All Books",
-      totalCount: 223,
+      totalCount: context.read<BookProvider>().count,
       availableCount: 22,
       searchHint: "Search Book",
-      items: books,
+      items: context.watch<BookProvider>().books,
       tileBuilder: (book) => Cards.bookCard(bookDetails: book),
       onTap: (book) => Navigator.push(
         context,

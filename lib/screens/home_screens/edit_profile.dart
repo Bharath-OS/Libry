@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../themes/styles.dart';
-import '../../../constants/app_colors.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/buttons.dart';
 import '../../../widgets/scaffold.dart';
@@ -18,7 +17,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late User userData;
-  late final TextEditingController _idController;
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   final _formKey = GlobalKey<FormState>();
@@ -27,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     userData = _getUserData()!;
-    _idController = TextEditingController(text: userData.libId);
     _nameController = TextEditingController(text: userData.name);
     _emailController = TextEditingController(text: userData.email);
   }
@@ -49,10 +46,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         spacing: 20,
         children: [
           TextFormField(
-            controller: _idController,
-            style: TextFieldStyle.inputTextStyle,
-          ),
-          TextFormField(
             controller: _nameController,
             style: TextFieldStyle.inputTextStyle,
           ),
@@ -72,16 +65,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return null;
   }
 
-  _editUserData() {
+  void _editUserData() {
     if (_formKey.currentState!.validate()) {
-      if (userData.libId != _idController.text ||
-          userData.name != _nameController.text ||
+      if (userData.name != _nameController.text ||
           userData.email != _emailController.text) {
         UserDatabase.saveData(
           user: User(
             name: _nameController.text,
             email: _emailController.text,
-            libId: _idController.text,
           ),
         );
       }
