@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             icon: Icons.email_outlined,
             inputController: emailController,
             validator: (value) {
-              return Validator.emailValidator(value);
+              return Validator.registerEmailValidator(value);
             },
           ),
           customTextField(

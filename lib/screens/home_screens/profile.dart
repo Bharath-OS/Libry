@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/login.dart';
 import 'package:libry/Screens/register.dart';
 import 'package:libry/constants/app_colors.dart';
 import 'package:libry/Widgets/appbar.dart';
@@ -129,10 +130,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {
-            UserDatabase.clearData();
+            // UserDatabase.clearData();
+            UserDatabase.setLogValue(false);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (ctx) => RegisterScreen()),
+              transition(child: LoginScreen())
             );
           },
           text: "Sign out",

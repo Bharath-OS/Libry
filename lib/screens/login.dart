@@ -80,12 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ..onTap = () {
                       Navigator.pushReplacement(
                         context,
-                        PageTransition(
-                          type: PageTransitionType.fade,
-                          curve: Curves.easeIn,
-                          child: RegisterScreen(),
-                          duration: Duration(milliseconds: 300),
-                        ),
+                        transition(child: RegisterScreen())
                       );
                     },
                   text: "Register",

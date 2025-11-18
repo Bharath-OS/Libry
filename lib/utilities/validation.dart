@@ -25,20 +25,24 @@ class Validator {
   }
 
   static String? emailValidator(String? email) {
-    User? user = UserDatabase.getData();
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
       caseSensitive: false,
     );
     if (email == null || email.isEmpty || email == " ") {
       return 'Email cannot be empty';
-    } else if (user?.email == email) {
-      return "The email already existing.Try logging in instead.";
-    }
-    else if (!emailRegex.hasMatch(email)) {
+    } else if (!emailRegex.hasMatch(email)) {
       return 'Enter a valid email address';
     }
     return null;
+  }
+
+  static String? registerEmailValidator(String? email) {
+    User? user = UserDatabase.getData();
+    if (user?.email == email) {
+      return "The email already existing.\nTry Logging instead";
+    }
+    return emailValidator(email);
   }
 
   static String? phoneValidator(String? phone) {
