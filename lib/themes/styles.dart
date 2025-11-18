@@ -39,7 +39,6 @@ class CustomTheme {
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
-
       errorStyle: TextStyle(
         color: MyColors.warningColor,
         fontSize: 16,

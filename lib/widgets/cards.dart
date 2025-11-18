@@ -11,7 +11,12 @@ class Cards {
         padding: const EdgeInsets.all(15),
         child: Row(
           children: [
-            Container(width: 84, height: 84, color: Colors.grey),
+            Container(
+              width: 84,
+              height: 84,
+              color: Colors.grey,
+              child: Image.asset(bookDetails.coverPicture),
+            ),
             const SizedBox(width: 14),
             Expanded(
               flex: 3,
@@ -63,6 +68,4 @@ class Cards {
       ),
     );
   }
-
-
 }

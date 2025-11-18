@@ -12,22 +12,6 @@ class BooksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final books = List.generate(
-      context.watch<BookProvider>().count,
-          (i) => Books(
-        title: "Book $i",
-        author: "Author $i",
-        year: "1999",
-        language: "English",
-        publisher: "Publisher",
-        genre: "Fantasy",
-        pages: 200 + i,
-        totalCopies: 6,
-        copiesAvailable: 3,
-        coverPicture:"image/path/default.png"
-      ),
-    );
-
     return ListScreen<Books>(
       title: "All Books",
       totalCount: context.watch<BookProvider>().count,

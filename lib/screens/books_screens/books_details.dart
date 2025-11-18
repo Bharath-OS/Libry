@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:libry/database/libry_db.dart';
 import 'package:libry/provider/book_provider.dart';
+import 'package:libry/screens/books_screens/edit_book_screen.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:libry/widgets/appbar.dart';
 import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +44,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   Positioned(
                     right: 10,
                     top: 10,
-                    child: MyButton.deleteButton(method: () {}),
+                    child: MyButton.deleteButton(method: ()=>context.read<BookProvider>().removeBook(0)),
                   ),
                 ],
               ),
@@ -172,7 +175,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {
-            context.read<BookProvider>().removeBook(0);
+            Navigator.push(context, transition(child: EditBookScreen(book: widget.bookDetails,)));
           },
           text: "Edit Book",
         ),

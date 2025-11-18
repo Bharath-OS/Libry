@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:hive_flutter/adapters.dart';
 import 'package:libry/models/user_model.dart';
 import 'package:libry/models/Keys/keys.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 
 class UserDatabase {
   // static bool initializeDatabase(){
@@ -17,11 +18,7 @@ class UserDatabase {
     try {
       userDataBoxNew.put(
         UserDatabaseKey.userDataKey,
-        User(
-          name: user.name,
-          email: user.email,
-          password: user.password,
-        ),
+        User(name: user.name, email: user.email, password: user.password),
       );
       setRegisterValue(true);
       return true;
@@ -34,7 +31,9 @@ class UserDatabase {
   //Retrieves the user data from Hive Database
   static User? getData() {
     try {
-      User user = userDataBoxNew.get(UserDatabaseKey.userDataKey) ?? User(name: "Guest", email: "guest@gmail.com");
+      User user =
+          userDataBoxNew.get(UserDatabaseKey.userDataKey) ??
+          User(name: "Guest", email: "guest@gmail.com");
       return user;
     } catch (e) {
       debugPrint(e as String?);
@@ -46,8 +45,7 @@ class UserDatabase {
     try {
       User user = userDataBoxNew.get(UserDatabaseKey.userDataKey);
       return user.name;
-    }
-    catch(e){
+    } catch (e) {
       debugPrint("Exception: $e");
       return "No Name";
     }
@@ -97,15 +95,14 @@ class UserDatabase {
     }
   }
 
-  static bool editData({required String userName, required String email}){
+  static bool editData({required String userName, required String email}) {
     User? user = getData();
-    if(user!=null){
+    if (user != null) {
       user.name = userName;
       user.email = email;
       userDataBoxNew.put(UserDatabaseKey.userDataKey, user);
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }

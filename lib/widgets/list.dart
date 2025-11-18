@@ -3,9 +3,11 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:libry/models/books_model.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:libry/utilities/validation.dart';
 import 'package:provider/provider.dart';
 import '../provider/book_provider.dart';
+import '../screens/books_screens/add_book_screen.dart';
 import '../themes/styles.dart';
 import 'package:libry/constants/app_colors.dart';
 import '../widgets/buttons.dart';
@@ -50,7 +52,10 @@ class ListScreen<T> extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: fab(method: () => _addBook(context)),
+      floatingActionButton: fab(
+        method: () =>
+            Navigator.push(context, transition(child: AddBookScreen())),
+      ),
     );
   }
 
@@ -141,120 +146,4 @@ class ListScreen<T> extends StatelessWidget {
     );
   }
 
-  void _addBook(BuildContext context) {
-    showPopUpScreen(
-      title: "Add Book",
-      context: context,
-      child: _addBookForm(context),
-    );
-  }
-
-  Widget _addBookForm(BuildContext context) {
-    final List<TextEditingController> controllers = List.generate(
-      9,
-      (_) => TextEditingController(),
-    );
-
-    void cancel() {
-      Navigator.pop(context);
-    }
-
-    void add(BuildContext context) {
-      if (_formKey.currentState!.validate()) {
-        final book = Books(
-          title: controllers[0].text,
-          author: controllers[1].text,
-          language: controllers[2].text,
-          year: controllers[3].text,
-          publisher: controllers[4].text,
-          pages: int.parse(controllers[5].text),
-          genre: controllers[6].text,
-          totalCopies: int.parse(controllers[7].text),
-          copiesAvailable: int.parse(controllers[8].text),
-        );
-        context.read<BookProvider>().addBook(book);
-        Navigator.pop(context);
-      }
-    }
-
-    return SizedBox(
-      width: double.infinity,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          spacing: 12,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: controllers[0],
-              decoration: InputDecoration(hintText: "Book title"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[1],
-              decoration: InputDecoration(hintText: "Author name"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[2],
-              decoration: InputDecoration(hintText: "Language"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[3],
-              decoration: InputDecoration(hintText: "Publish year"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[4],
-              decoration: InputDecoration(hintText: "Publisher"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[5],
-              decoration: InputDecoration(hintText: "Number of pages"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[6],
-              decoration: InputDecoration(hintText: "Genre"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[7],
-              decoration: InputDecoration(hintText: "No of copies available"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            TextFormField(
-              controller: controllers[8],
-              decoration: InputDecoration(hintText: "Book Shelf number"),
-              validator: (value)=>Validator.emptyValidator(value),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 20,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.secondaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
-                  ),
-                  onPressed: cancel,
-                  child: Text("Cancel"),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.primaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
-                  ),
-                  onPressed: () => add(context),
-                  child: Text("Save"),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

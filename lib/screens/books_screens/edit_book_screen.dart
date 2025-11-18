@@ -1,26 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Widgets/scaffold.dart';
-import 'package:libry/widgets/form.dart';
 import 'package:provider/provider.dart';
+
+import '../../Widgets/scaffold.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
 import '../../utilities/validation.dart';
+import '../../widgets/form.dart';
 
-class AddBookScreen extends StatefulWidget {
-  const AddBookScreen({super.key});
+class EditBookScreen extends StatefulWidget {
+  final Books book;
+  const EditBookScreen({super.key, required this.book});
 
   @override
-  State<AddBookScreen> createState() => _AddBookScreenState();
+  State<EditBookScreen> createState() => _EditBookScreenState();
 }
 
-class _AddBookScreenState extends State<AddBookScreen> {
+class _EditBookScreenState extends State<EditBookScreen> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
+  late Books _book;
   @override
   initState() {
     super.initState();
+    _book = widget.book;
     controllers = List.generate(9, (_) => TextEditingController());
+    controllers[0].text = _book.title;
+    controllers[1].text = _book.author;
+    controllers[2].text = _book.language;
+    controllers[3].text = _book.year;
+    controllers[4].text = _book.publisher;
+    controllers[5].text = _book.pages.toString();
+    controllers[6].text = _book.genre;
+    controllers[7].text = _book.totalCopies.toString();
+    controllers[8].text = _book.copiesAvailable.toString();
   }
 
   @override
@@ -38,20 +51,20 @@ class _AddBookScreenState extends State<AddBookScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: FormContainer(
-            title: "Add Book",
-            formWidget: _addBookForm(context),
+            title: "Edit Book",
+            formWidget: _editBookForm(context),
           ),
         ),
       ),
     );
   }
 
-  Widget _addBookForm(BuildContext context) {
+  Widget _editBookForm(BuildContext context) {
     void back() {
       Navigator.pop(context);
     }
 
-    void add(BuildContext context) {
+    void saveBook(BuildContext context) {
       if (_formKey.currentState!.validate()) {
         final book = Books(
           title: controllers[0].text,
@@ -133,10 +146,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
             TextFormField(
               style: textStyle,
               controller: controllers[8],
-              decoration: InputDecoration(hintText: "copies available"),
+              decoration: InputDecoration(hintText: "Available copies"),
               validator: (value) => Validator.emptyValidator(value),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 20,
@@ -154,7 +166,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     backgroundColor: MyColors.primaryButtonColor,
                     foregroundColor: MyColors.whiteBG,
                   ),
-                  onPressed: () => add(context),
+                  onPressed: () => saveBook(context),
                   child: Text("Save"),
                 ),
               ],
