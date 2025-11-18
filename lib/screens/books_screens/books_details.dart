@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
-import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/appbar.dart';
 import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
@@ -63,17 +62,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         borderRadius: BorderRadius.circular(20),
         color: MyColors.whiteBG,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitleSection(book),
-          const SizedBox(height: 10),
-          _buildMetadataSection(book),
-          const SizedBox(height: 10),
-          _buildStatusDropdown(),
-          const SizedBox(height: 20),
-          _buildActionButtons(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitleSection(book),
+            const SizedBox(height: 10),
+            _buildMetadataSection(book),
+            const SizedBox(height: 10),
+            _buildStatusDropdown(),
+            const SizedBox(height: 20),
+            _buildActionButtons(),
+          ],
+        ),
       ),
     );
   }
@@ -169,9 +170,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           text: "View History",
         ),
         const SizedBox(height: 10),
-        MyButton.primaryButton(method: () {
-          context.read<BookProvider>().removeBook(0);
-        }, text: "Edit Book"),
+        MyButton.primaryButton(
+          method: () {
+            context.read<BookProvider>().removeBook(0);
+          },
+          text: "Edit Book",
+        ),
       ],
     );
   }
@@ -197,5 +201,4 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       ),
     );
   }
-
 }
