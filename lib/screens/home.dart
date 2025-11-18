@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
+import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
 import 'package:libry/widgets/scaffold.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../database/userdata.dart';
 
@@ -128,7 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Text(
                   UserDatabase.getUserName.trim()[0],
-                  style: BodyTextStyles.headingMediumStyle(MyColors.whiteBG).copyWith(fontSize: 40),
+                  style: BodyTextStyles.headingMediumStyle(
+                    MyColors.whiteBG,
+                  ).copyWith(fontSize: 40),
                 ),
               ),
             ),
@@ -151,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: SizedBox.expand(
-                      child: detailsCard(count: 199, parameter: "Total Books"),
+                      child: detailsCard(count: context.watch<BookProvider>().count, parameter: "Total Books"),
                     ),
                   ),
                   Expanded(

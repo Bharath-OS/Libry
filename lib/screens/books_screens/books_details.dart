@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:libry/database/libry_db.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/books_screens/edit_book_screen.dart';
 import 'package:libry/utilities/helpers.dart';
@@ -8,6 +7,7 @@ import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import '../../models/books_model.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/alert_dialogue.dart';
 import '../../widgets/scaffold.dart';
 import '../../themes/styles.dart';
 import 'book_history.dart';
@@ -41,10 +41,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 children: [
                   _buildBookDetailsCard(),
                   _buildBookImage(),
+                  // In books_details.dart - Fix the delete button
                   Positioned(
                     right: 10,
                     top: 10,
-                    child: MyButton.deleteButton(method: ()=>context.read<BookProvider>().removeBook(0)),
+                    child: MyButton.deleteButton(
+                      method: ()=>deleteBook(context: context, bookDetails: widget.bookDetails),
+                    ),
                   ),
                 ],
               ),

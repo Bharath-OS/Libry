@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Widgets/scaffold.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/form.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
@@ -66,6 +67,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         );
         context.read<BookProvider>().addBook(book);
         Navigator.pop(context);
+        showAlertMessage(message: "${book.title} successfully added", context: context);
       }
     }
     final TextStyle textStyle = const TextStyle(

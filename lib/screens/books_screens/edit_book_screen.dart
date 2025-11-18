@@ -20,6 +20,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late Books _book;
+  final TextStyle textStyle = const TextStyle(
+    color: Color(0xffC1DCFF),
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+
   @override
   initState() {
     super.initState();
@@ -66,7 +72,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
     void saveBook(BuildContext context) {
       if (_formKey.currentState!.validate()) {
-        final book = Books(
+        final updatedBook = Books(
+          id: _book.id, // 🔥 CRITICAL: Keep the same ID
           title: controllers[0].text,
           author: controllers[1].text,
           language: controllers[2].text,
@@ -77,15 +84,10 @@ class _EditBookScreenState extends State<EditBookScreen> {
           totalCopies: int.parse(controllers[7].text),
           copiesAvailable: int.parse(controllers[8].text),
         );
-        context.read<BookProvider>().addBook(book);
+        context.read<BookProvider>().updateBook(updatedBook);
         Navigator.pop(context);
       }
     }
-    final TextStyle textStyle = const TextStyle(
-      color: Color(0xffC1DCFF),
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    );
 
     return SizedBox(
       width: double.infinity,

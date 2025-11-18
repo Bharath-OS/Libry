@@ -61,9 +61,9 @@ class DatabaseServices {
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> deleteBook(int id) async {
+  Future<void> deleteBook(int bookId) async {
     final db = await database;
-    await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+    await db.delete(_tableName, where: 'id = ?', whereArgs: [bookId]);
   }
 
   Future<List<Books>> getBooks() async {
@@ -73,6 +73,7 @@ class DatabaseServices {
     List<Books> books = data
         .map(
           (book) => Books(
+            id: book['id'] as int,
             title: book[BookKeys.title] as String,
             author: book[BookKeys.author] as String,
             year: book[BookKeys.publishYear] as String,
@@ -87,5 +88,26 @@ class DatabaseServices {
         )
         .toList();
     return books;
+  }
+
+  Future<void> updateBook(Books book) async {
+    final db = await database;
+    await db.update(
+      _tableName,
+      {
+        BookKeys.title: book.title,
+        BookKeys.author: book.author,
+        BookKeys.language: book.language,
+        BookKeys.publishYear: book.year,
+        BookKeys.publisherName: book.publisher,
+        BookKeys.pages: book.pages,
+        BookKeys.totalCopies: book.totalCopies,
+        BookKeys.copiesAvailable: book.copiesAvailable,
+        BookKeys.genre: book.genre,
+        BookKeys.coverPicture: book.coverPicture,
+      },
+      where: 'id = ?',
+      whereArgs: [book.id],
+    );
   }
 }

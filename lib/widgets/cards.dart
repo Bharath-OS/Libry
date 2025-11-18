@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 import '../models/members_model.dart';
 import '../models/books_model.dart';
 import '../themes/styles.dart';
 import 'buttons.dart';
 
 class Cards {
-  static Widget bookCard({required Books bookDetails}) {
+  static Widget bookCard({
+    required Books bookDetails,
+    required BuildContext context,
+  }) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -32,7 +36,17 @@ class Cards {
               ),
             ),
             Expanded(
-              child: Column(children: [MyButton.deleteButton(method: () {})]),
+              child: Column(
+                children: [
+                  MyButton.deleteButton(
+                    method: () => deleteBook(
+                      context: context,
+                      bookDetails: bookDetails,
+                      inDetailsScreen: false,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

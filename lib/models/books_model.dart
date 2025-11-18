@@ -1,4 +1,5 @@
 class Books {
+  int? id;
   String title;
   String author;
   String year;
@@ -10,6 +11,7 @@ class Books {
   int copiesAvailable;
   String coverPicture;
   Books({
+    this.id,
     required this.title,
     required this.author,
     required this.year,
