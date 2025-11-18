@@ -26,7 +26,7 @@ class BooksScreen extends StatelessWidget {
       tileBuilder: (book) => Cards.bookCard(bookDetails: book,context: context),
       onTap: (book) => Navigator.push(
         context,
-        transition(child: BookDetailScreen(bookDetails: book))
+        transition(child: BookDetailScreen(bookId: book.id!,))
       ),
     );
   }

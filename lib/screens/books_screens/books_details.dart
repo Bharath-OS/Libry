@@ -13,9 +13,9 @@ import '../../themes/styles.dart';
 import 'book_history.dart';
 
 class BookDetailScreen extends StatefulWidget {
-  final Books bookDetails;
+  final int bookId;
 
-  const BookDetailScreen({super.key, required this.bookDetails});
+  const BookDetailScreen({super.key, required this.bookId});
 
   @override
   State<BookDetailScreen> createState() => _BookDetailScreenState();
@@ -24,9 +24,16 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
   String selectedStatus = 'Available';
   final List<String> statusOptions = ['Available', 'Not Available'];
+  late Books bookDetails;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bookDetails = context.watch<BookProvider>().getBookById(widget.bookId)!;
     return CustomScaffold(
       appBar: LibryAppBar.appBar(barTitle: "Books Details", context: context),
       body: Padding(
@@ -46,7 +53,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     right: 10,
                     top: 10,
                     child: MyButton.deleteButton(
-                      method: ()=>deleteBook(context: context, bookDetails: widget.bookDetails),
+                      method: () => deleteBook(
+                        context: context,
+                        bookDetails: bookDetails,
+                      ),
                     ),
                   ),
                 ],
@@ -60,7 +70,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   //Book Container
   Widget _buildBookDetailsCard() {
-    final book = widget.bookDetails;
+    final book = bookDetails;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(30, 100, 30, 40),
@@ -178,7 +188,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {
-            Navigator.push(context, transition(child: EditBookScreen(book: widget.bookDetails,)));
+            Navigator.push(
+              context,
+              transition(child: EditBookScreen(book: bookDetails)),
+            );
+
+            if (mounted) {
+              context.read<BookProvider>().fetchBooks();
+            }
           },
           text: "Edit Book",
         ),
