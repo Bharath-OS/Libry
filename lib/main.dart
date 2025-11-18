@@ -14,7 +14,7 @@ void main() async{
   await Hive.initFlutter();
 
   Hive.registerAdapter(UserAdapter());
-  userDataBox = await Hive.openBox<User>('users');
+  userDataBoxNew = await Hive.openBox<User>('users');
   statusBox = await Hive.openBox("status");
 
   // Run the app

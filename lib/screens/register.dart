@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/home.dart';
+import 'package:libry/Screens/main_screen.dart';
 import 'package:libry/screens/login.dart';
 import 'package:libry/widgets/textField.dart';
 import 'package:page_transition/page_transition.dart';
@@ -131,12 +132,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       bool result = UserDatabase.saveData(user: user);
       if (result) {
         UserDatabase.setRegisterValue(true);
+        UserDatabase.setLogValue(true);
         Navigator.pushReplacement(
           context,
           PageTransition(
             type: PageTransitionType.fade,
             curve: Curves.easeIn,
-            child: HomeScreen(),
+            child: MainScreen(),
             duration: Duration(milliseconds: 300),
           ),
         );

@@ -6,7 +6,7 @@ import 'package:libry/models/Keys/keys.dart';
 
 class UserDatabase {
   // static bool initializeDatabase(){
-  //   if(!Hive.isBoxOpen('userDataBox')) {
+  //   if(!Hive.isBoxOpen('userDataBoxNew')) {
   //     Hive.initFlutter();
   //     return true;
   //   }
@@ -15,7 +15,7 @@ class UserDatabase {
   //Saves the user data to Hive Database
   static bool saveData({required User user}) {
     try {
-      userDataBox.put(
+      userDataBoxNew.put(
         UserDatabaseKey.userDataKey,
         User(
           name: user.name,
@@ -34,8 +34,8 @@ class UserDatabase {
   //Retrieves the user data from Hive Database
   static User? getData() {
     try {
-      User UserDatabase = userDataBox.get(UserDatabaseKey.userDataKey);
-      return UserDatabase;
+      User user = userDataBoxNew.get(UserDatabaseKey.userDataKey) ?? User(name: "Guest", email: "guest@gmail.com");
+      return user;
     } catch (e) {
       debugPrint(e as String?);
       return null;
@@ -44,7 +44,7 @@ class UserDatabase {
 
   static String get getUserName {
     try {
-      User user = userDataBox.get(UserDatabaseKey.userDataKey);
+      User user = userDataBoxNew.get(UserDatabaseKey.userDataKey);
       return user.name;
     }
     catch(e){
@@ -56,7 +56,7 @@ class UserDatabase {
   //Clears the user data from Hive Database
   static bool? clearData() {
     try {
-      userDataBox.clear();
+      userDataBoxNew.clear();
       print("Successfully cleared the data");
       return true;
     } catch (e) {
@@ -102,7 +102,7 @@ class UserDatabase {
     if(user!=null){
       user.name = userName;
       user.email = email;
-      userDataBox.put(UserDatabaseKey.userDataKey, user);
+      userDataBoxNew.put(UserDatabaseKey.userDataKey, user);
       return true;
     }
     else{

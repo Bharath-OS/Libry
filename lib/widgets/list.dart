@@ -91,7 +91,7 @@ class ListScreen<T> extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    int count = context.read<BookProvider>().count;
+    int count = context.watch<BookProvider>().count;
     return Expanded(
       child: Container(
         width: double.infinity,

@@ -21,14 +21,14 @@ class UserAdapter extends TypeAdapter<User> {
       email: fields[1] as String,
       password: fields[2] as String,
       bookIssued: fields[3] as int,
-      fineCollected: fields[4] as int,
+      fineCollected: fields[4] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)

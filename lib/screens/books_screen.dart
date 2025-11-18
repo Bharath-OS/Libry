@@ -30,7 +30,7 @@ class BooksScreen extends StatelessWidget {
 
     return ListScreen<Books>(
       title: "All Books",
-      totalCount: context.read<BookProvider>().count,
+      totalCount: context.watch<BookProvider>().count,
       availableCount: 22,
       searchHint: "Search Book",
       items: context.watch<BookProvider>().books,

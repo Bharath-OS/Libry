@@ -34,7 +34,8 @@ class Validator {
       return 'Email cannot be empty';
     } else if (user?.email == email) {
       return "The email already existing.Try logging in instead.";
-    } else if (!emailRegex.hasMatch(email)) {
+    }
+    else if (!emailRegex.hasMatch(email)) {
       return 'Enter a valid email address';
     }
     return null;
