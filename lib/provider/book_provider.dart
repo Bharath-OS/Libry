@@ -32,12 +32,18 @@ class BookProvider extends ChangeNotifier {
     await fetchBooks();
   }
 
-  // ADD: Helper method to get book by ID
+  // Helper method to get book by ID
   Books? getBookById(int id) {
     try {
       return _books.firstWhere((book) => book.id == id);
     } catch (e) {
       return null;
     }
+  }
+
+  Future<void> clearAllBooks() async {
+    await _db.clearAllBooks();
+    await fetchBooks();
+    notifyListeners();
   }
 }

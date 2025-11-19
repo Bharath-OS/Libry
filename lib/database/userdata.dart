@@ -6,14 +6,7 @@ import 'package:libry/models/Keys/keys.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
 
 class UserDatabase {
-  // static bool initializeDatabase(){
-  //   if(!Hive.isBoxOpen('userDataBoxNew')) {
-  //     Hive.initFlutter();
-  //     return true;
-  //   }
-  //   else return false;
-  // }
-  //Saves the user data to Hive Database
+
   static bool saveData({required User user}) {
     try {
       userDataBoxNew.put(
@@ -95,9 +88,23 @@ class UserDatabase {
     }
   }
 
+  //Editing user data
   static bool editData({required User user}) {
-    final User newUser = User(name: user.name, email: user.email);
-    userDataBoxNew.put(UserDatabaseKey.userDataKey, newUser);
-    return true;
+    try{
+      final currentUser = getData();
+      final updatedUser = User(
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        bookIssued: user.bookIssued,
+        fineCollected:  user.fineCollected,
+      );
+      userDataBoxNew.put(UserDatabaseKey.userDataKey, updatedUser);
+      return true;
+     }
+     catch(e){
+      debugPrint('Error editing user data: $e');
+      return false;
+     }
   }
 }

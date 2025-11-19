@@ -21,10 +21,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getUserData();
+    _loadUserData();
   }
 
-  void getUserData() {
+  void _loadUserData() {
     user = UserDatabase.getData()?? User(name: '', email: '', password: '');
     setState(() {});
   }
@@ -119,16 +119,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MyButton.secondaryButton(method: () {
-          Navigator.push(
+        MyButton.secondaryButton(method: () async{
+          await Navigator.push(
             context,
             transition(child: EditProfileScreen())
           );
+          _loadUserData();
         }, text: "Edit Profile"),
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {
-            // UserDatabase.clearData();
             UserDatabase.setLogValue(false);
             Navigator.pushReplacement(
               context,

@@ -1,3 +1,4 @@
+import 'package:libry/utilities/helpers.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/books_model.dart';
@@ -109,5 +110,10 @@ class DatabaseServices {
       where: 'id = ?',
       whereArgs: [book.id],
     );
+  }
+
+  Future<void> clearAllBooks() async {
+    final db = await database;
+    await db.delete(_tableName);
   }
 }

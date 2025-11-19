@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:libry/database/libry_db.dart';
 import 'package:libry/models/books_model.dart';
 import 'package:libry/utilities/helpers.dart';
 import 'package:libry/utilities/validation.dart';
@@ -21,7 +22,6 @@ class ListScreen<T> extends StatelessWidget {
   final List<T> items;
   final Widget Function(T item) tileBuilder;
   final void Function(T item)? onTap;
-  final _formKey = GlobalKey<FormState>();
 
   ListScreen({
     super.key,
@@ -86,7 +86,15 @@ class ListScreen<T> extends StatelessWidget {
                 ),
               ],
             ),
-            MyButton.filterButton(method: () {}),
+            SizedBox(
+              child: Row(
+                children: [
+                  MyButton.filterButton(method: () {}),
+                  MyButton.deleteButton(method:()=> _deleteBooks(context))
+                ],
+              ),
+            )
+
           ],
         ),
       ],
@@ -142,6 +150,11 @@ class ListScreen<T> extends StatelessWidget {
         style: BodyTextStyles.bodySmallStyle(Colors.black),
       ),
     );
+  }
+
+  Future<void> _deleteBooks(BuildContext context)async{
+    await context.read<BookProvider>().clearAllBooks();
+    showSnackBar(text: "All Books cleared", context: context);
   }
 
 }
