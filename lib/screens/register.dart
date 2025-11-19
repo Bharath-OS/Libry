@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Screens/home.dart';
-import 'package:libry/Screens/main_screen.dart';
 import 'package:libry/screens/login.dart';
-import 'package:libry/widgets/textField.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:libry/widgets/text_field.dart';
 import '../constants/app_colors.dart';
+import '../utilities/auth_methods.dart';
 import '../widgets/buttons.dart';
-import '../widgets/scaffold.dart';
-import '../database/userdata.dart';
-import '../models/user_model.dart';
+import '../widgets/layout_widgets.dart';
 import '../utilities/helpers.dart';
 import '../utilities/validation.dart';
 import 'package:flutter/gestures.dart';
 
-import '../widgets/form.dart';
+import '../widgets/forms.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -49,8 +45,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      body: FormContainer(title: "Get Started", formWidget: _form()),
+    return LayoutWidgets.customScaffold(
+      body: FormWidgets.formContainer(title: "Get Started", formWidget: _form()),
     );
   }
 
@@ -89,7 +85,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           MyButton.primaryButton(
             method: () {
-              _userValidation();
+              userValidation(
+                context: context,
+                formKey: _formKey,
+                controllers: [
+                  userNameController,
+                  emailController,
+                  passwordController,
+                ],
+              );
             },
             text: "Register",
           ),
@@ -103,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ..onTap = () {
                       Navigator.pushReplacement(
                         context,
-                        transition(child: LoginScreen())
+                        transition(child: LoginScreen()),
                       );
                     },
                   text: "Login",
@@ -119,34 +123,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
-  void _userValidation() {
-    FocusScope.of(context).unfocus();
-    String message = "";
-    if (_formKey.currentState!.validate()) {
-      User user = User(
-        name: userNameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      bool result = UserDatabase.saveData(user: user);
-      if (result) {
-        UserDatabase.setRegisterValue(true);
-        UserDatabase.setLogValue(true);
-        Navigator.pushReplacement(
-          context,
-          PageTransition(
-            type: PageTransitionType.fade,
-            curve: Curves.easeIn,
-            child: MainScreen(),
-            duration: Duration(milliseconds: 300),
-          ),
-        );
-        message = "Account created!";
-      } else {
-        message = "Something went wrong. Try again";
-      }
-      showSnackBar(text: message, context: context);
-    }
-  }
 }
+

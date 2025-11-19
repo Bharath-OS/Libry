@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:libry/screens/main_screen.dart';
 import 'package:libry/screens/register.dart';
 import 'package:libry/widgets/buttons.dart';
-import 'package:libry/widgets/textField.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:libry/widgets/text_field.dart';
 import '../constants/app_colors.dart';
-import '../widgets/scaffold.dart';
-import '../database/userdata.dart';
-import '../models/user_model.dart';
+import '../utilities/auth_methods.dart';
+import '../widgets/layout_widgets.dart';
 import '../utilities/helpers.dart';
 import '../utilities/validation.dart';
 import 'package:flutter/gestures.dart';
-import '../widgets/form.dart';
+import '../widgets/forms.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      body: FormContainer(title: "Welcome Back", formWidget: _form()),
+    return LayoutWidgets.customScaffold(
+      body: FormWidgets.formContainer(title: "Welcome Back", formWidget: _form()),
     );
   }
 
@@ -69,7 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
               return Validator.passwordValidator(value);
             },
           ),
-          MyButton.primaryButton(method: () => _validateUser(), text: "Login"),
+          MyButton.primaryButton(
+            method: () => validateUser(
+              context: context,
+              formKey: _formKey,
+              emailController: emailController,
+              passwordController: passwordController,
+            ),
+            text: "Login",
+          ),
           RichText(
             text: TextSpan(
               text: "Don't have an account? ",
@@ -80,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ..onTap = () {
                       Navigator.pushReplacement(
                         context,
-                        transition(child: RegisterScreen())
+                        transition(child: RegisterScreen()),
                       );
                     },
                   text: "Register",
@@ -96,30 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  void _validateUser() {
-    String message = "Something went wrong! Please Try Again or Register!";
-    final User? user = UserDatabase.getData();
-    if (_formKey.currentState!.validate()) {
-      if (user != null) {
-        if (user.email == emailController.text &&
-            user.password == passwordController.text) {
-          message = "Logged In Successfully!";
-          UserDatabase.setLogValue(true);
-          Navigator.pushReplacement(
-            context,
-            PageTransition(
-              type: PageTransitionType.fade,
-              curve: Curves.easeIn,
-              child: MainScreen(),
-              duration: Duration(milliseconds: 300),
-            ),
-          );
-        } else {
-          message = "Invalid Credentials!";
-        }
-      }
-    }
-    showSnackBar(text: message, context: context);
-  }
 }
+
+

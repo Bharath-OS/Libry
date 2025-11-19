@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
-import 'package:libry/widgets/scaffold.dart';
+import 'package:libry/widgets/layout_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),

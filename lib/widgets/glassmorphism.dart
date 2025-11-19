@@ -9,7 +9,7 @@ class GlassMorphism extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final Widget child;
 
-  GlassMorphism({
+  const GlassMorphism({
     required this.child,
     this.height,
     this.width,

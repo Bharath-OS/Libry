@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../Widgets/appbar.dart';
-import '../../widgets/scaffold.dart';
+import '../../widgets/layout_widgets.dart';
 
 class BookHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(
         barTitle: 'Book Borrow History',
         context: context,
       ),

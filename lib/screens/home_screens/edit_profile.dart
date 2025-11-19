@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../themes/styles.dart';
-import '../../../widgets/appbar.dart';
 import '../../../widgets/buttons.dart';
-import '../../../widgets/scaffold.dart';
+import '../../../widgets/layout_widgets.dart';
 import '../../../database/userdata.dart';
 import '../../../models/user_model.dart';
-import '../../../widgets/form.dart';
+import '../../../widgets/forms.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -31,12 +30,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(
         barTitle: 'Edit Profile Screen',
         context: context,
       ),
-      body: FormContainer(title: 'Edit Profile', formWidget: _buildForm()),
+      body: FormWidgets.formContainer(title: 'Edit Profile', formWidget: _buildForm()),
     );
   }
 
@@ -69,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_formKey.currentState!.validate()) {
       if (userData.name != _nameController.text ||
           userData.email != _emailController.text) {
-        UserDatabase.saveData(
+        UserDatabase.editData(
           user: User(
             name: _nameController.text,
             email: _emailController.text,

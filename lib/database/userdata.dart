@@ -95,15 +95,9 @@ class UserDatabase {
     }
   }
 
-  static bool editData({required String userName, required String email}) {
-    User? user = getData();
-    if (user != null) {
-      user.name = userName;
-      user.email = email;
-      userDataBoxNew.put(UserDatabaseKey.userDataKey, user);
-      return true;
-    } else {
-      return false;
-    }
+  static bool editData({required User user}) {
+    final User newUser = User(name: user.name, email: user.email);
+    userDataBoxNew.put(UserDatabaseKey.userDataKey, newUser);
+    return true;
   }
 }

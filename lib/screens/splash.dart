@@ -5,8 +5,8 @@ import 'package:libry/Screens/main_screen.dart';
 import 'package:libry/Screens/login.dart';
 import 'package:libry/Screens/register.dart';
 import 'package:libry/Themes/styles.dart';
-import '../Widgets/scaffold.dart';
 import '../utilities/helpers.dart';
+import '../widgets/layout_widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       body: AnimatedOpacity(
         opacity: !_isVisible ? 0.0 : 1.0,
         duration: const Duration(seconds: 1),

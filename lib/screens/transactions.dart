@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libry/constants/app_colors.dart';
-import 'package:libry/widgets/appbar.dart';
-import 'package:libry/widgets/scaffold.dart';
+import 'package:libry/constants/app_colors.dart';import 'package:libry/widgets/layout_widgets.dart';
 
 import 'transactions_screens/issue.dart';
 import 'transactions_screens/return.dart';
@@ -18,8 +16,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   
   @override
   Widget build(BuildContext context){
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(barTitle: "Book Transactions", context: context),
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(barTitle: "Book Transactions", context: context),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),

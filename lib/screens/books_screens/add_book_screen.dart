@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Widgets/scaffold.dart';
+import 'package:libry/widgets/layout_widgets.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
-import 'package:libry/widgets/form.dart';
+import 'package:libry/widgets/forms.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
@@ -35,10 +35,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: FormContainer(
+          child: FormWidgets.formContainer(
             title: "Add Book",
             formWidget: _addBookForm(context),
           ),

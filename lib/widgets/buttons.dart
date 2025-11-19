@@ -3,6 +3,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:libry/constants/app_colors.dart';
 
 class MyButton {
+  static FloatingActionButton fab({required VoidCallback method}) {
+    return FloatingActionButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      backgroundColor: MyColors.primaryButtonColor,
+      elevation: 0,
+      onPressed: method,
+      child: Icon(Icons.add, color: MyColors.whiteBG, size: 40),
+    );
+  }
+
   static Widget primaryButton({
     required VoidCallback method,
     required String text,

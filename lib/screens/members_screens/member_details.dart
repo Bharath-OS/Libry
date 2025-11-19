@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libry/widgets/appbar.dart';
-import 'package:libry/widgets/scaffold.dart';
+import 'package:libry/widgets/layout_widgets.dart';
 import '../../models/members_model.dart';
 import '../../widgets/buttons.dart';
 
@@ -11,8 +10,8 @@ class MemberDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(barTitle: "Member detail",context: context),
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(barTitle: "Member detail",context: context),
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Center(

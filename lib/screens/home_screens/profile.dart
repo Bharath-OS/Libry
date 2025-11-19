@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Screens/login.dart';
-import 'package:libry/Screens/register.dart';
+import 'package:libry/screens/login.dart';
 import 'package:libry/constants/app_colors.dart';
-import 'package:libry/Widgets/appbar.dart';
-import 'package:libry/Widgets/buttons.dart';
-import '../../../Widgets/scaffold.dart';
+import 'package:libry/widgets/buttons.dart';
+import '../../../widgets/layout_widgets.dart';
 import '../../../database/userdata.dart';
 import '../../../models/user_model.dart';
 import '../../../utilities/helpers.dart';
@@ -33,8 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(barTitle: "User Profile", context: context),
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(barTitle: "User Profile", context: context),
       body: _buildProfile(),
     );
   }

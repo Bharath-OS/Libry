@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/widgets/glassmorphism.dart';
 import '../../widgets/buttons.dart';
-import '../../widgets/scaffold.dart';
+import '../../widgets/layout_widgets.dart';
 
 class IssueBookScreen extends StatefulWidget {
   const IssueBookScreen({super.key});
@@ -13,7 +13,7 @@ class IssueBookScreen extends StatefulWidget {
 class _IssueBookScreenState extends State<IssueBookScreen> {
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       appBar: AppBar(title: Text("Issue Book"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(32),

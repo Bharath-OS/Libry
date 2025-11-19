@@ -11,9 +11,7 @@ import '../screens/books_screens/add_book_screen.dart';
 import '../themes/styles.dart';
 import 'package:libry/constants/app_colors.dart';
 import '../widgets/buttons.dart';
-import '../widgets/scaffold.dart';
-import 'alert_dialogue.dart';
-import 'fab.dart';
+import '../widgets/layout_widgets.dart';
 
 class ListScreen<T> extends StatelessWidget {
   final String title;
@@ -38,7 +36,7 @@ class ListScreen<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       appBar: AppBar(title: Text(title)),
       body: SafeArea(
         child: Padding(
@@ -52,7 +50,7 @@ class ListScreen<T> extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: fab(
+      floatingActionButton: MyButton.fab(
         method: () =>
             Navigator.push(context, transition(child: AddBookScreen())),
       ),

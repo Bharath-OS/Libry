@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/books_screens/edit_book_screen.dart';
 import 'package:libry/utilities/helpers.dart';
-import 'package:libry/widgets/appbar.dart';
 import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import '../../models/books_model.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/alert_dialogue.dart';
-import '../../widgets/scaffold.dart';
+import '../../widgets/layout_widgets.dart';
 import '../../themes/styles.dart';
 import 'book_history.dart';
 
@@ -34,8 +33,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     bookDetails = context.watch<BookProvider>().getBookById(widget.bookId)!;
-    return CustomScaffold(
-      appBar: LibryAppBar.appBar(barTitle: "Books Details", context: context),
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(barTitle: "Books Details", context: context),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -48,7 +47,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 children: [
                   _buildBookDetailsCard(),
                   _buildBookImage(),
-                  // In books_details.dart - Fix the delete button
                   Positioned(
                     right: 10,
                     top: 10,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../Widgets/scaffold.dart';
+import '../../widgets/layout_widgets.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
 import '../../utilities/validation.dart';
-import '../../widgets/form.dart';
+import '../../widgets/forms.dart';
 
 class EditBookScreen extends StatefulWidget {
   final Books book;
@@ -53,10 +53,10 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: FormContainer(
+          child: FormWidgets.formContainer(
             title: "Edit Book",
             formWidget: _editBookForm(context),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/constants/app_colors.dart';
-import 'package:libry/Widgets/scaffold.dart';
+import 'package:libry/widgets/layout_widgets.dart';
 
 import '../../Widgets/buttons.dart';
 
@@ -14,7 +14,7 @@ class ReturnBookScreen extends StatefulWidget {
 class _ReturnBookScreenState extends State<ReturnBookScreen> {
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return LayoutWidgets.customScaffold(
       appBar: AppBar(
         title: Text("Issue Book Page"),
         centerTitle: true,
