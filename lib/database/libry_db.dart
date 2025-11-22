@@ -5,7 +5,7 @@ import '../models/books_model.dart';
 
 class DatabaseServices {
   static Database? _db;
-  final String _dbName = 'books.db';
+  static final String _dbName = 'books.db';
   final String _tableName = "Books";
 
   static final DatabaseServices instance = DatabaseServices._constructor();

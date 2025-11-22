@@ -1,15 +1,53 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source,);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("Settings page.")));
+    return Scaffold(
+      appBar: AppBar(title: Text("Image Picker Example")),
+      body: Center(
+        child: Column(
+          spacing: 20,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _selectedImage != null
+                ? Image.file(_selectedImage!, height: 200)
+                : Text("No image selected."),
+            ElevatedButton.icon(
+              icon: Icon(Icons.photo_library),
+              label: Text("Pick from Gallery"),
+              onPressed: () => _pickImage(ImageSource.gallery),
+            ),
+            ElevatedButton.icon(
+              icon: Icon(Icons.camera_alt),
+              label: Text("Take a Photo"),
+              onPressed: () => _pickImage(ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

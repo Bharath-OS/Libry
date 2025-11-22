@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/register.dart';
 import 'package:libry/screens/login.dart';
 import 'package:libry/constants/app_colors.dart';
 import 'package:libry/widgets/buttons.dart';
@@ -135,8 +136,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               transition(child: LoginScreen())
             );
           },
-          text: "Sign out",
+          text: "Log out",
         ),
+        const SizedBox(height: 10,),
+        MyButton.primaryButton(method: (){
+          UserDatabase.clearData();
+          Navigator.pushReplacement(context, transition(child: RegisterScreen()));
+          showSnackBar(text: "Signed out from the app", context: context);
+        }, text: "Sign out")
       ],
     );
   }
