@@ -2,6 +2,7 @@ import 'package:libry/database/books_db.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/books_model.dart';
+import 'members_db.dart';
 
 class DatabaseServices {
   static Database? _db;
@@ -30,5 +31,6 @@ class DatabaseServices {
 
   Future<void> _createDatabases(Database db, int _) async{
     await BooksDB.createTable(db);
+    await MembersDB.createTable(db);
   }
 }

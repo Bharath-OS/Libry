@@ -1,59 +1,100 @@
 import 'package:sqflite/sqflite.dart';
-
 import '../models/members_model.dart';
 import 'libry_db.dart';
 
-
 // BookRepository - Handles only book operations
-class BookRepository {
-  static const String tableName = 'members';
+class MembersDB {
+  static const String _tableName = 'members';
+
+  static Future<Database> _initDB() async {
+    return await DatabaseServices.instance.database;
+  }
 
   static Future<void> createTable(Database db) async {
     await db.execute('''
-      CREATE TABLE $tableName (
+      CREATE TABLE $_tableName (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MembersKey.memberId} TEXT NOT NULL,
         ${MembersKey.name} TEXT NOT NULL,
-        ${MembersKey.memberId} TEXT,
         ${MembersKey.email} TEXT,
         ${MembersKey.phone} TEXT,
         ${MembersKey.address} TEXT,
-        ${MembersKey.totalBorrow} INTEGER,
-        ${MembersKey.currentlyBorrow} INTEGER,
-        ${MembersKey.fine} INTEGER,
+        ${MembersKey.totalBorrow} INTEGER DEFAULT 0,
+        ${MembersKey.currentlyBorrow} INTEGER DEFAULT 0,
+        ${MembersKey.fine} REAL DEFAULT 0,
         ${MembersKey.joined} TEXT DEFAULT (datetime('now')),
-        ${MembersKey.expiry} TEXT,
+        ${MembersKey.expiry} TEXT NOT NULL,
       )
     ''');
   }
 
-  static Future<int> addMember(Members member) async {
-    final db = await DatabaseServices.instance.database;
-    return await db.insert(tableName, {
-
+  static Future<void> addMember(Members member) async {
+    final db = await _initDB();
+    await db.insert(_tableName, {
+      MembersKey.memberId: _generateMemberId(),
+      MembersKey.name: member.name,
+      MembersKey.email: member.email,
+      MembersKey.phone: member.phone,
+      MembersKey.address: member.address,
+      MembersKey.totalBorrow: member.totalBorrow,
+      MembersKey.currentlyBorrow: member.currentlyBorrow,
+      MembersKey.fine: member.currentlyBorrow,
+      MembersKey.expiry: member.expiry,
     });
   }
 
-// ... other book methods
-}
-
-// MemberRepository - Handles only member operations
-class MemberRepository {
-  static const String tableName = 'members';
-
-  static Future<void> createTable(Database db) async {
-    await db.execute('''
-      CREATE TABLE $tableName (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT UNIQUE
-      )
-    ''');
+  static String _generateMemberId(int sequentialId) {
+    return 'M${sequentialId.toString().padLeft(3, '0')}';
   }
 
-  static Future<int> addMember(Member member) async {
-    final db = await DatabaseServices.instance.database;
-    return await db.insert(tableName, member.toMap());
+  static Future<void> deleteMember(int memberId) async {
+    final db = await _initDB();
+    await db.delete(_tableName, where: 'id = ?', whereArgs: [memberId]);
   }
 
-// ... other member methods
+  static Future<List<Members>> getMembers() async {
+    final db = await _initDB();
+    final data = await db.query(_tableName);
+
+    List<Members> members = data
+        .map(
+          (member) => Members(
+            name: member[MembersKey.name] as String,
+            memberId: member[MembersKey.memberId] as String,
+            email: member[MembersKey.email] as String,
+            phone: member[MembersKey.phone] as String,
+            address: member[MembersKey.address] as String,
+            totalBorrow: member[MembersKey.totalBorrow] as int,
+            currentlyBorrow: member[MembersKey.currentlyBorrow] as int,
+            fine: member[MembersKey.fine] as double,
+            joined: member[MembersKey.joined] as DateTime,
+            expiry: member[MembersKey.expiry] as DateTime,
+          ),
+        )
+        .toList();
+    return members;
+  }
+
+  static Future<void> updateMember(Members member)async{
+    final db = await _initDB();
+    await db.update(_tableName, {
+      MembersKey.memberId: member.memberId,
+      MembersKey.name: member.name,
+      MembersKey.email: member.email,
+      MembersKey.phone: member.phone,
+      MembersKey.address: member.address,
+      MembersKey.totalBorrow: member.totalBorrow,
+      MembersKey.currentlyBorrow: member.currentlyBorrow,
+      MembersKey.fine: member.currentlyBorrow,
+      MembersKey.expiry: member.expiry,
+    },
+      where: 'id = ?',
+      whereArgs: [member.memberId],
+    );
+  }
+
+  static Future<void> clearAllMembers() async{
+    final db = await _initDB();
+    await db.delete(_tableName);
+  }
 }
