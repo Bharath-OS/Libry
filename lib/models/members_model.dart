@@ -25,3 +25,17 @@ class Members {
     required this.expiry,
   });
 }
+
+class MembersKey{
+  static const String name = 'name';
+  static const String memberId = "members id";
+  static const String email = 'email';
+  static const String phone = "phone";
+  static const String dob = 'date of birth';
+  static const String address = "address";
+  static const String totalBorrow = 'total books borrowed';
+  static const String currentlyBorrow = "currently borrowed books";
+  static const String fine = 'fine owed';
+  static const String joined = "joined date";
+  static const String expiry = "expiry date";
+}
