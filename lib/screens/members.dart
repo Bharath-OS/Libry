@@ -1,3 +1,6 @@
+import 'package:libry/provider/members_provider.dart';
+import 'package:provider/provider.dart';
+
 import '../models/members_model.dart';
 import '../widgets/cards.dart';
 import '../widgets/list.dart';
@@ -9,29 +12,14 @@ class MembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final members = List.generate(
-      25,
-      (i) => Members(
-        name: "Member $i",
-        memberId: "MID${1000 + i}",
-        email: "member$i@example.com",
-        dob: "1990-01-${(i % 28) + 1}".padLeft(10, '0'),
-        address: "Address $i, City ${(i % 5) + 1}",
-        totalBorrow: (i % 10) + 1,
-        currentlyBorrow: (i % 3),
-        fine: (i % 5) * 10,
-        joined: "2023-01-${(i % 28) + 1}".padLeft(10, '0'),
-        expiry: "2026-01-${(i % 28) + 1}".padLeft(10, '0'),
-        phone: '9999999999',
-      ),
-    );
+    int totalMembers = context.watch<MembersProvider>().count;
 
     return ListScreen<Members>(
       title: "All Member",
-      totalCount: 290,
+      totalCount: totalMembers,
       availableCount: 20,
       searchHint: "Search Member",
-      items: members,
+      items: context.watch<MembersProvider>().members,
       tileBuilder: (member) => Cards.memberCard(memberDetails: member),
       onTap: (member) => Navigator.push(
         context,

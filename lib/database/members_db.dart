@@ -28,10 +28,10 @@ class MembersDB {
     ''');
   }
 
-  static Future<void> addMember(Members member) async {
+  static Future<void> addMember(Members member,int count) async {
     final db = await _initDB();
     await db.insert(_tableName, {
-      MembersKey.memberId: _generateMemberId(),
+      MembersKey.memberId: _generateMemberId(count),
       MembersKey.name: member.name,
       MembersKey.email: member.email,
       MembersKey.phone: member.phone,
@@ -47,7 +47,7 @@ class MembersDB {
     return 'M${sequentialId.toString().padLeft(3, '0')}';
   }
 
-  static Future<void> deleteMember(int memberId) async {
+  static Future<void> removeMember(int memberId) async {
     final db = await _initDB();
     await db.delete(_tableName, where: 'id = ?', whereArgs: [memberId]);
   }
@@ -86,10 +86,10 @@ class MembersDB {
       MembersKey.totalBorrow: member.totalBorrow,
       MembersKey.currentlyBorrow: member.currentlyBorrow,
       MembersKey.fine: member.currentlyBorrow,
-      MembersKey.expiry: member.expiry,
+      MembersKey.expiry: member.expiry.toIso8601String(),
     },
       where: 'id = ?',
-      whereArgs: [member.memberId],
+      whereArgs: [member.id],
     );
   }
 

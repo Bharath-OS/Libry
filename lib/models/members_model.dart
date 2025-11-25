@@ -1,7 +1,7 @@
 class Members {
   int? id;
   String name;
-  String memberId;
+  String? memberId;
   String email;
   String phone;
   String address;
@@ -13,8 +13,8 @@ class Members {
 
   Members({
     this.id,
+    this.memberId,
     required this.name,
-    required this.memberId,
     required this.email,
     required this.phone,
     required this.address,

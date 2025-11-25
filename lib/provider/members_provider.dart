@@ -19,33 +19,33 @@ class MembersProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  // Future<void> addMember(Members member) async{
-  //   await _db.addBook(member);
-  //   await fetchMembers();
-  // }
+  Future<void> addMember(Members member) async{
+    await MembersDB.addMember(member, count+1);
+    await fetchMembers();
+  }
   //
-  // Future<void> removeMember(int memberId) async{
-  //   await _db.deleteBook(memberId);
-  //   await fetchMembers();
-  // }
-  //
-  // Future<void> updateMember(Members member) async {
-  //   await _db.updateBook(member);
-  //   await fetchMembers();
-  // }
-  //
-  // // Helper method to get book by ID
-  // Members? getMemberById(int id) {
-  //   try {
-  //     return _members.firstWhere((book) => book.id == id);
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
-  //
-  // Future<void> clearAllMembers() async {
-  //   await _db.clearAllBooks();
-  //   await fetchMembers();
-  // }
+  Future<void> removeMember(int memberId) async{
+    await MembersDB.removeMember(memberId);
+    await fetchMembers();
+  }
+
+  Future<void> updateMember(Members member) async {
+    await MembersDB.updateMember(member);
+    await fetchMembers();
+  }
+
+  // Helper method to get member by ID
+  Members? getMemberById(int id) {
+    try {
+      return _members.firstWhere((member) => member.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> clearAllMembers() async {
+    await MembersDB.clearAllMembers();
+    await fetchMembers();
+  }
 
 }
