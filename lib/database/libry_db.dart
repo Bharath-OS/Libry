@@ -9,7 +9,8 @@ class DatabaseServices {
   static final String _dbName = 'library.db';
   final int _version = 1;
 
-  static final DatabaseServices instance = DatabaseServices._constructor();
+  static final DatabaseServices _instance = DatabaseServices._constructor();
+  static DatabaseServices get instance => _instance;
 
   DatabaseServices._constructor();
 

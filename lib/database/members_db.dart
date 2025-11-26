@@ -22,8 +22,8 @@ class MembersDB {
         ${MembersKey.totalBorrow} INTEGER DEFAULT 0,
         ${MembersKey.currentlyBorrow} INTEGER DEFAULT 0,
         ${MembersKey.fine} REAL DEFAULT 0,
-        ${MembersKey.joined} TEXT DEFAULT (datetime('now')),
-        ${MembersKey.expiry} TEXT NOT NULL,
+        ${MembersKey.joined} TEXT NOT NULL,
+        ${MembersKey.expiry} TEXT NOT NULL
       )
     ''');
   }
@@ -36,10 +36,11 @@ class MembersDB {
       MembersKey.email: member.email,
       MembersKey.phone: member.phone,
       MembersKey.address: member.address,
+      MembersKey.fine: member.fine,
       MembersKey.totalBorrow: member.totalBorrow,
       MembersKey.currentlyBorrow: member.currentlyBorrow,
-      MembersKey.fine: member.currentlyBorrow,
-      MembersKey.expiry: member.expiry,
+      MembersKey.joined: member.joined.toIso8601String(),
+      MembersKey.expiry: member.expiry.toIso8601String(),
     });
   }
 
@@ -59,16 +60,17 @@ class MembersDB {
     List<Members> members = data
         .map(
           (member) => Members(
+            id: member['id'] as int,
             name: member[MembersKey.name] as String,
             memberId: member[MembersKey.memberId] as String,
-            email: member[MembersKey.email] as String,
-            phone: member[MembersKey.phone] as String,
-            address: member[MembersKey.address] as String,
-            totalBorrow: member[MembersKey.totalBorrow] as int,
-            currentlyBorrow: member[MembersKey.currentlyBorrow] as int,
-            fine: member[MembersKey.fine] as double,
-            joined: member[MembersKey.joined] as DateTime,
-            expiry: member[MembersKey.expiry] as DateTime,
+            email: member[MembersKey.email] as String? ?? '',
+            phone: member[MembersKey.phone] as String? ?? '',
+            address: member[MembersKey.address] as String? ?? '',
+            totalBorrow: member[MembersKey.totalBorrow] as int? ?? 0,
+            currentlyBorrow: member[MembersKey.currentlyBorrow] as int? ?? 0,
+            fine: (member[MembersKey.fine] as num?)?.toDouble() ?? 0.0,
+            joined: DateTime.parse(member[MembersKey.joined] as String),
+            expiry: DateTime.parse(member[MembersKey.expiry] as String),
           ),
         )
         .toList();
@@ -83,9 +85,9 @@ class MembersDB {
       MembersKey.email: member.email,
       MembersKey.phone: member.phone,
       MembersKey.address: member.address,
+      MembersKey.fine: member.fine,
       MembersKey.totalBorrow: member.totalBorrow,
       MembersKey.currentlyBorrow: member.currentlyBorrow,
-      MembersKey.fine: member.currentlyBorrow,
       MembersKey.expiry: member.expiry.toIso8601String(),
     },
       where: 'id = ?',

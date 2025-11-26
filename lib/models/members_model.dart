@@ -27,9 +27,9 @@ class Members {
 }
 
 class MembersKey{
-  static const String id = 'id'; // Add this
+  static const String id = 'id';
   static const String name = 'name';
-  static const String memberId = "member_id"; // Use snake_case for SQL
+  static const String memberId = "member_id";
   static const String email = 'email';
   static const String phone = "phone";
   static const String address = "address";

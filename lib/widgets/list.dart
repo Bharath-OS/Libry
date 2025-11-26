@@ -23,7 +23,7 @@ class ListScreen<T> extends StatelessWidget {
   final Widget Function(T item) tileBuilder;
   final void Function(T item)? onTap;
 
-  ListScreen({
+  const ListScreen({
     super.key,
     required this.title,
     required this.totalCount,
@@ -102,7 +102,7 @@ class ListScreen<T> extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    int count = context.watch<BookProvider>().count;
+    int count = context.watch<BookProvider>().books.length;
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -146,7 +146,7 @@ class ListScreen<T> extends StatelessWidget {
   Widget _emptyField() {
     return Center(
       child: Text(
-        "No Books Found",
+        "No Books Found!",
         style: BodyTextStyles.bodySmallStyle(Colors.black),
       ),
     );

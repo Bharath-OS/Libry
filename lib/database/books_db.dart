@@ -22,7 +22,7 @@ class BooksDB {
   ${BookKeys.coverPicture} TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 )
-        ''');
+''');
   }
 
   static Future<Database> _initDB() async{

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/screens/settings.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/forms.dart';
@@ -138,6 +139,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
               decoration: InputDecoration(hintText: "copies available"),
               validator: (value) => Validator.emptyValidator(value),
             ),
+            // TextFormField(
+            //   style: textStyle,
+            //   controller: null,
+            //   decoration: InputDecoration(hintText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
+            // ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
