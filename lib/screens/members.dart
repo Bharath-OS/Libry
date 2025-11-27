@@ -1,4 +1,6 @@
 import 'package:libry/provider/members_provider.dart';
+import 'package:libry/screens/members_screens/add_members.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 
 import '../models/members_model.dart';
@@ -27,6 +29,7 @@ class MembersScreen extends StatelessWidget {
           builder: (_) => MemberDetailsScreen(memberDetails: member),
         ),
       ),
+      fabMethod: (){Navigator.push(context, transition(child: AddMembersScreen()));},
     );
   }
 }

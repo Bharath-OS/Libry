@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Themes/styles.dart';
+import '../../constants/app_colors.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
 import '../../provider/members_provider.dart'; // You'll need this
@@ -71,10 +73,12 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
     return Form(
       key: _formKey,
       child: Column(
+        spacing: 20,
         children: [
           TextFormField(
             controller: controllers[0],
-            decoration: InputDecoration(labelText: 'Full Name'),
+            style: TextFieldStyle.inputTextStyle,
+            decoration: InputDecoration(labelText: 'Full Name', labelStyle: TextFieldStyle.inputTextStyle),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter name';
@@ -84,16 +88,19 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
           ),
           TextFormField(
             controller: controllers[1],
+            style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Email'),
             keyboardType: TextInputType.emailAddress,
           ),
           TextFormField(
             controller: controllers[2],
+            style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Phone'),
             keyboardType: TextInputType.phone,
           ),
           TextFormField(
             controller: controllers[3],
+            style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Address'),
             maxLines: 3,
           ),
@@ -102,6 +109,10 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
             children: [
               Expanded(
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MyColors.secondaryButtonColor,
+                    foregroundColor: MyColors.whiteBG,
+                  ),
                   onPressed: () => Navigator.pop(context),
                   child: Text('Cancel'),
                 ),
@@ -109,6 +120,10 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
               SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MyColors.primaryButtonColor,
+                    foregroundColor: MyColors.whiteBG,
+                  ),
                   onPressed: _submitForm,
                   child: Text('Add Member'),
                 ),

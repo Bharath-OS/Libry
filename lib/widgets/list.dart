@@ -22,6 +22,7 @@ class ListScreen<T> extends StatelessWidget {
   final List<T> items;
   final Widget Function(T item) tileBuilder;
   final void Function(T item)? onTap;
+  final VoidCallback fabMethod;
 
   const ListScreen({
     super.key,
@@ -31,6 +32,7 @@ class ListScreen<T> extends StatelessWidget {
     required this.searchHint,
     required this.items,
     required this.tileBuilder,
+    required this.fabMethod,
     this.onTap,
   });
 
@@ -51,8 +53,7 @@ class ListScreen<T> extends StatelessWidget {
         ),
       ),
       floatingActionButton: MyButton.fab(
-        method: () =>
-            Navigator.push(context, transition(child: AddBookScreen())),
+        method: fabMethod
       ),
     );
   }
@@ -77,7 +78,7 @@ class ListScreen<T> extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Total : ${context.watch<BookProvider>().books.length}",
+                  "Total : $totalCount",
                   style: BodyTextStyles.headingSmallStyle(MyColors.whiteBG),
                 ),
                 Text(
