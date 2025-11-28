@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../provider/book_provider.dart';
 import '../widgets/list.dart';
 import '../widgets/cards.dart';
+import 'books_screens/add_book_screen.dart';
 import 'books_screens/books_details.dart';
 import 'package:libry/models/books_model.dart';
 
@@ -25,9 +26,12 @@ class BooksScreen extends StatelessWidget {
       items: context.watch<BookProvider>().books,
       tileBuilder: (book) => Cards.bookCard(bookDetails: book,context: context),
       onTap: (book) => Navigator.push(
-        context,
-        transition(child: BookDetailScreen(bookId: book.id!,))
+          context,
+          MaterialPageRoute(builder: (context)=>BookDetailScreen(bookId: book.id!))
       ),
+      fabMethod: () {
+        Navigator.push(context, transition(child: AddBookScreen()));
+      }
     );
   }
 }
