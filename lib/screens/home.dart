@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import 'package:libry/provider/book_provider.dart';
+import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../database/userdata.dart';
+import '../widgets/cards.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,38 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget detailsCard({required int count, required String parameter}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: MyColors.whiteBG,
-        borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
-      ),
-      child: Center(
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: "$count\n",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 30,
-              fontFamily: "Livvic",
-              fontWeight: FontWeight.bold,
-            ),
-            children: [
-              TextSpan(
-                text: parameter,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: "Livvic",
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildHeaderSection() {
     String formattedDate = formatter.format(time);
@@ -155,12 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: SizedBox.expand(
-                      child: detailsCard(count: context.watch<BookProvider>().count, parameter: "Total Books"),
+                      child: Cards.detailsCard(count: context.watch<BookProvider>().count, parameter: "Total Books"),
                     ),
                   ),
                   Expanded(
                     child: SizedBox.expand(
-                      child: detailsCard(count: 23, parameter: "Total Members"),
+                      child: Cards.detailsCard(count: context.watch<MembersProvider>().count, parameter: "Total Members"),
                     ),
                   ),
                 ],
@@ -172,12 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: SizedBox.expand(
-                      child: detailsCard(count: 12, parameter: "Due Today"),
+                      child: Cards.detailsCard(count: 12, parameter: "Due Today"),
                     ),
                   ),
                   Expanded(
                     child: SizedBox.expand(
-                      child: detailsCard(count: 12, parameter: "Over Due"),
+                      child: Cards.detailsCard(count: 12, parameter: "Over Due"),
                     ),
                   ),
                 ],

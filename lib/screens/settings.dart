@@ -51,3 +51,14 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
+class ImageSelection{
+  static Future<File?> pickImage() async{
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if(image!=null){
+      return File(image.path);
+    }
+    return null;
+  }
+}

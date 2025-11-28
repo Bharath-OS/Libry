@@ -22,15 +22,15 @@ class BooksDB {
   ${BookKeys.coverPicture} TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 )
-        ''');
+''');
   }
 
-  Future<Database> _initDB() async{
+  static Future<Database> _initDB() async{
     return DatabaseServices.instance.database;
   }
 
 
-  Future<void> addBook(Books book) async {
+  static Future<void> addBook(Books book) async {
     final db = await _initDB();
     await db.insert(_tableName, {
       BookKeys.title: book.title,
@@ -46,12 +46,12 @@ class BooksDB {
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> deleteBook(int bookId) async {
+  static Future<void> deleteBook(int bookId) async {
     final db = await _initDB();
     await db.delete(_tableName, where: 'id = ?', whereArgs: [bookId]);
   }
 
-  Future<List<Books>> getBooks() async {
+  static Future<List<Books>> getBooks() async {
     final db = await _initDB();
     final data = await db.query(_tableName);
 
@@ -75,7 +75,7 @@ class BooksDB {
     return books;
   }
 
-  Future<void> updateBook(Books book) async {
+  static Future<void> updateBook(Books book) async {
     final db = await _initDB();
     await db.update(
       _tableName,
@@ -96,7 +96,7 @@ class BooksDB {
     );
   }
 
-  Future<void> clearAllBooks() async {
+  static Future<void> clearAllBooks() async {
     final db = await _initDB();
     await db.delete(_tableName);
   }

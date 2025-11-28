@@ -34,6 +34,7 @@ class CustomTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: fillColor,
+      labelStyle: TextFieldStyle.inputTextStyle,
       hintStyle: TextStyle(
         color: MyColors.bgColor,
         fontSize: 16,

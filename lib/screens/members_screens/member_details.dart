@@ -76,7 +76,6 @@ class MemberDetailsScreen extends StatelessWidget {
         ),
         children: [
           TextSpan(text: "\nPhone : ${member.phone}"),
-          TextSpan(text: "\nDob : ${member.dob}"),
           TextSpan(text: "\nAddress : ${member.address}"),
           TextSpan(text: "\nTotal borrowed : ${member.totalBorrow}"),
           TextSpan(text: "\nCurrently borrowed : ${member.currentlyBorrow}/5"),

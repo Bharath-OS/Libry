@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/screens/settings.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/forms.dart';
@@ -87,77 +88,86 @@ class _AddBookScreenState extends State<AddBookScreen> {
             TextFormField(
               style: textStyle,
               controller: controllers[0],
-              decoration: InputDecoration(hintText: "Book title"),
+              decoration: InputDecoration(labelText: "Book title"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[1],
-              decoration: InputDecoration(hintText: "Author name"),
+              decoration: InputDecoration(labelText: "Author name"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[2],
-              decoration: InputDecoration(hintText: "Language"),
+              decoration: InputDecoration(labelText: "Language"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[3],
-              decoration: InputDecoration(hintText: "Publish year"),
+              decoration: InputDecoration(labelText: "Publish year"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[4],
-              decoration: InputDecoration(hintText: "Publisher"),
+              decoration: InputDecoration(labelText: "Publisher"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[5],
-              decoration: InputDecoration(hintText: "Number of pages"),
+              decoration: InputDecoration(labelText: "Number of pages"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[6],
-              decoration: InputDecoration(hintText: "Genre"),
+              decoration: InputDecoration(labelText: "Genre"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[7],
-              decoration: InputDecoration(hintText: "Total copies"),
+              decoration: InputDecoration(labelText: "Total copies"),
               validator: (value) => Validator.emptyValidator(value),
             ),
             TextFormField(
               style: textStyle,
               controller: controllers[8],
-              decoration: InputDecoration(hintText: "copies available"),
+              decoration: InputDecoration(labelText: "copies available"),
               validator: (value) => Validator.emptyValidator(value),
             ),
-
+            // TextFormField(
+            //   style: textStyle,
+            //   controller: null,
+            //   decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
+            // ),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 20,
+              spacing: 10,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.secondaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColors.secondaryButtonColor,
+                      foregroundColor: MyColors.whiteBG,
+                    ),
+                    onPressed: back,
+                    child: Text("Back"),
                   ),
-                  onPressed: back,
-                  child: Text("Back"),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.primaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColors.primaryButtonColor,
+                      foregroundColor: MyColors.whiteBG,
+                    ),
+                    onPressed: () => add(context),
+                    child: Text("Save"),
                   ),
-                  onPressed: () => add(context),
-                  child: Text("Save"),
                 ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
+import 'package:libry/provider/members_provider.dart';
 import 'Screens/splash.dart';
 import 'Themes/styles.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -20,6 +21,7 @@ void main() async{
   // Run the app
   runApp(MultiProvider(providers:[
     ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
+    ChangeNotifierProvider<MembersProvider>(create: (context)=>MembersProvider())
   ],child: LibryApp()));
 }
 

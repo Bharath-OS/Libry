@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
+import '../constants/app_colors.dart';
 import '../models/members_model.dart';
 import '../models/books_model.dart';
 import '../themes/styles.dart';
@@ -68,7 +69,7 @@ class Cards {
                 children: [
                   Text(memberDetails.name, style: CardStyles.cardTitleStyle),
                   Text(
-                    memberDetails.memberId,
+                    memberDetails.memberId!,
                     style: CardStyles.cardSubTitleStyle,
                   ),
                 ],
@@ -78,6 +79,39 @@ class Cards {
               child: Column(children: [MyButton.deleteButton(method: () {})]),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  static Widget detailsCard({required int count, required String parameter}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: MyColors.whiteBG,
+        borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+      ),
+      child: Center(
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: "$count\n",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 30,
+              fontFamily: "Livvic",
+              fontWeight: FontWeight.bold,
+            ),
+            children: [
+              TextSpan(
+                text: parameter,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: "Livvic",
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
