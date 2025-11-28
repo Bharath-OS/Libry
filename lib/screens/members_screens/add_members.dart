@@ -59,10 +59,12 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
   Widget build(BuildContext context) {
     return LayoutWidgets.customScaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: FormWidgets.formContainer(
-            title: "Add Member", // Changed from "Add Book"
-            formWidget: _addMemberForm(context),
+        child: Center(
+          child: SingleChildScrollView(
+            child: FormWidgets.formContainer(
+              title: "Add Book",
+              formWidget: _addMemberForm(context),
+            ),
           ),
         ),
       ),
