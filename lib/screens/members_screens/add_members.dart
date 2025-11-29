@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/alert_dialogue.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
 import '../../provider/members_provider.dart'; // You'll need this
@@ -49,9 +50,9 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
         expiry: DateTime.now().add(Duration(days: 365)), // 1 year membership
       );
 
-      // Add member using provider (which will handle the ID generation)
       membersProvider.addMember(newMember);
       Navigator.pop(context);
+      showAlertMessage(message: "${newMember.name} successfully added", context: context);
     }
   }
 
