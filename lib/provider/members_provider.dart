@@ -1,30 +1,61 @@
-
-
 import 'package:flutter/widgets.dart';
-import 'package:libry/database/libry_db.dart';
 import 'package:libry/database/members_db.dart';
 import 'package:libry/models/members_model.dart';
 
-class MembersProvider extends ChangeNotifier{
-  MembersProvider(){
+class MembersProvider extends ChangeNotifier {
+  MembersProvider() {
     fetchMembers();
   }
 
   List<Members> _members = [];
-  List<Members> get members => _members;
-  int get count => _members.length;
+  List<Members> _filteredMembers = [];
+  // String searchText = '';
 
-  Future<void> fetchMembers() async{
-    _members = await MembersDB.getMembers();
+  List<Members> get members => _filteredMembers;
+  int get count => _filteredMembers.length;
+  int get totalCount => _members.length;
+  // int get availableMembers => _members.where().length;
+
+  void searchMembers(String query) {
+    if (query.isNotEmpty) {
+      String searchText = query.toLowerCase();
+      final matchedMembers = checkMatch(searchText);
+
+      if (matchedMembers != null) {
+        _filteredMembers = matchedMembers;
+      } else {
+        _filteredMembers = [];
+      }
+    } else {
+      _filteredMembers = _members;
+    }
     notifyListeners();
   }
 
-  Future<void> addMember(Members member) async{
-    await MembersDB.addMember(member, count+1);
+  List<Members>? checkMatch(String searchText) {
+    final matchedMembers = _members
+        .where((member) => member.name.toLowerCase().contains(searchText))
+        .toList();
+    if (matchedMembers.isNotEmpty) {
+      return matchedMembers;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> fetchMembers() async {
+    _members = await MembersDB.getMembers();
+    _filteredMembers = _members;
+    notifyListeners();
+  }
+
+  Future<void> addMember(Members member) async {
+    await MembersDB.addMember(member, count + 1);
     await fetchMembers();
   }
+
   //
-  Future<void> removeMember(int memberId) async{
+  Future<void> removeMember(int memberId) async {
     await MembersDB.removeMember(memberId);
     await fetchMembers();
   }
@@ -47,5 +78,4 @@ class MembersProvider extends ChangeNotifier{
     await MembersDB.clearAllMembers();
     await fetchMembers();
   }
-
 }

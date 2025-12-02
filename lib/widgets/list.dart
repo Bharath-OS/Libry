@@ -1,6 +1,8 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:libry/models/members_model.dart';
+import 'package:libry/provider/members_provider.dart';
 import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 import '../models/books_model.dart';
@@ -38,7 +40,7 @@ class ListScreen<T> extends StatefulWidget {
 
 class _ListScreenState<T> extends State<ListScreen<T>> {
   final TextEditingController _searchController = TextEditingController();
-
+  late int count;
   @override
   void initState() {
     super.initState();
@@ -48,9 +50,8 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   void _onSearchChanged() {
     if (widget.items is List<Books>) {
       context.read<BookProvider>().searchBooks(_searchController.text);
-      print("this is books screen");
     } else {
-      print("This is members screen");
+      context.read<MembersProvider>().searchMembers(_searchController.text);
     }
   }
 
@@ -91,10 +92,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: widget.searchHint,
-              prefixIcon: Icon(Icons.search,color: MyColors.bgColor,),
+              prefixIcon: Icon(Icons.search, color: MyColors.bgColor),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.clear,color: MyColors.bgColor,),
+                      icon: Icon(Icons.clear, color: MyColors.bgColor),
                       onPressed: () {
                         _searchController.clear();
                       },
@@ -139,7 +140,8 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildList(BuildContext context) {
-    final int count = context.watch<BookProvider>().count;
+    count =  widget.items.length;
+
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -183,7 +185,8 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   Widget _emptyField() {
     return Center(
       child: Text(
-        "No Books Found!",
+        widget.items is List<Books> ?
+        "No Books Found!" : "No Members Found!",
         style: BodyTextStyles.bodySmallStyle(Colors.black),
       ),
     );
