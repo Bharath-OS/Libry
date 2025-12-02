@@ -14,6 +14,7 @@ class BooksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return ListScreen<Books>(
       title: "All Books",
       totalCount: context.watch<BookProvider>().count,
@@ -22,7 +23,7 @@ class BooksScreen extends StatelessWidget {
           .books
           .where((book) => book.copiesAvailable > 0)
           .length,
-      searchHint: "Search Book",
+      searchHint: "Search Books...",
       items: context.watch<BookProvider>().books,
       tileBuilder: (book) => Cards.bookCard(bookDetails: book,context: context),
       onTap: (book) => Navigator.push(
