@@ -1,8 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:libry/models/members_model.dart';
 import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 import '../models/books_model.dart';
@@ -17,12 +15,12 @@ class ListScreen<T> extends StatefulWidget {
   final int totalCount;
   final int availableCount;
   final String searchHint;
-  List<T> items;
+  final List<T> items;
   final Widget Function(T item) tileBuilder;
   final void Function(T item)? onTap;
   final VoidCallback fabMethod;
 
-  ListScreen({
+  const ListScreen({
     super.key,
     required this.title,
     required this.totalCount,
@@ -141,6 +139,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildList(BuildContext context) {
+    final int count = context.watch<BookProvider>().count;
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -155,7 +154,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
           child: Builder(
             builder: (context) {
-              if (widget.totalCount == 0) {
+              if (count == 0) {
                 return _emptyField();
               } else {
                 return _buildBookTile();
