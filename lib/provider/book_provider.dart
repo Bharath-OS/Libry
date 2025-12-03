@@ -23,12 +23,7 @@ class BookProvider extends ChangeNotifier {
 
     if (_searchQuery.isNotEmpty) {
       List<Books>? matchedBooks = matchSearch(query);
-      if(matchedBooks != null){
-          _filteredBooks = matchedBooks;
-      }
-      else{
-        _filteredBooks = [];
-      }
+      _filteredBooks = matchedBooks ?? [];
     } else {
       _filteredBooks = _books;
     }
@@ -41,12 +36,7 @@ class BookProvider extends ChangeNotifier {
       return book.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           book.author.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
-    if(filteredBooks.isNotEmpty){
-      return filteredBooks;
-    }
-    else{
-      return null;
-    }
+    return filteredBooks.isNotEmpty ? filteredBooks : null;
   }
 
   Future<void> fetchBooks() async {

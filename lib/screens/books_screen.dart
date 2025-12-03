@@ -16,7 +16,7 @@ class BooksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return ListScreen<Books>(
-      title: "All Books",
+      title: "Books",
       totalCount: context.watch<BookProvider>().totalBooks,
       availableCount: context.watch<BookProvider>().availableBooks,
       searchHint: "Search Books...",

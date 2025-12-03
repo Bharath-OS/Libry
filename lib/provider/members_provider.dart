@@ -21,11 +21,7 @@ class MembersProvider extends ChangeNotifier {
       String searchText = query.toLowerCase();
       final matchedMembers = checkMatch(searchText);
 
-      if (matchedMembers != null) {
-        _filteredMembers = matchedMembers;
-      } else {
-        _filteredMembers = [];
-      }
+      _filteredMembers = matchedMembers ?? [];
     } else {
       _filteredMembers = _members;
     }
@@ -36,11 +32,7 @@ class MembersProvider extends ChangeNotifier {
     final matchedMembers = _members
         .where((member) => member.name.toLowerCase().contains(searchText))
         .toList();
-    if (matchedMembers.isNotEmpty) {
-      return matchedMembers;
-    } else {
-      return null;
-    }
+    return matchedMembers.isNotEmpty ? matchedMembers : null;
   }
 
   Future<void> fetchMembers() async {

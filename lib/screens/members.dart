@@ -17,7 +17,7 @@ class MembersScreen extends StatelessWidget {
     int totalMembers = context.watch<MembersProvider>().totalCount;
 
     return ListScreen<Members>(
-      title: "All Member",
+      title: "Members",
       totalCount: totalMembers,
       availableCount: 20,
       searchHint: "Search Members...",

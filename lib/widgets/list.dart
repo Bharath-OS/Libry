@@ -54,7 +54,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       context.read<MembersProvider>().searchMembers(_searchController.text);
     }
   }
-
+  //todo Implement the clearing the search text when the user switches the page
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
@@ -129,7 +129,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                 spacing: 10,
                 children: [
                   MyButton.filterButton(method: () {}),
-                  MyButton.deleteButton(method: () => _deleteBooks(context)),
+                  MyButton.deleteButton(method: () => _clearAllItems(context)),
                 ],
               ),
             ),
@@ -140,7 +140,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildList(BuildContext context) {
-    count =  widget.items.length;
+    count = widget.items.length;
 
     return Expanded(
       child: Container(
@@ -185,15 +185,20 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   Widget _emptyField() {
     return Center(
       child: Text(
-        widget.items is List<Books> ?
-        "No Books Found!" : "No Members Found!",
+        // widget.items is List<Books> ? "No Books Found!" : "No Members Found!",
+        "No ${widget.title.toLowerCase()} Found!",
         style: BodyTextStyles.bodySmallStyle(Colors.black),
       ),
     );
   }
 
-  Future<void> _deleteBooks(BuildContext context) async {
-    await context.read<BookProvider>().clearAllBooks();
-    showSnackBar(text: "All Books cleared", context: context);
+  Future<void> _clearAllItems(BuildContext context) async {
+    if (widget.items is List<Books>) {
+      await context.read<BookProvider>().clearAllBooks();
+      showSnackBar(text: "All Books cleared", context: context);
+    } else if (widget.items is List<Members>) {
+      await context.read<MembersProvider>().clearAllMembers();
+      showSnackBar(text: "All Members cleared", context: context);
+    }
   }
 }
