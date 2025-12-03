@@ -20,7 +20,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
-  String? imagePath = '';
+  String? imagePath;
 
   @override
   initState() {
@@ -149,7 +149,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
             TextFormField(
               style: textStyle,
               controller: _imageController,
-              decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
+              decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: () async{
+                imagePath = await ImageSelection.pickImage();
+                print(imagePath);
+              }, icon: Icon(Icons.file_copy_outlined))),
             ),
             SizedBox(height: 20),
             Row(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/books_screens/edit_book_screen.dart';
@@ -218,7 +220,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ),
           ],
         ),
-        child: Image.asset("assets/images/dummy_book_cover.png"),
+        // child: Image.asset("assets/images/dummy_book_cover.png"),
+        child: Image.file(File(bookDetails.coverPicture),fit: BoxFit.cover,),
       ),
     );
   }

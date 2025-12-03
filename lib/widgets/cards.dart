@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
 import '../constants/app_colors.dart';
@@ -20,7 +22,7 @@ class Cards {
               width: 84,
               height: 84,
               color: Colors.grey,
-              child: Image.asset(bookDetails.coverPicture),
+              child: Image.file(File(bookDetails.coverPicture),fit: BoxFit.cover,),
             ),
             const SizedBox(width: 14),
             Expanded(
