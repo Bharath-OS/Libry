@@ -19,10 +19,14 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
+  late final TextEditingController _imageController;
+  String? imagePath = '';
+
   @override
   initState() {
     super.initState();
     controllers = List.generate(9, (_) => TextEditingController());
+    _imageController  = TextEditingController();
   }
 
   @override
@@ -32,6 +36,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     for (var controller in controllers) {
       controller.dispose();
     }
+    _imageController.dispose();
   }
 
   @override
@@ -65,6 +70,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           genre: controllers[6].text,
           totalCopies: int.parse(controllers[7].text),
           copiesAvailable: int.parse(controllers[8].text),
+          coverPicture: imagePath ?? "assets/images/dummy_book_cover.png"
         );
         context.read<BookProvider>().addBook(book);
         Navigator.pop(context);
@@ -139,11 +145,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
               decoration: InputDecoration(labelText: "copies available"),
               validator: (value) => Validator.emptyValidator(value),
             ),
-            // TextFormField(
-            //   style: textStyle,
-            //   controller: null,
-            //   decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
-            // ),
+            //todo cover picture functionality
+            TextFormField(
+              style: textStyle,
+              controller: _imageController,
+              decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
+            ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
