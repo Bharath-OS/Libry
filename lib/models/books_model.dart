@@ -21,7 +21,7 @@ class Books {
     required this.pages,
     required this.totalCopies,
     required this.copiesAvailable,
-    this.coverPicture = "assets/images/dummy_book_cover.png"
+    this.coverPicture = ""
   });
 }
 

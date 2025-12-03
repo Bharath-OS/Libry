@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/screens/settings.dart';
+import 'package:libry/utilities/cover_picture_method.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/forms.dart';
@@ -19,6 +20,7 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
+  String? coverPicture;
   @override
   initState() {
     super.initState();
@@ -27,7 +29,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     for (var controller in controllers) {
       controller.dispose();
@@ -65,6 +66,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           genre: controllers[6].text,
           totalCopies: int.parse(controllers[7].text),
           copiesAvailable: int.parse(controllers[8].text),
+          coverPicture: coverPicture ?? "assets/images/dummy_book_cover.png"
         );
         context.read<BookProvider>().addBook(book);
         Navigator.pop(context);
@@ -139,11 +141,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
               decoration: InputDecoration(labelText: "copies available"),
               validator: (value) => Validator.emptyValidator(value),
             ),
+            // #TODO: added TextField for selecting cover picture.But didn't added the logic for it.
             // TextFormField(
             //   style: textStyle,
+            //   enabled: false,
             //   controller: null,
-            //   decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ()=>ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
+            //   decoration: InputDecoration(labelText: "Select cover picture",suffixIcon: IconButton(onPressed: ImageSelection.pickImage(), icon: Icon(Icons.file_copy_outlined))),
             // ),
+
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
