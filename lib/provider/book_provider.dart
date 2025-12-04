@@ -9,11 +9,39 @@ class BookProvider extends ChangeNotifier {
     fetchBooks();
   }
   List<Books> _books = [];
-  List<Books> get books => _books;
-  int get count => _books.length;
+  List<Books> _filteredBooks = [];
+  String _searchQuery = '';
+
+  List<Books> get books => _filteredBooks;
+  int get count => _filteredBooks.length;
+  int get totalBooks => _books.length;
+  int get availableBooks => _books.where((book)=>book.copiesAvailable > 0).length;
+
+  //Searching implementation
+  void searchBooks(String query) {
+    _searchQuery = query;
+
+    if (_searchQuery.isNotEmpty) {
+      List<Books>? matchedBooks = matchSearch(query);
+      _filteredBooks = matchedBooks ?? [];
+    } else {
+      _filteredBooks = _books;
+    }
+
+    notifyListeners();
+  }
+
+  List<Books>? matchSearch(String query){
+    final filteredBooks = _books.where((book) {
+      return book.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          book.author.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+    return filteredBooks.isNotEmpty ? filteredBooks : null;
+  }
 
   Future<void> fetchBooks() async {
     _books = await BooksDB.getBooks();
+    _filteredBooks = _books;
     notifyListeners();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/database/genre_db.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'Screens/splash.dart';
@@ -13,6 +14,7 @@ void main() async{
 
   // Initialize Hive
   await Hive.initFlutter();
+  genreBox = await Hive.openBox<String>('genre');
 
   Hive.registerAdapter(UserAdapter());
   userDataBoxNew = await Hive.openBox<User>('users');

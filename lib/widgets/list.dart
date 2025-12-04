@@ -1,20 +1,18 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:libry/database/libry_db.dart';
-import 'package:libry/models/books_model.dart';
+import 'package:libry/models/members_model.dart';
+import 'package:libry/provider/members_provider.dart';
 import 'package:libry/utilities/helpers.dart';
-import 'package:libry/utilities/validation.dart';
 import 'package:provider/provider.dart';
+import '../models/books_model.dart';
 import '../provider/book_provider.dart';
-import '../screens/books_screens/add_book_screen.dart';
 import '../themes/styles.dart';
 import 'package:libry/constants/app_colors.dart';
 import '../widgets/buttons.dart';
 import '../widgets/layout_widgets.dart';
 
-class ListScreen<T> extends StatelessWidget {
+class ListScreen<T> extends StatefulWidget {
   final String title;
   final int totalCount;
   final int availableCount;
@@ -37,9 +35,37 @@ class ListScreen<T> extends StatelessWidget {
   });
 
   @override
+  State<ListScreen<T>> createState() => _ListScreenState<T>();
+}
+
+class _ListScreenState<T> extends State<ListScreen<T>> {
+  final TextEditingController _searchController = TextEditingController();
+  late int count;
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (widget.items is List<Books>) {
+      context.read<BookProvider>().searchBooks(_searchController.text);
+    } else {
+      context.read<MembersProvider>().searchMembers(_searchController.text);
+    }
+  }
+  //todo Implement the clearing the search text when the user switches the page
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutWidgets.customScaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(widget.title)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -52,23 +78,34 @@ class ListScreen<T> extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: MyButton.fab(
-        method: fabMethod
-      ),
+      floatingActionButton: MyButton.fab(method: widget.fabMethod),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Column(
       children: [
-        SearchBar(
-          elevation: const WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(MyColors.whiteBG),
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SvgPicture.asset("assets/icons/search-line.svg"),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: TextField(
+            style: TextFieldStyle.inputTextStyle,
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: widget.searchHint,
+              prefixIcon: Icon(Icons.search, color: MyColors.bgColor),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear, color: MyColors.bgColor),
+                      onPressed: () {
+                        _searchController.clear();
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
           ),
-          hintText: searchHint,
         ),
         const SizedBox(height: 16),
         Row(
@@ -78,24 +115,24 @@ class ListScreen<T> extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Total : $totalCount",
+                  "Total : ${widget.totalCount}",
                   style: BodyTextStyles.headingSmallStyle(MyColors.whiteBG),
                 ),
                 Text(
-                  "Available : $availableCount",
+                  "Available : ${widget.availableCount}",
                   style: BodyTextStyles.bodySmallStyle(MyColors.whiteBG),
                 ),
               ],
             ),
             SizedBox(
               child: Row(
+                spacing: 10,
                 children: [
                   MyButton.filterButton(method: () {}),
-                  MyButton.deleteButton(method:()=> _deleteBooks(context))
+                  MyButton.deleteButton(method: () => _clearAllItems(context)),
                 ],
               ),
-            )
-
+            ),
           ],
         ),
       ],
@@ -103,7 +140,8 @@ class ListScreen<T> extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    int count = context.watch<BookProvider>().books.length;
+    count = widget.items.length;
+
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -132,12 +170,12 @@ class ListScreen<T> extends StatelessWidget {
 
   Widget _buildBookTile() {
     return ListView.separated(
-      itemCount: items.length,
+      itemCount: widget.items.length,
       itemBuilder: (ctx, i) {
-        final item = items[i];
+        final item = widget.items[i];
         return GestureDetector(
-          onTap: () => onTap?.call(item),
-          child: tileBuilder(item),
+          onTap: () => widget.onTap?.call(item),
+          child: widget.tileBuilder(item),
         );
       },
       separatorBuilder: (_, _) => const SizedBox(height: 4),
@@ -147,15 +185,20 @@ class ListScreen<T> extends StatelessWidget {
   Widget _emptyField() {
     return Center(
       child: Text(
-        "No Books Found!",
+        // widget.items is List<Books> ? "No Books Found!" : "No Members Found!",
+        "No ${widget.title.toLowerCase()} Found!",
         style: BodyTextStyles.bodySmallStyle(Colors.black),
       ),
     );
   }
 
-  Future<void> _deleteBooks(BuildContext context)async{
-    await context.read<BookProvider>().clearAllBooks();
-    showSnackBar(text: "All Books cleared", context: context);
+  Future<void> _clearAllItems(BuildContext context) async {
+    if (widget.items is List<Books>) {
+      await context.read<BookProvider>().clearAllBooks();
+      showSnackBar(text: "All Books cleared", context: context);
+    } else if (widget.items is List<Members>) {
+      await context.read<MembersProvider>().clearAllMembers();
+      showSnackBar(text: "All Members cleared", context: context);
+    }
   }
-
 }
