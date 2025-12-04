@@ -55,4 +55,56 @@ class Validator {
     }
     return null;
   }
+
+  static String? yearValidator(String? value){
+    if (value == null || value.isEmpty) {
+      return 'Year is required';
+    }
+
+    final year = int.tryParse(value);
+    if(year == null){
+      return "Enter a valid year";
+    }
+
+    final currentYear = DateTime.now().year;
+    if(year < 1500 || year >= currentYear){
+      return 'Enter a valid year between 1500 and ${currentYear}';
+    }
+    return null;
+  }
+
+  //Validates numbers
+  static String? numberValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    final number = int.tryParse(value);
+    if (number == null) {
+      return 'Enter a valid number';
+    }
+    if (number <= 0) {
+      return 'Must be greater than 0';
+    }
+    return null;
+  }
+
+  static String? copiesValidator(String? value, String totalBooks){
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    final copiesAvailable = int.tryParse(value);
+    final totalBooksCount = int.tryParse(totalBooks);
+    if (copiesAvailable == null) {
+      return 'Enter a valid number';
+    }
+    if (copiesAvailable <= 0) {
+      return 'Must be greater than 0';
+    }
+    if(totalBooksCount != null){
+      if(totalBooksCount < copiesAvailable){
+        return 'available should be less than total copies';
+      }
+    }
+    return null;
+  }
 }

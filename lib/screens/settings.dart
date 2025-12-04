@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -14,7 +15,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source,);
+    final pickedFile = await _picker.pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() {
@@ -52,12 +53,36 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class ImageSelection{
-  static Future<File?> pickImage() async{
-    final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if(image!=null){
-      return File(image.path);
+class ImageSelection {
+  static Future<String?> pickImage() async {
+    final _picker = ImagePicker();
+
+    final XFile? pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85, // Good quality with compression
+      maxWidth: 800, // Limit size for performance
+    );
+
+    if (pickedImage != null) {
+      // Get app's documents directory for permanent storage
+      final appDir = await getApplicationDocumentsDirectory();
+
+      // Create unique filename using timestamp
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'book_cover_$timestamp.jpg';
+      final permanentPath = '${appDir.path}/$fileName';
+
+      // Create File object for the new location
+      final savedImage = File(permanentPath);
+
+      // Read original image bytes
+      final imageBytes = await pickedImage.readAsBytes();
+
+      // Write bytes to permanent location
+      await savedImage.writeAsBytes(imageBytes);
+
+      // Update UI state
+      return savedImage.path;
     }
     return null;
   }
