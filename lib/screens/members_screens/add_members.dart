@@ -63,7 +63,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: FormWidgets.formContainer(
-              title: "Add Book",
+              title: "Add Member",
               formWidget: _addMemberForm(context),
             ),
           ),
