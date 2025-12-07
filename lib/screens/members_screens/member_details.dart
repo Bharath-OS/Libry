@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import '../../models/members_model.dart';
 import '../../widgets/buttons.dart';
@@ -50,7 +51,7 @@ class MemberDetailsScreen extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: "Joined at ${member.joined}",
+            text: "Joined at ${formatDate(member.joined)}",
             style: const TextStyle(
               fontSize: 16,
               fontFamily: "Livvic",
@@ -80,7 +81,7 @@ class MemberDetailsScreen extends StatelessWidget {
           TextSpan(text: "\nTotal borrowed : ${member.totalBorrow}"),
           TextSpan(text: "\nCurrently borrowed : ${member.currentlyBorrow}/5"),
           TextSpan(text: "\nFines owed : ${member.fine}\$"),
-          TextSpan(text: "\nValidity : Till ${member.expiry}"),
+          TextSpan(text: "\nValidity : Till ${formatDate(member.expiry)}"),
         ],
       ),
     );
@@ -92,7 +93,7 @@ class MemberDetailsScreen extends StatelessWidget {
       children: [
         MyButton.secondaryButton(method: () {}, text: "View History"),
         const SizedBox(height: 10),
-        MyButton.primaryButton(method: () {}, text: "Edit Member"),
+        MyButton.primaryButton(method: (){}, text: "Edit Member"),
       ],
     );
   }

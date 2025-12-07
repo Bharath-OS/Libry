@@ -39,3 +39,7 @@ Future<String?> pickAndSaveImage() async {
   }
   return null;
 }
+
+String formatDate(DateTime date){
+  return "${date.day}/${date.month}/${date.year}";
+}
