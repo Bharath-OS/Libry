@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -18,22 +16,28 @@ class GenreDB{
   static int? getIndex(String searchKey){
     int index = 0;
     List<String> genres = getGenre();
-    for(String genre in genres){
-      if(genre == searchKey){
-        return index;
-      }
-      index++;
-    }
-    return null;
+    index = genres.indexOf(searchKey);
+    return index != -1? genres.indexOf(searchKey) : null;
   }
 
-  void deleteGenre(String genre){
+  static void deleteGenre(String genre){
     int? index = getIndex(genre);
     if(index != null){
       genreBox.deleteAt(index);
     }
     else{
       print("Element not found");
+    }
+  }
+
+  static void editGenre(String oldGenre, String newGenre){
+    int? index = getIndex(oldGenre);
+    print("genre index : $index");
+    if(index != null){
+      genreBox.putAt(index, newGenre);
+    }
+    else{
+      print("Error editing value");
     }
   }
 }

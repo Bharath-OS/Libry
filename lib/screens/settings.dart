@@ -1,7 +1,12 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:libry/Themes/styles.dart';
+import 'package:libry/Widgets/buttons.dart';
+import 'package:libry/widgets/layout_widgets.dart';
+import 'package:provider/provider.dart';
+
+import '../constants/app_colors.dart';
+import '../provider/genre_provider.dart';
+import '../utilities/validation.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,40 +16,87 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
-  File? _selectedImage;
-  final ImagePicker _picker = ImagePicker();
+  late List<String> genres;
+  late String currentValue;
 
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+  @override
+  void initState() {
+    super.initState();
+    currentValue = context.read<GenreProvider>().getGenre[0];
+  }
 
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-    }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Image Picker Example")),
-      body: Center(
-        child: Column(
-          spacing: 20,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _selectedImage != null
-                ? Image.file(_selectedImage!, height: 200)
-                : Text("No image selected."),
-            ElevatedButton.icon(
-              icon: Icon(Icons.photo_library),
-              label: Text("Pick from Gallery"),
-              onPressed: () => _pickImage(ImageSource.gallery),
+    genres = context.watch<GenreProvider>().getGenre;
+    final items = genres
+        .map(
+          (genre) => DropdownMenuItem(
+            value: genre,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(genre),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () => editGenre(context,genre),
+                      icon: Icon(Icons.create_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () => print("delete $genre"),
+                      icon: Icon(Icons.delete_outline),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton.icon(
-              icon: Icon(Icons.camera_alt),
-              label: Text("Take a Photo"),
-              onPressed: () => _pickImage(ImageSource.camera),
+          ),
+        )
+        .toList();
+    return LayoutWidgets.customScaffold(
+      appBar: LayoutWidgets.appBar(barTitle: "Settings", context: context),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.all(30),
+                padding: EdgeInsets.all(30),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: MyColors.whiteBG,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  spacing: 20,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Genre", style: CardStyles.cardTitleStyle),
+                    DropdownButton(
+                      items: items,
+                      value: currentValue,
+                      onChanged: (value) {
+                        setState(() {
+                          currentValue = value!;
+                        });
+                      },
+                    ),
+                    // Text("Add Genre", style:CardStyles.cardSubTitleStyle),
+                    MyButton.primaryButton(
+                      method: () => addGenre(context),
+                      text: "Add Genre",
+                      fontSize: 15,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -53,37 +105,83 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class ImageSelection {
-  static Future<String?> pickImage() async {
-    final _picker = ImagePicker();
+Future<void> addGenre(BuildContext context) async {
+  final _genreController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  await showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Form(
+        key: _formKey,
+        child: Column(
+          spacing: 20,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Add new genre", style: CardStyles.cardTitleStyle),
+            TextFormField(
+              controller: _genreController,
+              decoration: InputDecoration(labelText: "Enter new genre"),
+              validator: (value) => Validator.emptyValidator(value),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        MyButton.secondaryButton(
+          method: () => Navigator.pop(context),
+          text: "Cancel",
+          fontSize: 12,
+        ),
+        MyButton.primaryButton(
+          method: () {
+            context.read<GenreProvider>().addGenre(_genreController.text);
+            Navigator.pop(context);
+          },
+          text: "Add",
+          fontSize: 12,
+        ),
+      ],
+    ),
+  );
+}
 
-    final XFile? pickedImage = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85, // Good quality with compression
-      maxWidth: 800, // Limit size for performance
-    );
-
-    if (pickedImage != null) {
-      // Get app's documents directory for permanent storage
-      final appDir = await getApplicationDocumentsDirectory();
-
-      // Create unique filename using timestamp
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'book_cover_$timestamp.jpg';
-      final permanentPath = '${appDir.path}/$fileName';
-
-      // Create File object for the new location
-      final savedImage = File(permanentPath);
-
-      // Read original image bytes
-      final imageBytes = await pickedImage.readAsBytes();
-
-      // Write bytes to permanent location
-      await savedImage.writeAsBytes(imageBytes);
-
-      // Update UI state
-      return savedImage.path;
-    }
-    return null;
-  }
+Future<void> editGenre(BuildContext context, String genre) async {
+  final genreController = TextEditingController();
+  genreController.text = genre;
+  final formKey = GlobalKey<FormState>();
+  await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Form(
+        key: formKey,
+        child: Column(
+          spacing: 20,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Edit genre", style: CardStyles.cardTitleStyle),
+            TextFormField(
+              controller: genreController,
+              decoration: InputDecoration(labelText: "Enter new genre"),
+              validator: (value) => Validator.emptyValidator(value),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        MyButton.secondaryButton(
+          method: () => Navigator.pop(context),
+          text: "Cancel",
+          fontSize: 12,
+        ),
+        MyButton.primaryButton(
+          method: () {
+            context.read<GenreProvider>().editGenre(genre,genreController.text.trim());
+            Navigator.pop(context);
+          },
+          text: "Edit",
+          fontSize: 12,
+        ),
+      ],
+    ),
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/database/genre_db.dart';
 import 'package:libry/provider/book_provider.dart';
+import 'package:libry/provider/genre_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'Screens/splash.dart';
 import 'Themes/styles.dart';
@@ -23,6 +24,7 @@ void main() async{
   // Run the app
   runApp(MultiProvider(providers:[
     ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
+    ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
     ChangeNotifierProvider<MembersProvider>(create: (context)=>MembersProvider())
   ],child: LibryApp()));
 }

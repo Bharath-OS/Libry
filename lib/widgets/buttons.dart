@@ -16,13 +16,14 @@ class MyButton {
   static Widget primaryButton({
     required VoidCallback method,
     required String text,
+    double? fontSize = 20
   }) {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.primaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -31,7 +32,7 @@ class MyButton {
         text,
         style: TextStyle(
           fontFamily: "Livvic",
-          fontSize: 20,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -41,13 +42,14 @@ class MyButton {
   static Widget secondaryButton({
     required VoidCallback method,
     required String text,
+    double fontSize = 20
   }) {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
         backgroundColor: MyColors.primaryButtonColor,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -56,7 +58,7 @@ class MyButton {
         text,
         style: TextStyle(
           fontFamily: "Livvic",
-          fontSize: 20,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
