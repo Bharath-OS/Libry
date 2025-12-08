@@ -27,39 +27,12 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     genres = context.watch<GenreProvider>().getGenre;
-    final items = genres
-        .map(
-          (genre) => DropdownMenuItem(
-            value: genre,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(genre),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () => editGenre(context,genre),
-                      icon: Icon(Icons.create_outlined),
-                    ),
-                    IconButton(
-                      onPressed: () => print("delete $genre"),
-                      icon: Icon(Icons.delete_outline),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        )
-        .toList();
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(barTitle: "Settings", context: context),
       body: SafeArea(
@@ -74,27 +47,13 @@ class SettingsScreenState extends State<SettingsScreen> {
                   color: MyColors.whiteBG,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Column(
-                  spacing: 20,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Genre", style: CardStyles.cardTitleStyle),
-                    DropdownButton(
-                      items: items,
-                      value: currentValue,
-                      onChanged: (value) {
-                        setState(() {
-                          currentValue = value!;
-                        });
-                      },
-                    ),
-                    // Text("Add Genre", style:CardStyles.cardSubTitleStyle),
-                    MyButton.primaryButton(
-                      method: () => addGenre(context),
-                      text: "Add Genre",
-                      fontSize: 15,
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 20,
+                    children: [
+                      createWidgets(items: genres,context: context,field: "Genre"),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -175,7 +134,10 @@ Future<void> editGenre(BuildContext context, String genre) async {
         ),
         MyButton.primaryButton(
           method: () {
-            context.read<GenreProvider>().editGenre(genre,genreController.text.trim());
+            context.read<GenreProvider>().editGenre(
+              genre,
+              genreController.text.trim(),
+            );
             Navigator.pop(context);
           },
           text: "Edit",
@@ -183,5 +145,77 @@ Future<void> editGenre(BuildContext context, String genre) async {
         ),
       ],
     ),
+  );
+}
+
+Future<void> deleteGenre(BuildContext context, String genre) async{
+
+  await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text("Delete Genre"),
+      content: Text("Do you really want to delete this genre?"),
+      actions: [
+        MyButton.secondaryButton(
+          method: () => Navigator.pop(context),
+          text: "No",
+          fontSize: 12,
+        ),
+        MyButton.primaryButton(
+          method: () {
+            context.read<GenreProvider>().deleteGenre(genre);
+            Navigator.pop(context);
+          },
+          text: "Yes",
+          fontSize: 12,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget createWidgets({required List<String> items, required BuildContext context,required String field}){
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: 10,
+    children: [
+      Text(field, style: CardStyles.cardTitleStyle),
+      Container(
+        height: 150,
+        decoration: BoxDecoration(
+            color: MyColors.bgColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                width: 2,
+                color: MyColors.lightGrey
+            )
+        ),
+        child: ListView.builder(
+          itemBuilder: (ctx, index) => Card(
+            color: MyColors.whiteBG,
+            child: ListTile(
+              title: Text(items[index]),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () =>
+                        editGenre(context, items[index]),
+                    child: Icon(Icons.create_outlined),
+                  ),
+                  MyButton.deleteButton(method: ()=>deleteGenre(context, items[index])),
+                ],
+              ),
+            ),
+          ),
+          itemCount: items.length,
+        ),
+      ),
+      MyButton.primaryButton(
+        method: () => addGenre(context),
+        text: "Add $field",
+        fontSize: 15,
+      ),
+    ],
   );
 }
