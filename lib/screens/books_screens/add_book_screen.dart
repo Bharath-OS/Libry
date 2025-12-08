@@ -263,6 +263,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
+            //genre dropdown
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: InputDecorator(

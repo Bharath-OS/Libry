@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
+import '../../provider/genre_provider.dart';
+import '../../provider/language_provider.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
@@ -24,6 +26,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
   late Books _book;
   File? _newImage;
   bool _isPickingImage = false;
+  String? _selectedGenre;
+  String? _selectedLanguage;
 
   @override
   void initState() {
@@ -35,11 +39,11 @@ class _EditBookScreenState extends State<EditBookScreen> {
     // Initialize form
     controllers[0].text = _book.title;
     controllers[1].text = _book.author;
-    controllers[2].text = _book.language;
+    _selectedLanguage = _book.language;
     controllers[3].text = _book.year;
     controllers[4].text = _book.publisher;
     controllers[5].text = _book.pages.toString();
-    controllers[6].text = _book.genre;
+    _selectedGenre = _book.genre;
     controllers[7].text = _book.totalCopies.toString();
     controllers[8].text = _book.copiesAvailable.toString();
 
@@ -80,9 +84,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
       }
     } catch (e) {
       print('Error picking image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to pick image')));
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -111,11 +115,11 @@ class _EditBookScreenState extends State<EditBookScreen> {
         id: _book.id,
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
-        language: controllers[2].text.trim(),
+        language: _selectedLanguage!,
         year: controllers[3].text.trim(),
         publisher: controllers[4].text.trim(),
         pages: int.parse(controllers[5].text),
-        genre: controllers[6].text.trim(),
+        genre: _selectedGenre!,
         totalCopies: int.parse(controllers[7].text),
         copiesAvailable: int.parse(controllers[8].text),
         coverPicture: imagePath,
@@ -123,9 +127,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
       context.read<BookProvider>().updateBook(updatedBook);
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Book updated successfully')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Book updated successfully')));
     }
   }
 
@@ -144,20 +148,27 @@ class _EditBookScreenState extends State<EditBookScreen> {
       fontSize: 16,
       fontWeight: FontWeight.w600,
     );
+    List<String> genres = context.watch<GenreProvider>().getGenre;
+    List<String> languages = context.watch<LanguageProvider>().getLanguages;
 
     return LayoutWidgets.customScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: FormWidgets.formContainer(
             title: "Edit Book",
-            formWidget: _editBookForm(context, textStyle),
+            formWidget: _editBookForm(context, textStyle, genres, languages),
           ),
         ),
       ),
     );
   }
 
-  Widget _editBookForm(BuildContext context, TextStyle textStyle) {
+  Widget _editBookForm(
+    BuildContext context,
+    TextStyle textStyle,
+    List<String> genres,
+    List<String> languages,
+  ) {
     return SizedBox(
       width: double.infinity,
       child: Form(
@@ -174,10 +185,36 @@ class _EditBookScreenState extends State<EditBookScreen> {
               label: "Author name",
               validator: (value) => Validator.emptyValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[2],
-              label: "Language",
-              validator: (value) => Validator.emptyValidator(value),
+            //Language dropdown
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: "Language",
+                  labelStyle: textStyle.copyWith(fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedLanguage,
+                    isExpanded: true,
+                    style: textStyle,
+                    items: languages.map((String language) {
+                      return DropdownMenuItem<String>(
+                        value: language,
+                        child: Text(language),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedLanguage = newValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
             _buildTextField(
               controller: controllers[3],
@@ -195,10 +232,36 @@ class _EditBookScreenState extends State<EditBookScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[6],
-              label: "Genre",
-              validator: (value) => Validator.emptyValidator(value),
+            //genre dropdown
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: "Genre",
+                  labelStyle: textStyle.copyWith(fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedGenre,
+                    isExpanded: true,
+                    style: textStyle,
+                    items: genres.map((String genre) {
+                      return DropdownMenuItem<String>(
+                        value: genre,
+                        child: Text(genre),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedGenre = newValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
             _buildTextField(
               controller: controllers[7],
@@ -210,7 +273,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
               controller: controllers[8],
               label: "Available copies",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.copiesValidator(value, controllers[7].text),
+              validator: (value) =>
+                  Validator.copiesValidator(value, controllers[7].text),
             ),
 
             const SizedBox(height: 20),
@@ -275,9 +339,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: textStyle.copyWith(fontSize: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         ),
         validator: validator,
       ),
@@ -288,10 +350,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Cover Image",
-          style: textStyle.copyWith(fontSize: 14),
-        ),
+        Text("Cover Image", style: textStyle.copyWith(fontSize: 14)),
         const SizedBox(height: 8),
 
         // Image Picker Field
@@ -302,33 +361,33 @@ class _EditBookScreenState extends State<EditBookScreen> {
           decoration: InputDecoration(
             hintText: "Tap to change cover image",
             hintStyle: textStyle.copyWith(color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.primaryButtonColor),
-              ),
-            )
+                    padding: const EdgeInsets.all(12),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        MyColors.primaryButtonColor,
+                      ),
+                    ),
+                  )
                 : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_newImage != null)
-                  IconButton(
-                    onPressed: _clearImage,
-                    icon: Icon(Icons.clear, color: Colors.red),
-                    tooltip: 'Remove new image',
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_newImage != null)
+                        IconButton(
+                          onPressed: _clearImage,
+                          icon: Icon(Icons.clear, color: Colors.red),
+                          tooltip: 'Remove new image',
+                        ),
+                      IconButton(
+                        onPressed: _pickImage,
+                        icon: Icon(Icons.photo_library),
+                        tooltip: 'Pick from gallery',
+                      ),
+                    ],
                   ),
-                IconButton(
-                  onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library),
-                  tooltip: 'Pick from gallery',
-                ),
-              ],
-            ),
           ),
           onTap: _isPickingImage ? null : _pickImage,
         ),
