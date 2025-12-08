@@ -168,6 +168,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             _buildTextField(
               controller: controllers[3],
               label: "Publish year",
+              keyboardType: TextInputType.number,
               validator: (value) => Validator.yearValidator(value),
             ),
             _buildTextField(
@@ -196,7 +197,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               controller: controllers[8],
               label: "Copies available",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value),
+              validator: (value) => Validator.copiesValidator(value,controllers[7].text),
             ),
 
             const SizedBox(height: 20),
