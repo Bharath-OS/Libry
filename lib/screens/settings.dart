@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import 'package:libry/Widgets/buttons.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -51,7 +52,11 @@ class SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     spacing: 20,
                     children: [
-                      createWidgets(items: genres,context: context,field: "Genre"),
+                      createWidgets(
+                        items: genres,
+                        context: context,
+                        field: "Genre",
+                      ),
                     ],
                   ),
                 ),
@@ -65,20 +70,20 @@ class SettingsScreenState extends State<SettingsScreen> {
 }
 
 Future<void> addGenre(BuildContext context) async {
-  final _genreController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final genreController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   await showDialog(
     context: context,
     builder: (_) => AlertDialog(
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           spacing: 20,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("Add new genre", style: CardStyles.cardTitleStyle),
             TextFormField(
-              controller: _genreController,
+              controller: genreController,
               decoration: InputDecoration(labelText: "Enter new genre"),
               validator: (value) => Validator.emptyValidator(value),
             ),
@@ -93,8 +98,13 @@ Future<void> addGenre(BuildContext context) async {
         ),
         MyButton.primaryButton(
           method: () {
-            context.read<GenreProvider>().addGenre(_genreController.text);
-            Navigator.pop(context);
+            try {
+              context.read<GenreProvider>().addGenre(genreController.text);
+            } catch (_) {
+              showAlertMessage(message: "Error adding genre", context: context);
+            } finally {
+              Navigator.pop(context);
+            }
           },
           text: "Add",
           fontSize: 12,
@@ -134,11 +144,19 @@ Future<void> editGenre(BuildContext context, String genre) async {
         ),
         MyButton.primaryButton(
           method: () {
-            context.read<GenreProvider>().editGenre(
-              genre,
-              genreController.text.trim(),
-            );
-            Navigator.pop(context);
+            try {
+              context.read<GenreProvider>().editGenre(
+                genre,
+                genreController.text.trim(),
+              );
+            } catch (e) {
+              showAlertMessage(
+                message: "Error editing genre",
+                context: context,
+              );
+            } finally {
+              Navigator.pop(context);
+            }
           },
           text: "Edit",
           fontSize: 12,
@@ -148,8 +166,7 @@ Future<void> editGenre(BuildContext context, String genre) async {
   );
 }
 
-Future<void> deleteGenre(BuildContext context, String genre) async{
-
+Future<void> deleteGenre(BuildContext context, String genre) async {
   await showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -163,8 +180,16 @@ Future<void> deleteGenre(BuildContext context, String genre) async{
         ),
         MyButton.primaryButton(
           method: () {
-            context.read<GenreProvider>().deleteGenre(genre);
-            Navigator.pop(context);
+            try {
+              context.read<GenreProvider>().deleteGenre(genre);
+            } catch (e) {
+              showAlertMessage(
+                message: "Error deleting genre",
+                context: context,
+              );
+            } finally {
+              Navigator.pop(context);
+            }
           },
           text: "Yes",
           fontSize: 12,
@@ -174,7 +199,11 @@ Future<void> deleteGenre(BuildContext context, String genre) async{
   );
 }
 
-Widget createWidgets({required List<String> items, required BuildContext context,required String field}){
+Widget createWidgets({
+  required List<String> items,
+  required BuildContext context,
+  required String field,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     spacing: 10,
@@ -183,12 +212,9 @@ Widget createWidgets({required List<String> items, required BuildContext context
       Container(
         height: 150,
         decoration: BoxDecoration(
-            color: MyColors.bgColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-                width: 2,
-                color: MyColors.lightGrey
-            )
+          color: MyColors.bgColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 2, color: MyColors.lightGrey),
         ),
         child: ListView.builder(
           itemBuilder: (ctx, index) => Card(
@@ -199,11 +225,15 @@ Widget createWidgets({required List<String> items, required BuildContext context
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton(
-                    onPressed: () =>
-                        editGenre(context, items[index]),
-                    child: Icon(Icons.create_outlined),
+                    onPressed: () => editGenre(context, items[index]),
+                    child: Icon(
+                      Icons.create_outlined,
+                      color: MyColors.primaryColor,
+                    ),
                   ),
-                  MyButton.deleteButton(method: ()=>deleteGenre(context, items[index])),
+                  MyButton.deleteButton(
+                    method: () => deleteGenre(context, items[index]),
+                  ),
                 ],
               ),
             ),

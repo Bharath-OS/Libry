@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:libry/provider/genre_provider.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
@@ -32,6 +33,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
   late final TextEditingController _imageController;
   File? _selectedImage;
   bool _isPickingImage = false;
+  late List<String> genres;
+  late String currentValue;
+  late List<DropdownMenuItem> items;
+
 
   @override
   void initState() {
@@ -98,7 +103,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         year: controllers[3].text.trim(),
         publisher: controllers[4].text.trim(),
         pages: int.parse(controllers[5].text),
-        genre: controllers[6].text.trim(),
+        genre: currentValue,
         totalCopies: int.parse(controllers[7].text),
         copiesAvailable: int.parse(controllers[8].text),
         coverPicture: imagePath ?? '', // Empty will use default
@@ -129,6 +134,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
       fontSize: 16,
       fontWeight: FontWeight.w600,
     );
+
+    genres = context.watch<GenreProvider>().getGenre;
+    items = genres.map((genre)=>DropdownMenuItem(value: genre,child: Text(genre),)).toList();
 
     return LayoutWidgets.customScaffold(
       body: SafeArea(
@@ -182,11 +190,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[6],
-              label: "Genre",
-              validator: (value) => Validator.emptyValidator(value),
-            ),
+            DropdownButton(items: items, onChanged: (value)=>setState(()=>currentValue = value)),
             _buildTextField(
               controller: controllers[7],
               label: "Total copies",

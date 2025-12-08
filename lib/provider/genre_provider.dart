@@ -1,22 +1,32 @@
+import '../database/genre_db.dart';
 import 'package:flutter/material.dart';
 
-import '../database/genre_db.dart';
+class GenreProvider extends ChangeNotifier {
+  List<String> _genres = [];
 
-class GenreProvider extends ChangeNotifier{
+  List<String> get getGenre => List.from(_genres);
 
-  List<String> get getGenre => GenreDB.getGenre();
-  void addGenre(String genre){
+  GenreProvider() {
+    _loadGenres();
+  }
+
+  Future<void> _loadGenres() async {
+    _genres = await GenreDB.getGenre();
+    notifyListeners();
+  }
+
+  Future<void> addGenre(String genre) async {
     GenreDB.addGenre(genre);
-    notifyListeners();
+    await _loadGenres();
   }
 
-  void deleteGenre(String genre){
+  Future<void> deleteGenre(String genre) async {
     GenreDB.deleteGenre(genre);
-    notifyListeners();
+    await _loadGenres();
   }
 
-  void editGenre(String oldGenre, newGenre){
-    GenreDB.editGenre(oldGenre,newGenre);
-    notifyListeners();
+  Future<void> editGenre(String oldGenre, String newGenre) async {
+    GenreDB.editGenre(oldGenre, newGenre);
+    await _loadGenres();
   }
 }

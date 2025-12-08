@@ -6,16 +6,16 @@ late Box genreBox;
 //todo rework on the genre methods
 class GenreDB{
   static List<String> getGenre(){
-    return genreBox.values.toList() as List<String>;
+    return genreBox.values.toList().cast<String>();
   }
 
-  static void addGenre(String newGenre){
+  static void addGenre(String newGenre) {
     genreBox.add(newGenre);
   }
 
   static int? getIndex(String searchKey){
     int index = 0;
-    List<String> genres = getGenre();
+    List<String> genres = genreBox.values.toList().cast<String>();
     index = genres.indexOf(searchKey);
     return index != -1? genres.indexOf(searchKey) : null;
   }
@@ -26,18 +26,17 @@ class GenreDB{
       genreBox.deleteAt(index);
     }
     else{
-      print("Element not found");
+      throw Exception("Genre $genre is not found");
     }
   }
 
   static void editGenre(String oldGenre, String newGenre){
     int? index = getIndex(oldGenre);
-    print("genre index : $index");
     if(index != null){
       genreBox.putAt(index, newGenre);
     }
     else{
-      print("Error editing value");
+      throw Exception("Genre $oldGenre not found");
     }
   }
 }
