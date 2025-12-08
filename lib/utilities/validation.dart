@@ -107,4 +107,14 @@ class Validator {
     }
     return null;
   }
+
+  String? genreValidator(String? value, List<String> existingGenres) {
+    if (value == null || value.isEmpty) {
+      return 'Genre is required';
+    }
+    if (existingGenres.contains(value.trim())) {
+      return 'Genre already exists';
+    }
+    return null;
+  }
 }
