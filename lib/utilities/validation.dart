@@ -108,7 +108,7 @@ class Validator {
     return null;
   }
 
-  String? genreValidator(String? value, List<String> existingGenres) {
+  static String? genreValidator(String? value, List<String> existingGenres) {
     if (value == null || value.isEmpty) {
       return 'Genre is required';
     }

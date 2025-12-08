@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:libry/database/genre_db.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/provider/genre_provider.dart';
+import 'package:libry/provider/language_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'Screens/splash.dart';
 import 'Themes/styles.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'database/language_db.dart';
 import 'models/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,7 @@ void main() async{
   // Initialize Hive
   await Hive.initFlutter();
   genreBox = await Hive.openBox<String>('genre');
+  languageBox = await Hive.openBox<String>('language');
 
   Hive.registerAdapter(UserAdapter());
   userDataBoxNew = await Hive.openBox<User>('users');
@@ -25,6 +28,7 @@ void main() async{
   runApp(MultiProvider(providers:[
     ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
     ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
+    ChangeNotifierProvider<LanguageProvider>(create: (_) => LanguageProvider()),
     ChangeNotifierProvider<MembersProvider>(create: (context)=>MembersProvider())
   ],child: LibryApp()));
 }

@@ -10,23 +10,23 @@ class GenreProvider extends ChangeNotifier {
     _loadGenres();
   }
 
-  Future<void> _loadGenres() async {
-    _genres = await GenreDB.getGenre();
+  void _loadGenres()  {
+    _genres =  GenreDB.getGenre();
     notifyListeners();
   }
 
-  Future<void> addGenre(String genre) async {
+  void addGenre(String genre)  {
     GenreDB.addGenre(genre);
-    await _loadGenres();
+     _loadGenres();
   }
 
-  Future<void> deleteGenre(String genre) async {
+  void deleteGenre(String genre)  {
     GenreDB.deleteGenre(genre);
-    await _loadGenres();
+     _loadGenres();
   }
 
-  Future<void> editGenre(String oldGenre, String newGenre) async {
+  void editGenre(String oldGenre, String newGenre)  {
     GenreDB.editGenre(oldGenre, newGenre);
-    await _loadGenres();
+     _loadGenres();
   }
 }
