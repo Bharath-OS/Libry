@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import '../../models/members_model.dart';
 import '../../widgets/buttons.dart';
@@ -7,6 +8,7 @@ class MemberDetailsScreen extends StatelessWidget {
   final Members memberDetails;
 
   const MemberDetailsScreen({super.key, required this.memberDetails});
+  final String dateFormatString = 'd/m/y';
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class MemberDetailsScreen extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: "Joined at ${member.joined}",
+            text: "Joined at ${dateFormat(date:member.joined,format: dateFormatString)}",
             style: const TextStyle(
               fontSize: 16,
               fontFamily: "Livvic",
@@ -80,7 +82,7 @@ class MemberDetailsScreen extends StatelessWidget {
           TextSpan(text: "\nTotal borrowed : ${member.totalBorrow}"),
           TextSpan(text: "\nCurrently borrowed : ${member.currentlyBorrow}/5"),
           TextSpan(text: "\nFines owed : ${member.fine}\$"),
-          TextSpan(text: "\nValidity : Till ${member.expiry}"),
+          TextSpan(text: "\nValidity till : ${dateFormat(date:member.expiry,format: dateFormatString)}"),
         ],
       ),
     );
