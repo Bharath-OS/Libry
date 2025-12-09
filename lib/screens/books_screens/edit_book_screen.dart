@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
 import '../../provider/genre_provider.dart';
 import '../../provider/language_provider.dart';
+import '../../utilities/image_services.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
@@ -24,7 +26,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
   late Books _book;
-  String? _newImage;
+  String? _temporaryImage;
   bool _isPickingImage = false;
   String? _selectedGenre;
   String? _selectedLanguage;
@@ -48,17 +50,15 @@ class _EditBookScreenState extends State<EditBookScreen> {
     controllers[8].text = _book.copiesAvailable.toString();
 
     // Set image text
-    if (_book.coverPicture.isNotEmpty) {
+    if (_book.coverPicture.isNotEmpty &&
+        ImageService.isValidImagePath(_book.coverPicture)) {
       _imageController.text = 'Current cover image';
     }
   }
 
   @override
   void dispose() {
-    // Delete new image if user cancels
-    if (_newImage != null && _newImage!.existsSync()) {
-      _newImage!.delete();
-    }
+    ImageService.cleanupTemporaryImage();
     for (var controller in controllers) {
       controller.dispose();
     }
@@ -70,23 +70,16 @@ class _EditBookScreenState extends State<EditBookScreen> {
     setState(() => _isPickingImage = true);
 
     try {
-      final imagePicker = ImagePicker();
-      final pickedFile = await imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
+      final tempPath = await ImageService.pickAndSaveTemporaryImage();
 
-      if (pickedFile != null) {
+      if (tempPath != null) {
         setState(() {
-          _newImage = File(pickedFile.path);
+          _temporaryImage = tempPath;
           _imageController.text = 'New image selected';
         });
       }
     } catch (e) {
-      print('Error picking image: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to pick image')));
+      showAlertMessage(message: "Falied to pick Image", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -94,21 +87,28 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   void _clearImage() {
     setState(() {
-      _newImage = null;
+      _temporaryImage = null;
       if (_book.coverPicture.isNotEmpty) {
         _imageController.text = 'Current cover image';
       } else {
         _imageController.clear();
       }
     });
+    ImageService.cleanupTemporaryImage();
   }
 
-  void _saveBook() {
+  void _saveBook() async{
     if (_formKey.currentState!.validate()) {
       // Use new image if selected, otherwise keep original
       String imagePath = _book.coverPicture;
-      if (_newImage != null && _newImage!.existsSync()) {
-        imagePath = _newImage!.path;
+      if (_temporaryImage != null) {
+        final permanentPath = await ImageService.makeImagePermanent(_temporaryImage);
+        if(permanentPath != null){
+          if(_book.coverPicture.isNotEmpty && !_book.coverPicture.startsWith('assets/') && await ImageService.checkImage(_book.coverPicture)){
+            await ImageService.deletePermanentImage(_book.coverPicture);
+          }
+          imagePath = permanentPath;
+        }
       }
 
       final updatedBook = Books(
@@ -135,9 +135,10 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   void _cancel() {
     // Delete new image if user cancels
-    if (_newImage != null && _newImage!.existsSync()) {
-      _newImage!.delete();
-    }
+    // if (_temporaryImage != null && _temporaryImage!.existsSync()) {
+    //   _temporaryImage!.delete();
+    // }
+    ImageService.cleanupTemporaryImage();
     Navigator.pop(context);
   }
 
@@ -375,7 +376,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (_newImage != null)
+                      if (_temporaryImage != null)
                         IconButton(
                           onPressed: _clearImage,
                           icon: Icon(Icons.clear, color: Colors.red),
@@ -393,9 +394,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
         ),
 
         // Show either new image preview or current image path
-        if (_newImage != null)
-          _buildImagePreview(_newImage!)
-        else if (_book.coverPicture.isNotEmpty)
+        if (_temporaryImage != null)
+          _buildImagePreview(_temporaryImage!)
+        else if (_book.coverPicture.isNotEmpty && ImageService.isValidImagePath(_book.coverPicture))
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
@@ -407,7 +408,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     );
   }
 
-  Widget _buildImagePreview(File imageFile) {
+  Widget _buildImagePreview(String imagePath) {
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Center(
@@ -421,7 +422,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.file(
-              imageFile,
+              File(imagePath),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
