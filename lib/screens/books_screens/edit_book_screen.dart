@@ -108,6 +108,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
             await ImageService.deletePermanentImage(_book.coverPicture);
           }
           imagePath = permanentPath;
+          _temporaryImage = null;
         }
       }
 
@@ -134,11 +135,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
   }
 
   void _cancel() {
-    // Delete new image if user cancels
-    // if (_temporaryImage != null && _temporaryImage!.existsSync()) {
-    //   _temporaryImage!.delete();
-    // }
     ImageService.cleanupTemporaryImage();
+    _temporaryImage = null;
     Navigator.pop(context);
   }
 
