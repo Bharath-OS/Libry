@@ -24,7 +24,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
   late Books _book;
-  File? _newImage;
+  String? _newImage;
   bool _isPickingImage = false;
   String? _selectedGenre;
   String? _selectedLanguage;

@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:libry/provider/genre_provider.dart';
+import 'package:libry/utilities/image_services.dart';
 import 'package:provider/provider.dart';
+import '../../Themes/styles.dart';
+import '../../Widgets/buttons.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
@@ -10,16 +13,7 @@ import '../../provider/language_provider.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
-import '../../models/books_model.dart';
-import '../../provider/book_provider.dart';
-import '../../utilities/validation.dart';
 import '../../widgets/alert_dialogue.dart';
-import '../../widgets/forms.dart';
-import '../../widgets/layout_widgets.dart';
 import '../settings.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -88,7 +82,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     });
   }
 
-  void _submitForm() {
+  void _submitForm() async{
     if (_formKey.currentState!.validate()) {
       if (_selectedGenre == null || _selectedGenre!.isEmpty) {
         showAlertMessage(message: "Please select a genre", context: context);
@@ -100,7 +94,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
       }
       String? imagePath;
       if (_selectedImage != null && _selectedImage!.existsSync()) {
-        imagePath = _selectedImage!.path;
+        String path = _selectedImage!.path;
+        imagePath = await ImageService.makeImagePermanent(path);
       }
 
       final book = Books(
@@ -146,32 +141,40 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
     if (genres.isEmpty || languages.isEmpty) {
       return LayoutWidgets.customScaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                genres.isEmpty && languages.isEmpty
-                    ? "Genre and Language are not available"
-                    : genres.isEmpty
-                    ? "No genres available"
-                    : "No languages available",
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: MyColors.bgColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    genres.isEmpty && languages.isEmpty
+                        ? "Genre and Language are not available"
+                        : genres.isEmpty
+                        ? "No genres available"
+                        : "No languages available",
+                    style: CardStyles.cardTitleStyle,
+                  ),
+                  SizedBox(height: 20),
+                  MyButton.primaryButton(
+                    method: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SettingsScreen()),
+                    ),
+                    text: genres.isEmpty && languages.isEmpty
+                        ? "Add Genres and Languages First"
+                        : genres.isEmpty
+                        ? "Add Genres First"
+                        : "Add Languages First",
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => SettingsScreen()),
-                ),
-                child: Text(
-                  genres.isEmpty && languages.isEmpty
-                      ? "Add Genres and Languages First"
-                      : genres.isEmpty
-                      ? "Add Genres First"
-                      : "Add Languages First",
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       );

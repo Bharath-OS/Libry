@@ -24,7 +24,6 @@ void main() async{
   userDataBoxNew = await Hive.openBox<User>('users');
   statusBox = await Hive.openBox("status");
 
-  // Run the app
   runApp(MultiProvider(providers:[
     ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
     ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
