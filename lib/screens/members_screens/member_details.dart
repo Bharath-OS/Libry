@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libry/utilities/helpers.dart';
+import 'package:libry/utilities/helpers/date_formater.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import '../../models/members_model.dart';
 import '../../widgets/buttons.dart';
@@ -8,6 +8,7 @@ class MemberDetailsScreen extends StatelessWidget {
   final Members memberDetails;
 
   const MemberDetailsScreen({super.key, required this.memberDetails});
+  final String dateFormatString = 'd/m/y';
 
   @override
   Widget build(BuildContext context) {

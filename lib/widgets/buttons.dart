@@ -16,6 +16,7 @@ class MyButton {
   static Widget primaryButton({
     required VoidCallback method,
     required String text,
+    double? fontSize = 20
   }) {
     return ElevatedButton(
       onPressed: method,
@@ -31,7 +32,7 @@ class MyButton {
         text,
         style: TextStyle(
           fontFamily: "Livvic",
-          fontSize: 20,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -41,6 +42,7 @@ class MyButton {
   static Widget secondaryButton({
     required VoidCallback method,
     required String text,
+    double fontSize = 20
   }) {
     return ElevatedButton(
       onPressed: method,
@@ -56,7 +58,7 @@ class MyButton {
         text,
         style: TextStyle(
           fontFamily: "Livvic",
-          fontSize: 20,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),

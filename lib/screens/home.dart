@@ -3,8 +3,8 @@ import 'package:libry/Themes/styles.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
+import 'package:libry/utilities/helpers/date_formater.dart';
 import 'package:libry/widgets/layout_widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../database/userdata.dart';
@@ -20,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late DateTime time;
   late String greeting;
-  var formatter = DateFormat('EEEE d, MMM y');
   final _actionSectionBG = MyColors.bgColor;
 
   @override
@@ -63,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Widget _buildHeaderSection() {
-    String formattedDate = formatter.format(time);
+    String formattedDate = dateFormat(date: time);
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

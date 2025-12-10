@@ -1,9 +1,12 @@
-import 'dart:io';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:libry/widgets/dialogs.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+
+import '../models/books_model.dart';
+import '../provider/book_provider.dart';
+import 'helpers/snackBar_helpers.dart';
 
 spacing({required double height}) {
   return SizedBox(height: height);
@@ -22,24 +25,33 @@ PageTransition transition({required Widget child}){
     duration: Duration(milliseconds: 300),
   );
 }
-Future<String?> pickAndSaveImage() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-  if (image != null) {
-    // Get app documents directory
-    final appDir = await getApplicationDocumentsDirectory();
-    final fileName = 'book_cover_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final savedImage = File('${appDir.path}/$fileName');
 
-    // Copy the image to app directory
-    await savedImage.writeAsBytes(await image.readAsBytes());
-
-    return savedImage.path; // This path will persist
-  }
-  return null;
-}
-
-String formatDate(DateTime date){
-  return "${date.day}/${date.month}/${date.year}";
+void deleteBook({required BuildContext context, required Books bookDetails, inDetailsScreen=true}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Delete Book"),
+      content: const Text("Are you sure you want to delete this book?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            // 🔥 Use the actual book ID, not index 0
+            context.read<BookProvider>().removeBook(bookDetails.id!);
+            Navigator.pop(context); // Close dialog
+            inDetailsScreen ? Navigator.pop(context) : null; // Go back to books list
+            AppDialogs.showSnackBar(
+              message: "${bookDetails.title} deleted successfully",
+              context: context,
+            );
+          },
+          child: const Text("Delete"),
+        ),
+      ],
+    ),
+  );
 }

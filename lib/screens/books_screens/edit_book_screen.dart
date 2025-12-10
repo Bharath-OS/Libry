@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
+import '../../provider/genre_provider.dart';
+import '../../provider/language_provider.dart';
+import '../../utilities/image_services.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
+import '../../widgets/dialogs.dart';
 import '../../widgets/layout_widgets.dart';
 
 class EditBookScreen extends StatefulWidget {
@@ -22,8 +25,10 @@ class _EditBookScreenState extends State<EditBookScreen> {
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
   late Books _book;
-  File? _newImage;
+  String? _temporaryImage;
   bool _isPickingImage = false;
+  String? _selectedGenre;
+  String? _selectedLanguage;
 
   @override
   void initState() {
@@ -35,26 +40,24 @@ class _EditBookScreenState extends State<EditBookScreen> {
     // Initialize form
     controllers[0].text = _book.title;
     controllers[1].text = _book.author;
-    controllers[2].text = _book.language;
+    _selectedLanguage = _book.language;
     controllers[3].text = _book.year;
     controllers[4].text = _book.publisher;
     controllers[5].text = _book.pages.toString();
-    controllers[6].text = _book.genre;
+    _selectedGenre = _book.genre;
     controllers[7].text = _book.totalCopies.toString();
     controllers[8].text = _book.copiesAvailable.toString();
 
     // Set image text
-    if (_book.coverPicture.isNotEmpty) {
+    if (_book.coverPicture.isNotEmpty &&
+        ImageService.isValidImagePath(_book.coverPicture)) {
       _imageController.text = 'Current cover image';
     }
   }
 
   @override
   void dispose() {
-    // Delete new image if user cancels
-    if (_newImage != null && _newImage!.existsSync()) {
-      _newImage!.delete();
-    }
+    ImageService.cleanupTemporaryImage();
     for (var controller in controllers) {
       controller.dispose();
     }
@@ -66,23 +69,16 @@ class _EditBookScreenState extends State<EditBookScreen> {
     setState(() => _isPickingImage = true);
 
     try {
-      final imagePicker = ImagePicker();
-      final pickedFile = await imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
+      final tempPath = await ImageService.pickAndSaveTemporaryImage();
 
-      if (pickedFile != null) {
+      if (tempPath != null) {
         setState(() {
-          _newImage = File(pickedFile.path);
+          _temporaryImage = tempPath;
           _imageController.text = 'New image selected';
         });
       }
     } catch (e) {
-      print('Error picking image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image')),
-      );
+      AppDialogs.showSnackBar(message: "Falied to pick Image", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -90,32 +86,40 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   void _clearImage() {
     setState(() {
-      _newImage = null;
+      _temporaryImage = null;
       if (_book.coverPicture.isNotEmpty) {
         _imageController.text = 'Current cover image';
       } else {
         _imageController.clear();
       }
     });
+    ImageService.cleanupTemporaryImage();
   }
 
-  void _saveBook() {
+  void _saveBook() async{
     if (_formKey.currentState!.validate()) {
       // Use new image if selected, otherwise keep original
       String imagePath = _book.coverPicture;
-      if (_newImage != null && _newImage!.existsSync()) {
-        imagePath = _newImage!.path;
+      if (_temporaryImage != null) {
+        final permanentPath = await ImageService.makeImagePermanent(_temporaryImage);
+        if(permanentPath != null){
+          if(_book.coverPicture.isNotEmpty && !_book.coverPicture.startsWith('assets/') && await ImageService.checkImage(_book.coverPicture)){
+            await ImageService.deletePermanentImage(_book.coverPicture);
+          }
+          imagePath = permanentPath;
+          _temporaryImage = null;
+        }
       }
 
       final updatedBook = Books(
         id: _book.id,
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
-        language: controllers[2].text.trim(),
+        language: _selectedLanguage!,
         year: controllers[3].text.trim(),
         publisher: controllers[4].text.trim(),
         pages: int.parse(controllers[5].text),
-        genre: controllers[6].text.trim(),
+        genre: _selectedGenre!,
         totalCopies: int.parse(controllers[7].text),
         copiesAvailable: int.parse(controllers[8].text),
         coverPicture: imagePath,
@@ -123,17 +127,15 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
       context.read<BookProvider>().updateBook(updatedBook);
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Book updated successfully')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Book updated successfully')));
     }
   }
 
   void _cancel() {
-    // Delete new image if user cancels
-    if (_newImage != null && _newImage!.existsSync()) {
-      _newImage!.delete();
-    }
+    ImageService.cleanupTemporaryImage();
+    _temporaryImage = null;
     Navigator.pop(context);
   }
 
@@ -144,20 +146,27 @@ class _EditBookScreenState extends State<EditBookScreen> {
       fontSize: 16,
       fontWeight: FontWeight.w600,
     );
+    List<String> genres = context.watch<GenreProvider>().getGenre;
+    List<String> languages = context.watch<LanguageProvider>().getLanguages;
 
     return LayoutWidgets.customScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: FormWidgets.formContainer(
             title: "Edit Book",
-            formWidget: _editBookForm(context, textStyle),
+            formWidget: _editBookForm(context, textStyle, genres, languages),
           ),
         ),
       ),
     );
   }
 
-  Widget _editBookForm(BuildContext context, TextStyle textStyle) {
+  Widget _editBookForm(
+    BuildContext context,
+    TextStyle textStyle,
+    List<String> genres,
+    List<String> languages,
+  ) {
     return SizedBox(
       width: double.infinity,
       child: Form(
@@ -174,10 +183,36 @@ class _EditBookScreenState extends State<EditBookScreen> {
               label: "Author name",
               validator: (value) => Validator.emptyValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[2],
-              label: "Language",
-              validator: (value) => Validator.emptyValidator(value),
+            //Language dropdown
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: "Language",
+                  labelStyle: textStyle.copyWith(fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedLanguage,
+                    isExpanded: true,
+                    style: textStyle,
+                    items: languages.map((String language) {
+                      return DropdownMenuItem<String>(
+                        value: language,
+                        child: Text(language),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedLanguage = newValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
             _buildTextField(
               controller: controllers[3],
@@ -195,10 +230,36 @@ class _EditBookScreenState extends State<EditBookScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[6],
-              label: "Genre",
-              validator: (value) => Validator.emptyValidator(value),
+            //genre dropdown
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: "Genre",
+                  labelStyle: textStyle.copyWith(fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedGenre,
+                    isExpanded: true,
+                    style: textStyle,
+                    items: genres.map((String genre) {
+                      return DropdownMenuItem<String>(
+                        value: genre,
+                        child: Text(genre),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedGenre = newValue;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
             _buildTextField(
               controller: controllers[7],
@@ -210,7 +271,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
               controller: controllers[8],
               label: "Available copies",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.copiesValidator(value, controllers[7].text),
+              validator: (value) =>
+                  Validator.copiesValidator(value, controllers[7].text),
             ),
 
             const SizedBox(height: 20),
@@ -275,9 +337,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: textStyle.copyWith(fontSize: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         ),
         validator: validator,
       ),
@@ -288,10 +348,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Cover Image",
-          style: textStyle.copyWith(fontSize: 14),
-        ),
+        Text("Cover Image", style: textStyle.copyWith(fontSize: 14)),
         const SizedBox(height: 8),
 
         // Image Picker Field
@@ -302,41 +359,41 @@ class _EditBookScreenState extends State<EditBookScreen> {
           decoration: InputDecoration(
             hintText: "Tap to change cover image",
             hintStyle: textStyle.copyWith(color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(MyColors.primaryButtonColor),
-              ),
-            )
+                    padding: const EdgeInsets.all(12),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        MyColors.primaryButtonColor,
+                      ),
+                    ),
+                  )
                 : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_newImage != null)
-                  IconButton(
-                    onPressed: _clearImage,
-                    icon: Icon(Icons.clear, color: Colors.red),
-                    tooltip: 'Remove new image',
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_temporaryImage != null)
+                        IconButton(
+                          onPressed: _clearImage,
+                          icon: Icon(Icons.clear, color: Colors.red),
+                          tooltip: 'Remove new image',
+                        ),
+                      IconButton(
+                        onPressed: _pickImage,
+                        icon: Icon(Icons.photo_library),
+                        tooltip: 'Pick from gallery',
+                      ),
+                    ],
                   ),
-                IconButton(
-                  onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library),
-                  tooltip: 'Pick from gallery',
-                ),
-              ],
-            ),
           ),
           onTap: _isPickingImage ? null : _pickImage,
         ),
 
         // Show either new image preview or current image path
-        if (_newImage != null)
-          _buildImagePreview(_newImage!)
-        else if (_book.coverPicture.isNotEmpty)
+        if (_temporaryImage != null)
+          _buildImagePreview(_temporaryImage!)
+        else if (_book.coverPicture.isNotEmpty && ImageService.isValidImagePath(_book.coverPicture))
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
@@ -348,7 +405,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     );
   }
 
-  Widget _buildImagePreview(File imageFile) {
+  Widget _buildImagePreview(String imagePath) {
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Center(
@@ -362,7 +419,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.file(
-              imageFile,
+              File(imagePath),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
