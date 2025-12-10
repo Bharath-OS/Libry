@@ -64,7 +64,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: FormWidgets.formContainer(
-              title: "Add Book",
+              title: "Add Member",
               formWidget: _addMemberForm(context),
             ),
           ),
@@ -83,28 +83,28 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
             controller: controllers[0],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Full Name', labelStyle: TextFieldStyle.inputTextStyle),
-            validator: (value)=>Validator.emptyValidator(value),
+            validator: (value)=>Validator.emptyValidator(value)
           ),
           TextFormField(
             controller: controllers[1],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Email'),
             keyboardType: TextInputType.emailAddress,
-            validator: (email)=>Validator.emailValidator(email),
+            validator: (email)=>Validator.emailValidator(email)
           ),
           TextFormField(
             controller: controllers[2],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Phone'),
             keyboardType: TextInputType.phone,
-            validator: (phone)=>Validator.phoneValidator(phone),
+            validator: (phone)=>Validator.phoneValidator(phone)
           ),
           TextFormField(
             controller: controllers[3],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Address'),
             maxLines: 3,
-            validator: (value)=>Validator.emptyValidator(value),
+            validator: (value)=>Validator.emptyValidator(value)
           ),
           SizedBox(height: 20),
           Row(
