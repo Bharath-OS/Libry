@@ -26,7 +26,7 @@ class MembersScreen extends StatelessWidget {
       onTap: (member) => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => MemberDetailsScreen(memberDetails: member),
+          builder: (context) => MemberDetailsScreen(memberId: member.id!),
         ),
       ),
       fabMethod: (){Navigator.push(context, transition(child: AddMembersScreen()));},

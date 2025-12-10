@@ -34,7 +34,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   @override
   void initState() {
     super.initState();
-    controllers = List.generate(9, (_) => TextEditingController());
+    controllers = List.generate(8, (_) => TextEditingController()); // Changed from 9 to 8
     _imageController = TextEditingController();
   }
 
@@ -91,6 +91,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
         _temporaryImage = null;
       }
 
+      final totalCopies = int.parse(controllers[7].text);
+
       final book = Books(
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
@@ -99,8 +101,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
         publisher: controllers[4].text.trim(),
         pages: int.parse(controllers[5].text),
         genre: _selectedGenre!,
-        totalCopies: int.parse(controllers[7].text),
-        copiesAvailable: int.parse(controllers[8].text),
+        totalCopies: totalCopies,
+        copiesAvailable: totalCopies, // Set to same as totalCopies
         coverPicture: imagePath ?? 'assets/images/dummy_book_cover.png',
       );
 
@@ -115,7 +117,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
   }
 
   void _cancel() {
-    // Delete the temporary image file if it exists
     ImageService.cleanupTemporaryImage();
     _temporaryImage = null;
     Navigator.pop(context);
@@ -188,11 +189,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
   }
 
   Widget _addBookForm(
-    BuildContext context,
-    TextStyle textStyle,
-    List<String> genres,
-    List<String> languages,
-  ) {
+      BuildContext context,
+      TextStyle textStyle,
+      List<String> genres,
+      List<String> languages,
+      ) {
     return SizedBox(
       width: double.infinity,
       child: Form(
@@ -223,6 +224,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+                    dropdownColor: MyColors.darkGrey,
                     value: _selectedLanguage,
                     isExpanded: true,
                     style: textStyle,
@@ -271,6 +273,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+                    dropdownColor: MyColors.darkGrey,
                     value: _selectedGenre,
                     isExpanded: true,
                     style: textStyle,
@@ -295,13 +298,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
-            _buildTextField(
-              controller: controllers[8],
-              label: "Copies available",
-              keyboardType: TextInputType.number,
-              validator: (value) =>
-                  Validator.copiesValidator(value, controllers[7].text),
-            ),
+            // REMOVED: Copies available field - it will be set automatically
 
             const SizedBox(height: 20),
 
@@ -390,30 +387,30 @@ class _AddBookScreenState extends State<AddBookScreen> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        MyColors.primaryButtonColor,
-                      ),
-                    ),
-                  )
+              padding: const EdgeInsets.all(12),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  MyColors.primaryButtonColor,
+                ),
+              ),
+            )
                 : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_temporaryImage != null)
-                        IconButton(
-                          onPressed: _clearImage,
-                          icon: Icon(Icons.clear, color: Colors.red),
-                          tooltip: 'Remove image',
-                        ),
-                      IconButton(
-                        onPressed: _pickImage,
-                        icon: Icon(Icons.photo_library),
-                        tooltip: 'Pick from gallery',
-                      ),
-                    ],
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_temporaryImage != null)
+                  IconButton(
+                    onPressed: _clearImage,
+                    icon: Icon(Icons.clear, color: Colors.red),
+                    tooltip: 'Remove image',
                   ),
+                IconButton(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.photo_library),
+                  tooltip: 'Pick from gallery',
+                ),
+              ],
+            ),
           ),
           onTap: _isPickingImage ? null : _pickImage,
         ),

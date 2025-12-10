@@ -748,6 +748,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
+        backgroundColor: MyColors.darkGrey,
         title: Row(
           children: [
             Icon(Icons.check_circle, color: MyColors.successColor),

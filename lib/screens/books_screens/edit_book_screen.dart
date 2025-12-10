@@ -30,12 +30,20 @@ class _EditBookScreenState extends State<EditBookScreen> {
   String? _selectedGenre;
   String? _selectedLanguage;
 
+  // Track original values
+  late int _originalTotalCopies;
+  late int _originalCopiesAvailable;
+
   @override
   void initState() {
     super.initState();
     _book = widget.book;
-    controllers = List.generate(9, (_) => TextEditingController());
+    controllers = List.generate(8, (_) => TextEditingController()); // Changed from 9 to 8
     _imageController = TextEditingController();
+
+    // Store original values
+    _originalTotalCopies = _book.totalCopies;
+    _originalCopiesAvailable = _book.copiesAvailable;
 
     // Initialize form
     controllers[0].text = _book.title;
@@ -46,7 +54,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     controllers[5].text = _book.pages.toString();
     _selectedGenre = _book.genre;
     controllers[7].text = _book.totalCopies.toString();
-    controllers[8].text = _book.copiesAvailable.toString();
+    // REMOVED: controllers[8] for copiesAvailable
 
     // Set image text
     if (_book.coverPicture.isNotEmpty &&
@@ -78,7 +86,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
         });
       }
     } catch (e) {
-      AppDialogs.showSnackBar(message: "Falied to pick Image", context: context);
+      AppDialogs.showSnackBar(message: "Failed to pick Image", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -98,6 +106,23 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   void _saveBook() async{
     if (_formKey.currentState!.validate()) {
+      final newTotalCopies = int.parse(controllers[7].text);
+
+      // Calculate how many copies are currently borrowed
+      final currentlyBorrowed = _originalTotalCopies - _originalCopiesAvailable;
+
+      // Calculate new available copies
+      final newCopiesAvailable = newTotalCopies - currentlyBorrowed;
+
+      // Validate that new total isn't less than borrowed
+      if (newCopiesAvailable < 0) {
+        AppDialogs.showSnackBar(
+          message: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
+          context: context,
+        );
+        return;
+      }
+
       // Use new image if selected, otherwise keep original
       String imagePath = _book.coverPicture;
       if (_temporaryImage != null) {
@@ -120,8 +145,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
         publisher: controllers[4].text.trim(),
         pages: int.parse(controllers[5].text),
         genre: _selectedGenre!,
-        totalCopies: int.parse(controllers[7].text),
-        copiesAvailable: int.parse(controllers[8].text),
+        totalCopies: newTotalCopies,
+        copiesAvailable: newCopiesAvailable, // Calculated automatically
         coverPicture: imagePath,
       );
 
@@ -162,11 +187,13 @@ class _EditBookScreenState extends State<EditBookScreen> {
   }
 
   Widget _editBookForm(
-    BuildContext context,
-    TextStyle textStyle,
-    List<String> genres,
-    List<String> languages,
-  ) {
+      BuildContext context,
+      TextStyle textStyle,
+      List<String> genres,
+      List<String> languages,
+      ) {
+    final currentlyBorrowed = _originalTotalCopies - _originalCopiesAvailable;
+
     return SizedBox(
       width: double.infinity,
       child: Form(
@@ -265,15 +292,46 @@ class _EditBookScreenState extends State<EditBookScreen> {
               controller: controllers[7],
               label: "Total copies",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value),
+              validator: (value) {
+                final error = Validator.numberValidator(value);
+                if (error != null) return error;
+
+                final newTotal = int.tryParse(value ?? '0') ?? 0;
+                if (newTotal < currentlyBorrowed) {
+                  return "Total cannot be less than borrowed ($currentlyBorrowed)";
+                }
+                return null;
+              },
             ),
-            _buildTextField(
-              controller: controllers[8],
-              label: "Available copies",
-              keyboardType: TextInputType.number,
-              validator: (value) =>
-                  Validator.copiesValidator(value, controllers[7].text),
-            ),
+
+            // Show info about currently borrowed copies
+            if (currentlyBorrowed > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Currently borrowed: $currentlyBorrowed",
+                          style: textStyle.copyWith(
+                            fontSize: 12,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             const SizedBox(height: 20),
 
@@ -316,6 +374,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     );
   }
 
+  //isolate the _buildTextField widget.
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -362,30 +421,30 @@ class _EditBookScreenState extends State<EditBookScreen> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        MyColors.primaryButtonColor,
-                      ),
-                    ),
-                  )
+              padding: const EdgeInsets.all(12),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  MyColors.primaryButtonColor,
+                ),
+              ),
+            )
                 : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_temporaryImage != null)
-                        IconButton(
-                          onPressed: _clearImage,
-                          icon: Icon(Icons.clear, color: Colors.red),
-                          tooltip: 'Remove new image',
-                        ),
-                      IconButton(
-                        onPressed: _pickImage,
-                        icon: Icon(Icons.photo_library),
-                        tooltip: 'Pick from gallery',
-                      ),
-                    ],
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_temporaryImage != null)
+                  IconButton(
+                    onPressed: _clearImage,
+                    icon: Icon(Icons.clear, color: Colors.red),
+                    tooltip: 'Remove new image',
                   ),
+                IconButton(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.photo_library),
+                  tooltip: 'Pick from gallery',
+                ),
+              ],
+            ),
           ),
           onTap: _isPickingImage ? null : _pickImage,
         ),
