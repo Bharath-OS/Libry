@@ -12,7 +12,7 @@ import '../../provider/language_provider.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/layout_widgets.dart';
-import '../../widgets/alert_dialogue.dart';
+import '../../widgets/dialogs.dart';
 import '../settings.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         });
       }
     } catch (e) {
-      showAlertMessage(message: "Failed to pick an image.", context: context);
+      AppDialogs.showSnackBar(message: "Failed to pick an image.", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -78,11 +78,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void _submitForm() async{
     if (_formKey.currentState!.validate()) {
       if (_selectedGenre == null || _selectedGenre!.isEmpty) {
-        showAlertMessage(message: "Please select a genre", context: context);
+        AppDialogs.showSnackBar(message: "Please select a genre", context: context);
         return;
       }
       if (_selectedLanguage == null || _selectedLanguage!.isEmpty) {
-        showAlertMessage(message: "Please select a language", context: context);
+        AppDialogs.showSnackBar(message: "Please select a language", context: context);
         return;
       }
       String? imagePath;
@@ -107,7 +107,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
       context.read<BookProvider>().addBook(book);
 
       Navigator.pop(context);
-      showAlertMessage(
+      AppDialogs.showSnackBar(
         message: "${book.title} successfully added",
         context: context,
       );

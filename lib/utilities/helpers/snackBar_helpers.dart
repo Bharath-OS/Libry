@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../models/books_model.dart';
-import '../provider/book_provider.dart';
+import '../../models/books_model.dart';
+import '../../provider/book_provider.dart';
 
 void showPopUpScreen({
   required String title,
