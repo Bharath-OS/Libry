@@ -52,7 +52,7 @@ class MemberDetailsScreen extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: "Joined at ${formatDate(member.joined)}",
+            text: "Joined at ${dateFormat(date:member.joined)}",
             style: const TextStyle(
               fontSize: 16,
               fontFamily: "Livvic",
@@ -82,7 +82,7 @@ class MemberDetailsScreen extends StatelessWidget {
           TextSpan(text: "\nTotal borrowed : ${member.totalBorrow}"),
           TextSpan(text: "\nCurrently borrowed : ${member.currentlyBorrow}/5"),
           TextSpan(text: "\nFines owed : ${member.fine}\$"),
-          TextSpan(text: "\nValidity : Till ${formatDate(member.expiry)}"),
+          TextSpan(text: "\nValidity : Till ${dateFormat(date:member.expiry)}"),
         ],
       ),
     );

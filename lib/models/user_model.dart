@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-// import 'package:build_runner/build_runner.dart';
 
 part 'user_model.g.dart';
 @HiveType(typeId: 0)

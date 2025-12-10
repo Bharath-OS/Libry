@@ -17,7 +17,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context){
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(barTitle: "Book Transactions", context: context),
+      appBar: AppBar(title: Text("Book Transactions")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),

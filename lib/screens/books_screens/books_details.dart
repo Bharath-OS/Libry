@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:libry/screens/books_screens/edit_book_screen.dart';
+import 'package:libry/screens/transactions_screens/issue_screens/issue_history_screen.dart';
 import 'package:libry/utilities/helpers.dart';
 import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
@@ -179,7 +180,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         MyButton.secondaryButton(
           method: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BookHistoryScreen()),
+            MaterialPageRoute(builder: (context) => IssueHistoryScreen()),
           ),
           text: "View History",
         ),
