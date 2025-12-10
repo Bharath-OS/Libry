@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/provider/language_provider.dart';
-import 'package:libry/widgets/alert_dialogue.dart';
+import 'package:libry/widgets/dialogs.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -116,7 +116,7 @@ Future<void> addLanguage({
             try {
               context.read<LanguageProvider>().addLanguage(languageController.text);
             } catch (_) {
-              showAlertMessage(message: "Error adding language", context: context);
+              AppDialogs.showSnackBar(message: "Error adding language", context: context);
             } finally {
               Navigator.pop(context);
             }
@@ -164,7 +164,7 @@ Future<void> addGenre({
             try {
               context.read<GenreProvider>().addGenre(genreController.text);
             } catch (_) {
-              showAlertMessage(message: "Error adding genre", context: context);
+              AppDialogs.showSnackBar(message: "Error adding genre", context: context);
             } finally {
               Navigator.pop(context);
             }
@@ -213,7 +213,7 @@ Future<void> editLanguage(BuildContext context, String language) async {
                 languageController.text.trim(),
               );
             } catch (e) {
-              showAlertMessage(
+              AppDialogs.showSnackBar(
                 message: "Error editing language",
                 context: context,
               );
@@ -265,7 +265,7 @@ Future<void> editGenre(BuildContext context, String genre) async {
                 genreController.text.trim(),
               );
             } catch (e) {
-              showAlertMessage(
+              AppDialogs.showSnackBar(
                 message: "Error editing genre",
                 context: context,
               );
@@ -298,7 +298,7 @@ Future<void> deleteLanguage(BuildContext context, String language) async {
             try {
               context.read<LanguageProvider>().deleteLanguage(language);
             } catch (e) {
-              showAlertMessage(
+              AppDialogs.showSnackBar(
                 message: "Error deleting language",
                 context: context,
               );
@@ -331,7 +331,7 @@ Future<void> deleteGenre(BuildContext context, String genre) async {
             try {
               context.read<GenreProvider>().deleteGenre(genre);
             } catch (e) {
-              showAlertMessage(
+              AppDialogs.showSnackBar(
                 message: "Error deleting genre",
                 context: context,
               );

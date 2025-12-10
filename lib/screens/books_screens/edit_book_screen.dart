@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:libry/widgets/alert_dialogue.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../models/books_model.dart';
@@ -11,6 +9,7 @@ import '../../provider/language_provider.dart';
 import '../../utilities/image_services.dart';
 import '../../utilities/validation.dart';
 import '../../widgets/forms.dart';
+import '../../widgets/dialogs.dart';
 import '../../widgets/layout_widgets.dart';
 
 class EditBookScreen extends StatefulWidget {
@@ -79,7 +78,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
         });
       }
     } catch (e) {
-      showAlertMessage(message: "Falied to pick Image", context: context);
+      AppDialogs.showSnackBar(message: "Falied to pick Image", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
