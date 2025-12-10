@@ -39,7 +39,7 @@ class ImageService {
       }
       return null;
     } catch (e) {
-      print('Error picking image: $e');
+      // throw Exception('Error picking image: $e');
       return null;
     }
   }

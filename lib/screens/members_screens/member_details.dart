@@ -8,6 +8,7 @@ class MemberDetailsScreen extends StatelessWidget {
   final Members memberDetails;
 
   const MemberDetailsScreen({super.key, required this.memberDetails});
+  final String dateFormatString = 'd/m/y';
 
   @override
   Widget build(BuildContext context) {

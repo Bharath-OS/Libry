@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-// import 'package:hive/hive.dart';
-// import 'package:hive_flutter/adapters.dart';
 import 'package:libry/models/user_model.dart';
-import 'package:libry/models/Keys/keys.dart';
-import 'package:libry/widgets/alert_dialogue.dart';
+import 'package:libry/models/keys/keys.dart';
 
 class UserDatabase {
 
   static bool saveData({required User user}) {
     try {
       userDataBoxNew.put(
-        UserDatabaseKey.userDataKey,
+        DatabaseKeys.userDataKey,
         User(name: user.name, email: user.email, password: user.password),
       );
       setRegisterValue(true);
@@ -25,7 +22,7 @@ class UserDatabase {
   static User? getData() {
     try {
       User user =
-          userDataBoxNew.get(UserDatabaseKey.userDataKey) ??
+          userDataBoxNew.get(DatabaseKeys.userDataKey) ??
           User(name: "Guest", email: "guest@gmail.com");
       return user;
     } catch (e) {
@@ -36,7 +33,7 @@ class UserDatabase {
 
   static String get getUserName {
     try {
-      User user = userDataBoxNew.get(UserDatabaseKey.userDataKey);
+      User user = userDataBoxNew.get(DatabaseKeys.userDataKey);
       return user.name;
     } catch (e) {
       debugPrint("Exception: $e");
@@ -58,13 +55,13 @@ class UserDatabase {
 
   //Returns the user Log status
   static bool get isLogged {
-    return statusBox.get(UserDatabaseKey.loginKey, defaultValue: false);
+    return statusBox.get(DatabaseKeys.loginKey, defaultValue: false);
   }
 
   //Sets the user log status
   static bool setLogValue(bool value) {
     try {
-      statusBox.put(UserDatabaseKey.loginKey, value);
+      statusBox.put(DatabaseKeys.loginKey, value);
       return true;
     } catch (e) {
       debugPrint(e as String?);
@@ -74,13 +71,13 @@ class UserDatabase {
 
   //Returns the user register status
   static bool get isRegistered {
-    return statusBox.get(UserDatabaseKey.registerKey, defaultValue: false);
+    return statusBox.get(DatabaseKeys.registerKey, defaultValue: false);
   }
 
   //Sets the user register status
   static bool setRegisterValue(bool value) {
     try {
-      statusBox.put(UserDatabaseKey.registerKey, value);
+      statusBox.put(DatabaseKeys.registerKey, value);
       return true;
     } catch (e) {
       debugPrint(e as String?);
@@ -99,7 +96,7 @@ class UserDatabase {
         bookIssued: user.bookIssued,
         fineCollected:  user.fineCollected,
       );
-      userDataBoxNew.put(UserDatabaseKey.userDataKey, updatedUser);
+      userDataBoxNew.put(DatabaseKeys.userDataKey, updatedUser);
       return true;
      }
      catch(e){

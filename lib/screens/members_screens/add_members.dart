@@ -90,21 +90,21 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Email'),
             keyboardType: TextInputType.emailAddress,
-            validator: (email)=>Validator.emailValidator(email),
+            validator: (email)=>Validator.emailValidator(email)
           ),
           TextFormField(
             controller: controllers[2],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Phone'),
             keyboardType: TextInputType.phone,
-            validator: (value)=>Validator.numberValidator(value),
+            validator: (phone)=>Validator.phoneValidator(phone)
           ),
           TextFormField(
             controller: controllers[3],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Address'),
             maxLines: 3,
-            validator: (value)=>Validator.emptyValidator(value),
+            validator: (value)=>Validator.emptyValidator(value)
           ),
           SizedBox(height: 20),
           Row(
