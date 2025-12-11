@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/constants/app_colors.dart';import 'package:libry/widgets/layout_widgets.dart';
+import 'package:libry/constants/app_colors.dart';
+import 'package:libry/screens/transactions_screens/issue_screens/issue_history_screen.dart';import 'package:libry/widgets/layout_widgets.dart';
 
 import 'transactions_screens/issue.dart';
 import 'transactions_screens/return.dart';
@@ -17,7 +18,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context){
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(barTitle: "Book Transactions", context: context),
+      appBar: AppBar(title: Text("Book Transactions")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -58,7 +59,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 GestureDetector(
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (ctx) => ReturnBookScreen()),
+                    MaterialPageRoute(builder: (ctx) => IssueHistoryScreen()),
                   ),
                   child: Container(
                     height: 120,
@@ -71,7 +72,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           const Text(
-                            "Return Book",
+                            "View all Transactions",
                             style: TextStyle(
                               fontSize: 25,
                               fontFamily: "Livvic",

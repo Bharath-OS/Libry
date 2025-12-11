@@ -1,25 +1,25 @@
+// lib/screens/issue_history_screen.dart
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
-import '../../models/books_model.dart';
-import '../../models/issue_records_model.dart';
-import '../../models/members_model.dart';
-import '../../provider/book_provider.dart';
-import '../../provider/issue_provider.dart';
-import '../../provider/members_provider.dart';
-import '../../widgets/layout_widgets.dart';
-import '../../widgets/buttons.dart';
+import '../../../constants/app_colors.dart';
+import '../../../models/books_model.dart';
+import '../../../models/issue_records_model.dart';
+import '../../../models/members_model.dart';
+import '../../../provider/book_provider.dart';
+import '../../../provider/issue_provider.dart';
+import '../../../provider/members_provider.dart';
+import '../../../widgets/layout_widgets.dart';
 
-class BookHistoryScreen extends StatefulWidget {
-  final int bookId;
-
-  const BookHistoryScreen({super.key, required this.bookId});
+class IssueHistoryScreen extends StatefulWidget {
+  const IssueHistoryScreen({super.key});
 
   @override
-  State<BookHistoryScreen> createState() => _BookHistoryScreenState();
+  State<IssueHistoryScreen> createState() => _IssueHistoryScreenState();
 }
 
-class _BookHistoryScreenState extends State<BookHistoryScreen> {
+class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   String _filter = 'all'; // 'all', 'active', 'returned', 'overdue'
 
   @override
@@ -28,41 +28,26 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
     final bookProvider = context.read<BookProvider>();
     final memberProvider = context.read<MembersProvider>();
 
-    final book = bookProvider.getBookById(widget.bookId);
-    if (book == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text('Book History')),
-        body: Center(child: Text('Book not found')),
-      );
-    }
-
-    // Get all issues for this book
-    final allBookIssues = issueProvider.allIssues
-        .where((issue) => issue.bookId == widget.bookId)
-        .toList();
-
-    // Apply filter
-    final filteredIssues = _applyFilter(allBookIssues, issueProvider);
+    // Get all issues and apply filter
+    final allIssues = issueProvider.allIssues;
+    final filteredIssues = _applyFilter(allIssues, issueProvider);
 
     // Calculate stats
-    final totalIssues = allBookIssues.length;
-    final activeIssues = allBookIssues.where((i) => !i.isReturned).length;
-    final returnedIssues = allBookIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allBookIssues.where((i) =>
+    final totalIssues = allIssues.length;
+    final activeIssues = allIssues.where((i) => !i.isReturned).length;
+    final returnedIssues = allIssues.where((i) => i.isReturned).length;
+    final overdueIssues = allIssues.where((i) =>
     !i.isReturned && DateTime.now().isAfter(i.dueDate)
     ).length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
-        barTitle: 'Book Borrow History',
+        barTitle: 'All Transactions',
         context: context,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // Book Info Header
-            _buildBookHeader(book),
-
             // Stats Cards
             _buildStatsCards(totalIssues, activeIssues, returnedIssues, overdueIssues),
 
@@ -79,7 +64,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                     Icon(Icons.history, size: 64, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
-                      'No borrow history found',
+                      'No transactions found',
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ],
@@ -90,8 +75,9 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                 itemCount: filteredIssues.length,
                 itemBuilder: (context, index) {
                   final issue = filteredIssues[index];
+                  final book = bookProvider.getBookById(issue.bookId);
                   final member = memberProvider.getMemberById(issue.memberId);
-                  return _buildIssueCard(issue, member, issueProvider);
+                  return _buildIssueCard(issue, book, member, issueProvider);
                 },
               ),
             ),
@@ -101,58 +87,9 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
     );
   }
 
-  Widget _buildBookHeader(Books book) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: MyColors.bgColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.book, color: Colors.white, size: 40),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  book.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'by ${book.author}',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildStatsCards(int total, int active, int returned, int overdue) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -229,7 +166,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
 
   Widget _buildFilterChips(int total, int active, int returned, int overdue) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -262,7 +199,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
     );
   }
 
-  Widget _buildIssueCard(IssueRecords issue, Members? member, IssueProvider issueProvider) {
+  Widget _buildIssueCard(IssueRecords issue, Books? book, Members? member, IssueProvider issueProvider) {
     final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
 
@@ -281,31 +218,60 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Member Info
+            // Book and Member Info Header
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: MyColors.bgColor,
-                  child: Icon(Icons.person, color: Colors.white),
+                // Book Icon
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: MyColors.bgColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.book, color: Colors.white),
                 ),
                 SizedBox(width: 12),
+                // Book and Member Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        member?.name ?? 'Unknown Member',
+                        book?.title ?? 'Unknown Book',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      SizedBox(height: 4),
                       Text(
-                        'ID: ${member?.memberId ?? 'N/A'}',
+                        'by ${book?.author ?? 'Unknown Author'}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
                         ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              member?.name ?? 'Unknown Member',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -341,7 +307,8 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             Divider(),
             SizedBox(height: 8),
 
-            // Issue Details
+            // Transaction Details
+            // Row 1: Issue ID and Borrow Date
             Row(
               children: [
                 Expanded(
@@ -361,6 +328,8 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
               ],
             ),
             SizedBox(height: 8),
+
+            // Row 2: Due Date and Status
             Row(
               children: [
                 Expanded(
@@ -379,8 +348,29 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                   )
                       : _buildInfoItem(
                     'Days Left',
-                    '${issue.dueDate.difference(DateTime.now()).inDays}',
+                    '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
                     Icons.access_time,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+
+            // Row 3: Book ID and Member ID
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoItem(
+                    'Book ID',
+                    'B${issue.bookId.toString().padLeft(3, '0')}',
+                    Icons.bookmark,
+                  ),
+                ),
+                Expanded(
+                  child: _buildInfoItem(
+                    'Member ID',
+                    'M${issue.memberId.toString().padLeft(3, '0')}',
+                    Icons.badge,
                   ),
                 ),
               ],
@@ -400,39 +390,78 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                   children: [
                     Icon(Icons.warning_amber, color: Colors.red),
                     SizedBox(width: 8),
-                    Text(
-                      'Fine: ₹${fine.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Overdue Fine',
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '₹${fine.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
 
-            // Return Button (if not returned)
-            if (!issue.isReturned)
-              Padding(
-                padding: EdgeInsets.only(top: 12),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _returnBook(issue),
-                    icon: Icon(Icons.assignment_return),
-                    label: Text('Return Book'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primaryButtonColor,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+            // Action Buttons
+            Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  // Return Button (if not returned)
+                  if (!issue.isReturned)
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _returnBook(issue),
+                        icon: Icon(Icons.assignment_return, size: 18),
+                        label: Text('Return Book'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColors.primaryButtonColor,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  if (!issue.isReturned) SizedBox(width: 8),
+
+                  // View Details Button
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _viewDetails(issue, book, member),
+                      icon: Icon(Icons.remove_red_eye, size: 18),
+                      label: Text('View Details'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: MyColors.bgColor,
+                        side: BorderSide(color: MyColors.bgColor),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
+            ),
           ],
         ),
       ),
@@ -444,24 +473,28 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
       children: [
         Icon(icon, size: 16, color: Colors.grey[600]),
         SizedBox(width: 4),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+              SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -537,8 +570,13 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
         SnackBar(
           content: Text('Book returned successfully'),
           backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
         ),
       );
+
+      // Refresh the UI
+      setState(() {});
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -547,6 +585,110 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
         ),
       );
     }
+  }
+
+  void _viewDetails(IssueRecords issue, Books? book, Members? member) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Transaction Details'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Book Details
+              _buildDetailSection('Book Information', [
+                _buildDetailRow('Title', book?.title ?? 'Unknown'),
+                _buildDetailRow('Author', book?.author ?? 'Unknown'),
+                _buildDetailRow('Book ID', 'B${issue.bookId.toString().padLeft(3, '0')}'),
+              ]),
+
+              SizedBox(height: 16),
+
+              // Member Details
+              _buildDetailSection('Member Information', [
+                _buildDetailRow('Name', member?.name ?? 'Unknown'),
+                _buildDetailRow('Member ID', 'M${issue.memberId.toString().padLeft(3, '0')}'),
+                _buildDetailRow('Phone', member?.phone ?? 'N/A'),
+              ]),
+
+              SizedBox(height: 16),
+
+              // Transaction Details
+              _buildDetailSection('Transaction Details', [
+                _buildDetailRow('Issue ID', issue.issueId),
+                _buildDetailRow('Borrow Date', _formatDate(issue.borrowDate)),
+                _buildDetailRow('Due Date', _formatDate(issue.dueDate)),
+                _buildDetailRow('Status', issue.isReturned ? 'Returned' : 'Active'),
+                if (issue.isReturned)
+                  _buildDetailRow('Return Date', _formatDate(issue.returnDate!)),
+              ]),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: MyColors.bgColor,
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: MyColors.darkGrey),
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(color: Colors.grey[800]),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   String _formatDate(DateTime date) {

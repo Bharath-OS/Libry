@@ -24,15 +24,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String selectedStatus = 'Available';
   final List<String> statusOptions = ['Available', 'Not Available'];
   late Books bookDetails;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     bookDetails = context.watch<BookProvider>().getBookById(widget.bookId)!;
+    // Update status based on availability
+    selectedStatus = bookDetails.copiesAvailable > 0 ? 'Available' : 'Not Available';
+
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(barTitle: "Books Details", context: context),
       body: Padding(
@@ -161,12 +164,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         items: statusOptions.map((value) {
           return DropdownMenuItem(value: value, child: Text(value));
         }).toList(),
-        onChanged: (newValue) {
-          setState(() {
-            selectedStatus = newValue!;
-          });
-        },
+        onChanged: null, // Disabled - status is determined by copiesAvailable
         underline: const SizedBox(),
+        disabledHint: Text(
+          selectedStatus,
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
@@ -179,7 +182,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         MyButton.secondaryButton(
           method: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BookHistoryScreen()),
+            MaterialPageRoute(
+              builder: (context) => BookHistoryScreen(bookId: widget.bookId),
+            ),
           ),
           text: "View History",
         ),
@@ -218,8 +223,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ),
           ],
         ),
-        // child: Image.asset("assets/images/dummy_book_cover.png"),
-        child: Image.file(File(bookDetails.coverPicture),fit: BoxFit.cover,),
+        child: bookDetails.coverPicture.isNotEmpty &&
+            !bookDetails.coverPicture.startsWith('assets/')
+            ? Image.file(
+          File(bookDetails.coverPicture),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              "assets/images/dummy_book_cover.png",
+              fit: BoxFit.cover,
+            );
+          },
+        )
+            : Image.asset(
+          "assets/images/dummy_book_cover.png",
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
