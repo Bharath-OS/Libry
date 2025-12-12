@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
@@ -47,9 +49,9 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     final totalIssues = allMemberIssues.length;
     final activeIssues = allMemberIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allMemberIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allMemberIssues.where((i) =>
-    !i.isReturned && DateTime.now().isAfter(i.dueDate)
-    ).length;
+    final overdueIssues = allMemberIssues
+        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+        .length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
@@ -63,36 +65,46 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
             _buildMemberHeader(member),
 
             // Stats Cards
-            _buildStatsCards(totalIssues, activeIssues, returnedIssues, overdueIssues),
+            _buildStatsCards(
+              totalIssues,
+              activeIssues,
+              returnedIssues,
+              overdueIssues,
+            ),
 
             // Filter Chips
-            _buildFilterChips(totalIssues, activeIssues, returnedIssues, overdueIssues),
+            _buildFilterChips(
+              totalIssues,
+              activeIssues,
+              returnedIssues,
+              overdueIssues,
+            ),
 
             // Issues List
             Expanded(
               child: filteredIssues.isEmpty
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.history, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'No borrow history found',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              )
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.history, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            'No borrow history found',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: filteredIssues.length,
-                itemBuilder: (context, index) {
-                  final issue = filteredIssues[index];
-                  final book = bookProvider.getBookById(issue.bookId);
-                  return _buildIssueCard(issue, book, issueProvider);
-                },
-              ),
+                      padding: EdgeInsets.all(16),
+                      itemCount: filteredIssues.length,
+                      itemBuilder: (context, index) {
+                        final issue = filteredIssues[index];
+                        final book = bookProvider.getBookById(issue.bookId);
+                        return _buildIssueCard(issue, book, issueProvider);
+                      },
+                    ),
             ),
           ],
         ),
@@ -108,18 +120,14 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         color: MyColors.bgColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: Colors.white,
+            backgroundColor: MyColors.primaryColor,
             child: Icon(Icons.person, color: MyColors.bgColor, size: 35),
           ),
           SizedBox(width: 16),
@@ -130,7 +138,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Text(
                   member.name,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: MyColors.primaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -138,17 +146,11 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 SizedBox(height: 4),
                 Text(
                   'Member ID: ${member.memberId}',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
                 ),
                 Text(
                   'Currently Borrowed: ${member.currentlyBorrow}/5',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
                 ),
               ],
             ),
@@ -159,6 +161,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   }
 
   Widget _buildStatsCards(int total, int active, int returned, int overdue) {
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -203,7 +206,13 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color, IconData icon) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
+    final textColor = MyColors.whiteBG;
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -223,13 +232,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
               color: color,
             ),
           ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text(label, style: TextStyle(fontSize: 12, color: textColor)),
         ],
       ),
     );
@@ -270,8 +273,13 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     );
   }
 
-  Widget _buildIssueCard(IssueRecords issue, Books? book, IssueProvider issueProvider) {
-    final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+  Widget _buildIssueCard(
+    IssueRecords issue,
+    Books? book,
+    IssueProvider issueProvider,
+  ) {
+    final isOverdue =
+        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -299,7 +307,10 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                     color: MyColors.bgColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(Icons.book, color: MyColors.bgColor, size: 30),
+                  // child: Icon(Icons.book, color: MyColors.bgColor, size: 30),
+                  child: book?.coverPicture == null || book!.coverPicture.isEmpty
+                      ? Icon(Icons.book, color: MyColors.primaryColor)
+                      : Image.file(File(book.coverPicture), fit: BoxFit.cover),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -317,10 +328,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                       ),
                       Text(
                         'by ${book?.author ?? 'Unknown'}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -360,11 +368,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoItem(
-                    'Issue ID',
-                    issue.issueId,
-                    Icons.tag,
-                  ),
+                  child: _buildInfoItem('Issue ID', issue.issueId, Icons.tag),
                 ),
                 Expanded(
                   child: _buildInfoItem(
@@ -388,15 +392,15 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Expanded(
                   child: issue.isReturned
                       ? _buildInfoItem(
-                    'Returned',
-                    _formatDate(issue.returnDate!),
-                    Icons.check_circle,
-                  )
+                          'Returned',
+                          _formatDate(issue.returnDate!),
+                          Icons.check_circle,
+                        )
                       : _buildInfoItem(
-                    'Days Left',
-                    '${issue.dueDate.difference(DateTime.now()).inDays}',
-                    Icons.access_time,
-                  ),
+                          'Days Left',
+                          '${issue.dueDate.difference(DateTime.now()).inDays}',
+                          Icons.access_time,
+                        ),
                 ),
               ],
             ),
@@ -464,17 +468,11 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -482,16 +480,19 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     );
   }
 
-  List<IssueRecords> _applyFilter(List<IssueRecords> issues, IssueProvider issueProvider) {
+  List<IssueRecords> _applyFilter(
+    List<IssueRecords> issues,
+    IssueProvider issueProvider,
+  ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
       case 'returned':
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
-        return issues.where((i) =>
-        !i.isReturned && DateTime.now().isAfter(i.dueDate)
-        ).toList();
+        return issues
+            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+            .toList();
       default:
         return issues;
     }
@@ -555,10 +556,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
   }

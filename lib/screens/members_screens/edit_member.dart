@@ -77,7 +77,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: FormWidgets.formContainer(
-              title: "Save Changes",
+              title: "Edit Member",
               formWidget: _editMemberForm(context),
             ),
           ),

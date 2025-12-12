@@ -108,17 +108,17 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
       decoration: BoxDecoration(
         color: MyColors.bgColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black12,
+        //     blurRadius: 4,
+        //     offset: Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: Row(
         children: [
-          Icon(Icons.book, color: Colors.white, size: 40),
+          Icon(Icons.book, color: MyColors.primaryColor, size: 40),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -127,7 +127,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                 Text(
                   book.title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: MyColors.primaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -138,7 +138,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                 Text(
                   'by ${book.author}',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: MyColors.lightGrey,
                     fontSize: 14,
                   ),
                 ),
@@ -186,7 +186,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             child: _buildStatCard(
               'Overdue',
               overdue.toString(),
-              Colors.red,
+              MyColors.warningColor,
               Icons.warning,
             ),
           ),
@@ -196,6 +196,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
   }
 
   Widget _buildStatCard(String label, String value, Color color, IconData icon) {
+    final textColor = MyColors.whiteBG;
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -219,7 +220,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[700],
+              color: textColor,
             ),
           ),
         ],
@@ -285,8 +286,8 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: MyColors.bgColor,
-                  child: Icon(Icons.person, color: Colors.white),
+                  backgroundColor: MyColors.primaryColor,
+                  child: Icon(Icons.person, color: MyColors.bgColor),
                 ),
                 SizedBox(width: 12),
                 Expanded(

@@ -20,7 +20,7 @@ class MemberDetailsScreen extends StatefulWidget {
 
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   late Members memberDetail;
-  final String dateFormatString = 'd/m/y';
+  final String dateFormatString = 'dd/MM/yyyy';
 
   @override
   Widget build(BuildContext context) {
