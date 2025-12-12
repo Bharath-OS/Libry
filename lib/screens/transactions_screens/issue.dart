@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:libry/utilities/image_services.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../themes/styles.dart';
@@ -748,7 +747,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.darkGrey,
+        backgroundColor: MyColors.bgColor,
         title: Row(
           children: [
             Icon(Icons.check_circle, color: MyColors.successColor),
@@ -765,16 +764,15 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: MyColors.bgColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Issue ID: $issueId", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Member: ${_selectedMember!.name}"),
-                  Text("Book: ${_selectedBook!.title}"),
-                  Text("Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}"),
+                  Text("Member: ${_selectedMember!.name}",style: TextStyle(color: MyColors.darkGrey)),
+                  Text("Book: ${_selectedBook!.title}",style: TextStyle(color: MyColors.darkGrey)),
+                  Text("Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",style: TextStyle(color: MyColors.darkGrey)),
                 ],
               ),
             ),

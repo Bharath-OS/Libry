@@ -9,7 +9,7 @@ import 'package:libry/provider/members_provider.dart';
 import 'Screens/splash.dart';
 import 'Themes/styles.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:flutter/services.dart';
 import 'database/language_db.dart';
 import 'models/issue_records_model.dart';
 import 'models/user_model.dart';
@@ -20,7 +20,6 @@ void main() async {
 
   // Initialize Hive
   await Hive.initFlutter();
-
   Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(IssueRecordsAdapter());
 
@@ -30,21 +29,23 @@ void main() async {
   statusBox = await Hive.openBox("status");
 
   await IssueDBHive.initIssueBox();
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
-        ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
-        ChangeNotifierProvider<LanguageProvider>(create: (_) => LanguageProvider()),
-        ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
-        ChangeNotifierProvider<MembersProvider>(
-          create: (context) => MembersProvider(),
-        ),
-      ],
-      child: LibryApp(),
-    ),
-  );
+  
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
+          ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
+          ChangeNotifierProvider<LanguageProvider>(create: (_) => LanguageProvider()),
+          ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
+          ChangeNotifierProvider<MembersProvider>(
+            create: (context) => MembersProvider(),
+          ),
+        ],
+        child: LibryApp(),
+      ),
+    );
+  });
 }
 
 class LibryApp extends StatelessWidget {
