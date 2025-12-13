@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Screens/register.dart';
+import 'package:libry/Themes/styles.dart';
 import 'package:libry/screens/login.dart';
 import 'package:libry/constants/app_colors.dart';
 import 'package:libry/widgets/buttons.dart';
@@ -17,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late User user;
+  late User? user;
 
   @override
   void initState() {
@@ -26,18 +27,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _loadUserData() {
-    user = UserDatabase.getData()?? User(name: '', email: '', password: '');
+    user = UserDatabase.getData();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(barTitle: "User Profile", context: context),
+      appBar: LayoutWidgets.appBar(barTitle: "Account", context: context),
       body: _buildProfile(),
     );
   }
-  Widget _buildProfile(){
+
+  Widget _buildProfile() {
     return Padding(
       padding: const EdgeInsets.all(30),
       child: Center(
@@ -50,100 +52,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: MyColors.whiteBG,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: "${user.name}\n",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "Lobster",
-                              fontSize: 42,
-                              fontWeight: FontWeight.w800,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Librarian",
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontFamily: "Livvic",
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text:
-                            "",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: "Livvic",
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                              height: 2,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "Email : ${user.email}\n",
-                              ),
-                              TextSpan(text: "Book Issued : ${user.bookIssued}\n"),
-                              TextSpan(text: "Fine collected : ${user.fineCollected}\$"),
-                            ],
-                          ),
-                        ),
-                        _buildActions(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              child: _buildMetaData(),
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildMetaData() {
+    if (user == null) {
+      return Text(
+        "No user data available",
+        style: BodyTextStyles.headingSmallStyle(),
+      );
+    } else {
+      return Column(
+        children: [
+          SizedBox(
+            child: Column(
+              children: [
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "${user!.name}\n",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Lobster",
+                      fontSize: 42,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: "Librarian",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontFamily: "Livvic",
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            child: Column(
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: "",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: "Livvic",
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                      height: 2,
+                    ),
+                    children: [
+                      TextSpan(text: "Email : ${user!.email}\n"),
+                      TextSpan(text: "Book Issued : ${user!.bookIssued}\n"),
+                      TextSpan(
+                        text: "Fine collected : ${user!.fineCollected}\$",
+                      ),
+                    ],
+                  ),
+                ),
+                _buildActions(),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget _buildActions() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        MyButton.secondaryButton(method: () async{
-          await Navigator.push(
-            context,
-            transition(child: EditProfileScreen())
-          );
-          _loadUserData();
-        }, text: "Edit Profile"),
+        MyButton.secondaryButton(
+          method: () async {
+            await Navigator.push(
+              context,
+              transition(child: EditProfileScreen()),
+            );
+            _loadUserData();
+          },
+          text: "Edit Profile",
+        ),
         const SizedBox(height: 10),
         MyButton.primaryButton(
           method: () {
             UserDatabase.setLogValue(false);
             Navigator.pushReplacement(
               context,
-              transition(child: LoginScreen())
+              transition(child: LoginScreen()),
             );
           },
           text: "Log out",
         ),
-        const SizedBox(height: 10,),
-        MyButton.primaryButton(method: (){
-          UserDatabase.clearData();
-          Navigator.pushReplacement(context, transition(child: RegisterScreen()));
-          showSnackBar(text: "Signed out from the app", context: context);
-        }, text: "Sign out")
+        const SizedBox(height: 10),
+        MyButton.primaryButton(
+          method: () {
+            UserDatabase.clearData();
+            Navigator.pushReplacement(
+              context,
+              transition(child: RegisterScreen()),
+            );
+            showSnackBar(text: "Signed out from the app", context: context);
+          },
+          text: "Sign out",
+        ),
       ],
     );
   }
