@@ -36,10 +36,10 @@ void userValidation({
   FocusScope.of(context).unfocus();
   String message = "";
   if (formKey.currentState!.validate()) {
-    User user = User(
-      name: controllers[0].text,
-      email: controllers[1].text,
-      password: controllers[2].text,
+    final User user = User(
+      name: controllers[0].text.trim(),
+      email: controllers[1].text.trim(),
+      password: controllers[2].text.trim(),
     );
     bool result = UserDatabase.saveData(user: user);
     if (result) {
@@ -50,6 +50,7 @@ void userValidation({
         transition(child: MainScreen())
       );
       message = "Account created!";
+
     } else {
       message = "Something went wrong. Try again";
     }

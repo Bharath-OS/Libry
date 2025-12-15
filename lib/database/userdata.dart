@@ -88,13 +88,10 @@ class UserDatabase {
   //Editing user data
   static bool editData({required User user}) {
     try{
-      final currentUser = getData();
       final updatedUser = User(
         name: user.name,
         email: user.email,
         password: user.password,
-        bookIssued: user.bookIssued,
-        fineCollected:  user.fineCollected,
       );
       userDataBoxNew.put(DatabaseKeys.userDataKey, updatedUser);
       return true;
