@@ -14,6 +14,12 @@ class IssueProvider with ChangeNotifier {
     return fines;
   }
 
+  int get dueTodayCount {
+    return _allIssues
+        .where((issue) => DateUtils.isSameDay(issue.dueDate, DateTime.now()))
+        .length;
+  }
+
   static Box<IssueRecords>? _issueBox;
   String _filter = 'all'; // 'all', 'active', 'returned'
 
@@ -22,8 +28,11 @@ class IssueProvider with ChangeNotifier {
   int get totalCount => _allIssues.length;
   int get activeCount => _allIssues.where((i) => !i.isReturned).length;
   int get returnedCount => _allIssues.where((i) => i.isReturned).length;
-  int get issuedTodayCount =>
-      _allIssues.where((i) => i.borrowDate == DateTime.now()).length;
+  int get issuedTodayCount => _allIssues
+      .where((i) => DateUtils.isSameDay(i.borrowDate, DateTime.now()))
+      .length;
+  int get overDueCount =>
+      _allIssues.where((i) => i.dueDate.isAfter(DateTime.now())).length;
 
   // Initialize
   Future<void> init() async {

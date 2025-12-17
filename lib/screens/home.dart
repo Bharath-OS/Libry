@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
 import 'package:libry/provider/book_provider.dart';
+import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
 import 'package:libry/utilities/helpers/date_formater.dart';
@@ -58,8 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-
 
   Widget _buildHeaderSection() {
     String formattedDate = dateFormat(date: time);
@@ -125,12 +124,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: SizedBox.expand(
-                      child: Cards.detailsCard(count: context.watch<BookProvider>().count, parameter: "Total Books"),
+                      child: Cards.detailsCard(
+                        count: context.watch<IssueProvider>().issuedTodayCount,
+                        parameter: "Issued Today",
+                      ),
                     ),
                   ),
                   Expanded(
                     child: SizedBox.expand(
-                      child: Cards.detailsCard(count: context.watch<MembersProvider>().count, parameter: "Total Members"),
+                      child: Cards.detailsCard(
+                        count: context.watch<IssueProvider>().returnedCount,
+                        parameter: "Returned Today",
+                      ),
                     ),
                   ),
                 ],
@@ -142,12 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: SizedBox.expand(
-                      child: Cards.detailsCard(count: 12, parameter: "Due Today"),
+                      child: Cards.detailsCard(
+                        count: context.watch<IssueProvider>().dueTodayCount,
+                        parameter: "Due Today",
+                      ),
                     ),
                   ),
                   Expanded(
                     child: SizedBox.expand(
-                      child: Cards.detailsCard(count: 12, parameter: "Over Due"),
+                      child: Cards.detailsCard(
+                        count: context.watch<IssueProvider>().overDueCount,
+                        parameter: "Overdue Books",
+                      ),
                     ),
                   ),
                 ],
