@@ -28,7 +28,6 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   Members? _selectedMember;
   Books? _selectedBook;
-  //initially starts with 14days
   DateTime _dueDate = DateTime.now().add(Duration(days: 14));
 
   bool _isMemberVerified = false;
