@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/books_screens/add_book_screen.dart';
 import 'package:libry/themes/styles.dart';
 import 'package:libry/provider/issue_provider.dart';
@@ -23,12 +24,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final Color color = MyColors.primaryColor;
   late User? user;
   late final int issuedToday;
+  late final int activeMembers;
+  late final int fineCollected;
 
   @override
   void initState() {
     super.initState();
     if (mounted) {
       issuedToday = context.read<IssueProvider>().issuedTodayCount;
+      activeMembers = context.read<MembersProvider>().activeMembers;
+      fineCollected = context.read<IssueProvider>().fineOwed;
     }
     _loadUserData();
   }
@@ -137,14 +142,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           verticalDivider(),
           _buildStatCard(
             icon: Icons.people_rounded,
-            stat: 3,
+            stat: activeMembers,
             label: "Active Members",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.currency_rupee_rounded,
-            stat: 5,
+            stat: fineCollected,
             label: "Fine Collected",
             color: color,
           ),

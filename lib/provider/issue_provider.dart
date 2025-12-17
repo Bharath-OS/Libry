@@ -8,8 +8,13 @@ class IssueProvider with ChangeNotifier {
   List<IssueRecords> _allIssues = [];
   List<IssueRecords> _filteredIssues = [];
   int fineAmount = 5;
+  int get fineOwed {
+    int fines = 0;
+    _allIssues.map((issue) => fines += issue.fineAmount);
+    return fines;
+  }
+
   static Box<IssueRecords>? _issueBox;
-  static int _nextId = 1;
   String _filter = 'all'; // 'all', 'active', 'returned'
 
   List<IssueRecords> get issues => _filteredIssues;
@@ -17,7 +22,8 @@ class IssueProvider with ChangeNotifier {
   int get totalCount => _allIssues.length;
   int get activeCount => _allIssues.where((i) => !i.isReturned).length;
   int get returnedCount => _allIssues.where((i) => i.isReturned).length;
-  int get issuedTodayCount => _allIssues.where((i) => i.borrowDate == DateTime.now()).length;
+  int get issuedTodayCount =>
+      _allIssues.where((i) => i.borrowDate == DateTime.now()).length;
 
   // Initialize
   Future<void> init() async {
