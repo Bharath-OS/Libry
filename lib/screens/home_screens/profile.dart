@@ -253,7 +253,6 @@ Widget actionButton({
   required Color textColor,
   required VoidCallback method,
 }) {
-  final Color color = MyColors.primaryColor;
   return GestureDetector(
     onTap: method,
     child: Row(
