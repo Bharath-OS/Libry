@@ -67,8 +67,9 @@ class Validator {
     }
 
     final currentYear = DateTime.now().year;
-    if(year < 1500 || year >= currentYear){
-      return 'Enter a valid year between 1500 and ${currentYear}';
+    if(year < 1500 || year > currentYear){
+      // return 'Enter a valid year between 1500 and ${currentYear}';
+      return 'Enter a valid year';
     }
     return null;
   }
