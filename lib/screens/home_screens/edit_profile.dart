@@ -21,8 +21,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  late final TextEditingController _booksIssuedController;
-  late final TextEditingController _finesController;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -33,12 +31,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: userData.name);
     _emailController = TextEditingController(text: userData.email);
     _passwordController = TextEditingController(text: userData.password);
-    _booksIssuedController = TextEditingController(
-      text: userData.bookIssued.toString(),
-    );
-    _finesController = TextEditingController(
-      text: userData.fineCollected.toString(),
-    );
   }
 
   @override
@@ -46,8 +38,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _booksIssuedController.dispose();
-    _finesController.dispose();
     super.dispose();
   }
 
@@ -72,30 +62,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         spacing: 20,
         children: [
           TextFormField(
+            decoration: InputDecoration(
+              labelText: "Name"
+            ),
             controller: _nameController,
             style: TextFieldStyle.inputTextStyle,
             validator: (value) => Validator.emptyValidator(value),
           ),
           TextFormField(
+            decoration: InputDecoration(
+                labelText: "Email"
+            ),
             controller: _emailController,
             style: TextFieldStyle.inputTextStyle,
             validator: (email) => Validator.emailValidator(email),
           ),
           TextFormField(
+            decoration: InputDecoration(
+                labelText: "Password"
+            ),
             controller: _passwordController,
             style: TextFieldStyle.inputTextStyle,
             validator: (password) => Validator.passwordValidator(password),
-          ),
-          TextFormField(
-            controller: _booksIssuedController,
-            style: TextFieldStyle.inputTextStyle,
-            validator: (booksCollected) =>
-                Validator.emptyValidator(booksCollected),
-          ),
-          TextFormField(
-            controller: _finesController,
-            style: TextFieldStyle.inputTextStyle,
-            validator: (fines) => Validator.emptyValidator(fines),
           ),
           MyButton.primaryButton(text: 'Save', method: _editUserData),
         ],
@@ -113,15 +101,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_formKey.currentState!.validate()) {
       if (userData.name != _nameController.text ||
           userData.email != _emailController.text ||
-          userData.password != _passwordController.text ||
-          userData.fineCollected != double.parse(_finesController.text) ||
-          userData.bookIssued != int.parse(_booksIssuedController.text)) {
+          userData.password != _passwordController.text) {
         final updatedUser = User(
-          name: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
-          fineCollected: double.parse(_finesController.text),
-          bookIssued: int.parse(_booksIssuedController.text),
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
         );
         final success = UserDatabase.editData(user: updatedUser);
         if (success) {

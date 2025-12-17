@@ -24,7 +24,7 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
       dueDate: fields[4] as DateTime,
       returnDate: fields[5] as DateTime?,
       isReturned: fields[6] as bool,
-      fineAmount: fields[7] as double,
+      fineAmount: fields[7] as int,
     );
   }
 
