@@ -14,7 +14,13 @@ class MembersProvider extends ChangeNotifier {
   List<Members> get members => _filteredMembers;
   int get count => _filteredMembers.length;
   int get totalCount => _members.length;
-  // int get availableMembers => _members.where().length;
+  int get activeMembers => _members
+      .where(
+        (member) =>
+            member.expiry.isAfter(DateTime.now()) ||
+            member.expiry.isAtSameMomentAs(DateTime.now()),
+      )
+      .length;
 
   void searchMembers(String query) {
     if (query.isNotEmpty) {

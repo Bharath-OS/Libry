@@ -27,7 +27,7 @@ class IssueRecords {
   bool isReturned;
 
   @HiveField(7)
-  double fineAmount;
+  int fineAmount;
 
   IssueRecords({
     required this.issueId,
@@ -37,14 +37,14 @@ class IssueRecords {
     required this.dueDate,
     this.returnDate,
     this.isReturned = false,
-    this.fineAmount = 0.0,
+    this.fineAmount = 0,
   });
 
   // Simple copyWith for updates
   IssueRecords copyWith({
     bool? isReturned,
     DateTime? returnDate,
-    double? fineAmount,
+    int? fineAmount,
   }) {
     return IssueRecords(
       issueId: issueId,

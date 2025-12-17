@@ -7,6 +7,7 @@ import '../models/issue_records_model.dart';
 class IssueProvider with ChangeNotifier {
   List<IssueRecords> _allIssues = [];
   List<IssueRecords> _filteredIssues = [];
+  int fineAmount = 5;
   static Box<IssueRecords>? _issueBox;
   static int _nextId = 1;
   String _filter = 'all'; // 'all', 'active', 'returned'
@@ -88,15 +89,15 @@ class IssueProvider with ChangeNotifier {
   }
 
   // Calculate fine for overdue book
-  double calculateFine(IssueRecords issue) {
+  int calculateFine(IssueRecords issue) {
     if (issue.isReturned) return issue.fineAmount;
 
     if (DateTime.now().isAfter(issue.dueDate)) {
       final daysLate = DateTime.now().difference(issue.dueDate).inDays;
-      return daysLate * 5.0; // ₹5 per day
+      return daysLate * fineAmount; // ₹5 per day
     }
 
-    return 0.0;
+    return 0;
   }
 
   // ========== FILTERING ==========

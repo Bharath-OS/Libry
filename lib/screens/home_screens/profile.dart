@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:libry/screens/books_screens/add_book_screen.dart';
-import 'package:libry/screens/register.dart';
 import 'package:libry/themes/styles.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/screens/login.dart';
 import 'package:libry/constants/app_colors.dart';
 import 'package:libry/screens/transactions_screens/issue.dart';
-import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/layout_widgets.dart';
 import '../../../database/userdata.dart';
@@ -22,9 +20,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final Color color = MyColors.primaryColor;
   late User? user;
   late final int issuedToday;
-  //todo work on the profile page
+
   @override
   void initState() {
     super.initState();
@@ -56,8 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildHeader(),
-            _buildKeyStats(MyColors.primaryButtonColor),
-            _quickActionButtons(MyColors.primaryButtonColor),
+            _buildKeyStats(color),
+            _quickActionButtons(color),
           ],
         ),
       ),
@@ -164,6 +163,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           actionButton(
+            iconColor: color,
+            textColor: color,
             icon: Icons.add_rounded,
             text: "Add Book",
             method: () {
@@ -172,6 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Divider(),
           actionButton(
+            iconColor: color,
+            textColor: color,
             icon: Icons.arrow_upward_rounded,
             text: "Issue Book",
             method: () =>
@@ -180,18 +183,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Divider(),
           actionButton(
             icon: Icons.create_outlined,
+            iconColor: color,
             text: "Edit Profile",
+            textColor: color,
             method: () async{
               await Navigator.push(context, transition(child: EditProfileScreen()));
               _loadUserData();
             }
           ),
           Divider(),
-          actionButton(icon: Icons.file_copy_outlined, text: "Download", method: (){}),
+          actionButton(icon: Icons.file_copy_outlined, iconColor: color,text: "Download",textColor: color, method: (){}),
           Divider(),
           actionButton(
               icon: Icons.exit_to_app,
+              iconColor: MyColors.warningColor,
               text: "Logout",
+              textColor: MyColors.warningColor,
               method: () async{
                 UserDatabase.setLogValue(false);
                 await Navigator.push(context, transition(child: LoginScreen()));
@@ -239,11 +246,12 @@ Widget verticalDivider() {
 
 Widget actionButton({
   required IconData icon,
+  required Color iconColor,
   required String text,
+  required Color textColor,
   required VoidCallback method,
 }) {
-  final Color color = MyColors.primaryButtonColor;
-  final Color textColor = MyColors.primaryColor;
+  final Color color = MyColors.primaryColor;
   return GestureDetector(
     onTap: method,
     child: Row(
@@ -252,11 +260,11 @@ Widget actionButton({
         Row(
           spacing: 10,
           children: [
-            Icon(icon, color: color, size: 40),
-            Text(text, style: CardStyles.cardSubTitleStyle.copyWith(color: color)),
+            Icon(icon, color: iconColor, size: 40),
+            Text(text, style: CardStyles.cardSubTitleStyle.copyWith(color: textColor)),
           ],
         ),
-        Icon(Icons.arrow_forward_ios_rounded,color: color,),
+        Icon(Icons.arrow_forward_ios_rounded,color: iconColor,),
       ],
     ),
   );
