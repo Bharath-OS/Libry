@@ -2,6 +2,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:libry/screens/transactions_screens/issue.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/app_colors.dart';
 import '../../../database/issue_records_db.dart';
@@ -103,6 +105,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: ElevatedButton(
+        child: Text("Issue Book"),
+        onPressed: () =>
+            Navigator.push(context, transition(child: IssueBookScreen())),
       ),
     );
   }
@@ -553,8 +560,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
       await _payFine(issue, fine);
     }
-
   }
+
   Future<bool> _showFinePaymentDialog(int fine) async {
     return await showDialog<bool>(
           context: context,
