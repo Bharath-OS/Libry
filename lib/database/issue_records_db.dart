@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import '../models/issue_records_model.dart';
 
 class IssueDBHive {
-  static const String _boxName = 'issue_records';
+  static const String boxName = 'issue_records';
   static Box<IssueRecords>? _issueBox;
   static int _nextId = 1;
 
@@ -12,7 +12,7 @@ class IssueDBHive {
   static Future<void> initIssueBox() async {
     try {
       // Just open the box, Hive is already initialized in main.dart
-      _issueBox = await Hive.openBox<IssueRecords>(_boxName);
+      _issueBox = await Hive.openBox<IssueRecords>(boxName);
 
       // Find highest issue ID to continue sequence
       final allIssues = getAllIssues();
@@ -40,7 +40,7 @@ class IssueDBHive {
   }
 
   // Get box instance
-  static Box<IssueRecords> get _box {
+  static Box<IssueRecords> get box {
     if (_issueBox == null) {
       throw Exception('Hive not initialized. Call initHive() first.');
     }
@@ -65,23 +65,23 @@ class IssueDBHive {
       dueDate: dueDate,
     );
 
-    await _box.put(issueId, record);
+    await box.put(issueId, record);
     return issueId;
   }
 
   // 2. Get all issues
   static List<IssueRecords> getAllIssues() {
-    return _box.values.toList();
+    return box.values.toList();
   }
 
   // 3. Get issue by ID
   static IssueRecords? getIssueById(String issueId) {
-    return _box.get(issueId);
+    return box.get(issueId);
   }
 
   // 4. Get active issues (not returned)
   static List<IssueRecords> getActiveIssues() {
-    return _box.values.where((issue) => !issue.isReturned).toList();
+    return box.values.where((issue) => !issue.isReturned).toList();
   }
 
   // 5. Return a book
@@ -94,41 +94,41 @@ class IssueDBHive {
       returnDate: DateTime.now(),
     );
 
-    await _box.put(issueId, updated);
+    await box.put(issueId, updated);
   }
 
   // 6. Delete issue (for corrections)
   static Future<void> deleteIssue(String issueId) async {
-    await _box.delete(issueId);
+    await box.delete(issueId);
   }
 
   // 7. Get issues by member
   static List<IssueRecords> getIssuesByMember(int memberId) {
-    return _box.values.where((issue) => issue.memberId == memberId).toList();
+    return box.values.where((issue) => issue.memberId == memberId).toList();
   }
 
   // 8. Get active issues by member
   static List<IssueRecords> getActiveIssuesByMember(int memberId) {
-    return _box.values.where((issue) =>
+    return box.values.where((issue) =>
     issue.memberId == memberId && !issue.isReturned
     ).toList();
   }
 
   // 9. Get issues by book
   static List<IssueRecords> getIssuesByBook(int bookId) {
-    return _box.values.where((issue) => issue.bookId == bookId).toList();
+    return box.values.where((issue) => issue.bookId == bookId).toList();
   }
 
   // 10. Check if book is borrowed
   static bool isBookBorrowed(int bookId) {
-    return _box.values.any((issue) =>
+    return box.values.any((issue) =>
     issue.bookId == bookId && !issue.isReturned
     );
   }
 
   // 11. Clear all (for testing)
   static Future<void> clearAll() async {
-    await _box.clear();
+    await box.clear();
     _nextId = 1;
   }
 }

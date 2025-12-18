@@ -9,8 +9,8 @@ class IssueProvider with ChangeNotifier {
   List<IssueRecords> _filteredIssues = [];
   int fineAmount = 5;
   int get fineOwed {
-    if(_allIssues.isEmpty) return 0;
-    return _allIssues.fold(0, (sum, issue)=>sum+issue.fineAmount);
+    if (_allIssues.isEmpty) return 0;
+    return _allIssues.fold(0, (sum, issue) => sum + issue.fineAmount);
   }
 
   int get dueTodayCount {
@@ -33,6 +33,12 @@ class IssueProvider with ChangeNotifier {
   int get overDueCount =>
       _allIssues.where((i) => i.dueDate.isAfter(DateTime.now())).length;
 
+  int get totalPendingFines {
+    return _allIssues
+        .where((issue) => !issue.isReturned)
+        .fold(0, (sum, issue) => sum + calculateFine(issue));
+  }
+
   // Initialize
   Future<void> init() async {
     await IssueDBHive.initIssueBox();
@@ -42,6 +48,7 @@ class IssueProvider with ChangeNotifier {
   // Refresh data
   Future<void> refresh() async {
     _allIssues = IssueDBHive.getAllIssues();
+    await _updateFines();
     _applyFilter();
     notifyListeners();
   }
@@ -102,6 +109,17 @@ class IssueProvider with ChangeNotifier {
     return !IssueDBHive.isBookBorrowed(bookId);
   }
 
+  Future<void> _updateFines() async {
+    for (var issue in _allIssues.where((i) => !i.isReturned)) {
+      final fine = calculateFine(issue);
+      if (fine > 0 && issue.fineAmount != fine) {
+        final updatedIssue = issue.copyWith(fineAmount: fine);
+        await IssueDBHive.box.put(issue.issueId, updatedIssue);
+      }
+    }
+    await refresh(); // Refresh to update UI
+  }
+
   // Calculate fine for overdue book
   int calculateFine(IssueRecords issue) {
     if (issue.isReturned) return issue.fineAmount;
@@ -114,7 +132,7 @@ class IssueProvider with ChangeNotifier {
     return 0;
   }
 
-  // ========== FILTERING ==========
+  //Filtering logics
 
   void setFilter(String filter) {
     _filter = filter;

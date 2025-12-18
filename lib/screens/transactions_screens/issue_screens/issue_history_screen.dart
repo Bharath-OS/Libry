@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/app_colors.dart';
+import '../../../database/issue_records_db.dart';
 import '../../../models/books_model.dart';
 import '../../../models/issue_records_model.dart';
 import '../../../models/members_model.dart';
@@ -36,9 +37,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final totalIssues = allIssues.length;
     final activeIssues = allIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allIssues.where((i) =>
-    !i.isReturned && DateTime.now().isAfter(i.dueDate)
-    ).length;
+    final overdueIssues = allIssues
+        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+        .length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
@@ -49,37 +50,56 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         child: Column(
           children: [
             // Stats Cards
-            _buildStatsCards(totalIssues, activeIssues, returnedIssues, overdueIssues),
+            _buildStatsCards(
+              totalIssues,
+              activeIssues,
+              returnedIssues,
+              overdueIssues,
+            ),
 
             // Filter Chips
-            _buildFilterChips(totalIssues, activeIssues, returnedIssues, overdueIssues),
+            _buildFilterChips(
+              totalIssues,
+              activeIssues,
+              returnedIssues,
+              overdueIssues,
+            ),
 
             // Issues List
             Expanded(
               child: filteredIssues.isEmpty
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.history, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'No transactions found',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              )
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.history, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            'No transactions found',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: filteredIssues.length,
-                itemBuilder: (context, index) {
-                  final issue = filteredIssues[index];
-                  final book = bookProvider.getBookById(issue.bookId);
-                  final member = memberProvider.getMemberById(issue.memberId);
-                  return _buildIssueCard(issue, book, member, issueProvider);
-                },
-              ),
+                      padding: EdgeInsets.all(16),
+                      itemCount: filteredIssues.length,
+                      itemBuilder: (context, index) {
+                        final issue = filteredIssues[index];
+                        final book = context.watch<BookProvider>().getBookById(
+                          issue.bookId,
+                        );
+                        final member = context
+                            .watch<MembersProvider>()
+                            .getMemberById(issue.memberId);
+                        return _buildIssueCard(
+                          issue,
+                          book,
+                          member,
+                          issueProvider,
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -132,7 +152,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color, IconData icon) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -152,13 +177,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
               color: color,
             ),
           ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
         ],
       ),
     );
@@ -199,9 +218,19 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     );
   }
 
-  Widget _buildIssueCard(IssueRecords issue, Books? book, Members? member, IssueProvider issueProvider) {
-    final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+  Widget _buildIssueCard(
+    IssueRecords issue,
+    Books? book,
+    Members? member,
+    IssueProvider issueProvider,
+  ) {
+    final isOverdue =
+        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
+    final bookTitle = book?.title ?? '[Book Deleted - ID: ${issue.bookId}]';
+    final bookAuthor = book?.author ?? 'Unknown Author';
+    final memberName =
+        member?.name ?? '[Member Deleted - ID: ${issue.memberId}]';
 
     return Card(
       margin: EdgeInsets.only(bottom: 12),
@@ -239,7 +268,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        book?.title ?? 'Unknown Book',
+                        bookTitle,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -249,20 +278,21 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'by ${book?.author ?? 'Unknown Author'}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        'by ${bookAuthor}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
+                          Icon(
+                            Icons.person_outline,
+                            size: 14,
+                            color: Colors.grey[600],
+                          ),
                           SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              member?.name ?? 'Unknown Member',
+                              memberName,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -312,11 +342,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoItem(
-                    'Issue ID',
-                    issue.issueId,
-                    Icons.tag,
-                  ),
+                  child: _buildInfoItem('Issue ID', issue.issueId, Icons.tag),
                 ),
                 Expanded(
                   child: _buildInfoItem(
@@ -342,15 +368,15 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: issue.isReturned
                       ? _buildInfoItem(
-                    'Returned',
-                    _formatDate(issue.returnDate!),
-                    Icons.check_circle,
-                  )
+                          'Returned',
+                          _formatDate(issue.returnDate!),
+                          Icons.check_circle,
+                        )
                       : _buildInfoItem(
-                    'Days Left',
-                    '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
-                    Icons.access_time,
-                  ),
+                          'Days Left',
+                          '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
+                          Icons.access_time,
+                        ),
                 ),
               ],
             ),
@@ -479,18 +505,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 10, color: Colors.grey[600]),
               ),
               SizedBox(height: 2),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -500,16 +520,19 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     );
   }
 
-  List<IssueRecords> _applyFilter(List<IssueRecords> issues, IssueProvider issueProvider) {
+  List<IssueRecords> _applyFilter(
+    List<IssueRecords> issues,
+    IssueProvider issueProvider,
+  ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
       case 'returned':
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
-        return issues.where((i) =>
-        !i.isReturned && DateTime.now().isAfter(i.dueDate)
-        ).toList();
+        return issues
+            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+            .toList();
       default:
         return issues;
     }
@@ -519,72 +542,78 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     setState(() => _filter = filter);
   }
 
+  //book return logic
   Future<void> _returnBook(IssueRecords issue) async {
-    try {
-      final issueProvider = context.read<IssueProvider>();
-      final bookProvider = context.read<BookProvider>();
-      final memberProvider = context.read<MembersProvider>();
+    final issueProvider = context.read<IssueProvider>();
+    final fine = issueProvider.calculateFine(issue);
 
-      // 1. Mark as returned in Hive
-      await issueProvider.returnBook(issue.issueId);
+    if (fine > 0) {
+      final confirmed = await _showFinePaymentDialog(fine);
+      if (!confirmed) return;
 
-      // 2. Update book in SQLite
-      final book = bookProvider.getBookById(issue.bookId);
-      if (book != null) {
-        final updatedBook = Books(
-          id: book.id,
-          title: book.title,
-          author: book.author,
-          year: book.year,
-          language: book.language,
-          publisher: book.publisher,
-          genre: book.genre,
-          pages: book.pages,
-          totalCopies: book.totalCopies,
-          copiesAvailable: book.copiesAvailable + 1,
-          coverPicture: book.coverPicture,
-        );
-        await bookProvider.updateBook(updatedBook);
-      }
-
-      // 3. Update member in SQLite
-      final member = memberProvider.getMemberById(issue.memberId);
-      if (member != null) {
-        final updatedMember = Members(
-          id: member.id,
-          memberId: member.memberId,
-          name: member.name,
-          email: member.email,
-          phone: member.phone,
-          address: member.address,
-          fine: member.fine,
-          totalBorrow: member.totalBorrow,
-          currentlyBorrow: member.currentlyBorrow - 1,
-          joined: member.joined,
-          expiry: member.expiry,
-        );
-        await memberProvider.updateMember(updatedMember);
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Book returned successfully'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
-
-      // Refresh the UI
-      setState(() {});
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      await _payFine(issue, fine);
     }
+
+  }
+  Future<bool> _showFinePaymentDialog(int fine) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Fine Payment Required'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Overdue fine: ₹$fine'),
+                SizedBox(height: 16),
+                Text('Please collect the fine before returning the book.'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Fine Paid'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _payFine(IssueRecords issue, int fine) async {
+    final issueProvider = context.read<IssueProvider>();
+    final memberProvider = context.read<MembersProvider>();
+
+    // 1. Update issue with fine amount
+    final updatedIssue = issue.copyWith(fineAmount: fine);
+    await IssueDBHive.box.put(issue.issueId, updatedIssue);
+
+    // 2. Update member's fine total
+    final member = memberProvider.getMemberById(issue.memberId);
+    if (member != null) {
+      final updatedMember = Members(
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        address: member.address,
+        totalBorrow: member.totalBorrow,
+        currentlyBorrow: member.currentlyBorrow,
+        fine: member.fine + fine,
+        joined: member.joined,
+        expiry: member.expiry,
+      );
+      await memberProvider.updateMember(updatedMember);
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Fine of ₹$fine recorded'),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
   void _viewDetails(IssueRecords issue, Books? book, Members? member) {
@@ -601,7 +630,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
               _buildDetailSection('Book Information', [
                 _buildDetailRow('Title', book?.title ?? 'Unknown'),
                 _buildDetailRow('Author', book?.author ?? 'Unknown'),
-                _buildDetailRow('Book ID', 'B${issue.bookId.toString().padLeft(3, '0')}'),
+                _buildDetailRow(
+                  'Book ID',
+                  'B${issue.bookId.toString().padLeft(3, '0')}',
+                ),
               ]),
 
               SizedBox(height: 16),
@@ -609,7 +641,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
               // Member Details
               _buildDetailSection('Member Information', [
                 _buildDetailRow('Name', member?.name ?? 'Unknown'),
-                _buildDetailRow('Member ID', 'M${issue.memberId.toString().padLeft(3, '0')}'),
+                _buildDetailRow(
+                  'Member ID',
+                  'M${issue.memberId.toString().padLeft(3, '0')}',
+                ),
                 _buildDetailRow('Phone', member?.phone ?? 'N/A'),
               ]),
 
@@ -620,9 +655,15 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 _buildDetailRow('Issue ID', issue.issueId),
                 _buildDetailRow('Borrow Date', _formatDate(issue.borrowDate)),
                 _buildDetailRow('Due Date', _formatDate(issue.dueDate)),
-                _buildDetailRow('Status', issue.isReturned ? 'Returned' : 'Active'),
+                _buildDetailRow(
+                  'Status',
+                  issue.isReturned ? 'Returned' : 'Active',
+                ),
                 if (issue.isReturned)
-                  _buildDetailRow('Return Date', _formatDate(issue.returnDate!)),
+                  _buildDetailRow(
+                    'Return Date',
+                    _formatDate(issue.returnDate!),
+                  ),
               ]),
             ],
           ),
@@ -657,9 +698,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: MyColors.darkGrey),
           ),
-          child: Column(
-            children: children,
-          ),
+          child: Column(children: children),
         ),
       ],
     );
@@ -681,10 +720,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey[800]),
-            ),
+            child: Text(value, style: TextStyle(color: Colors.grey[800])),
           ),
         ],
       ),
