@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/books_screen.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/books_screens/add_book_screen.dart';
 import 'package:libry/themes/styles.dart';
@@ -168,9 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textColor: color,
             icon: Icons.add_rounded,
             text: "Add Book",
-            method: () {
-              Navigator.push(context, transition(child: AddBookScreen()));
-            },
+            method: ()=>Navigator.push(context, transition(child: AddBookScreen()))
           ),
           Divider(),
           actionButton(

@@ -9,9 +9,8 @@ class IssueProvider with ChangeNotifier {
   List<IssueRecords> _filteredIssues = [];
   int fineAmount = 5;
   int get fineOwed {
-    int fines = 0;
-    _allIssues.map((issue) => fines += issue.fineAmount);
-    return fines;
+    if(_allIssues.isEmpty) return 0;
+    return _allIssues.fold(0, (sum, issue)=>sum+issue.fineAmount);
   }
 
   int get dueTodayCount {
