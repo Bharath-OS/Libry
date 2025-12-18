@@ -18,6 +18,10 @@ class IssueProvider with ChangeNotifier {
         .where((issue) => DateUtils.isSameDay(issue.dueDate, DateTime.now()))
         .length;
   }
+  
+  int get returnTodayCount {
+    return _allIssues.where((issue)=>DateUtils.isSameDay(issue.returnDate, DateTime.now())&&issue.isReturned).length;
+  }
 
   static Box<IssueRecords>? _issueBox;
   String _filter = 'all'; // 'all', 'active', 'returned'
