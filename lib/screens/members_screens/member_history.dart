@@ -90,7 +90,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                           Icon(Icons.history, size: 64, color: Colors.grey),
                           SizedBox(height: 16),
                           Text(
-                            'No borrow history found',
+                            'Borrow a book to see the history',
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
                         ],
