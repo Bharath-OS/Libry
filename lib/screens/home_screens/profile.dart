@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/Screens/books_screen.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/books_screens/add_book_screen.dart';
 import 'package:libry/themes/styles.dart';
@@ -23,18 +24,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final Color color = MyColors.primaryColor;
   late User? user;
-  late final int issuedToday;
-  late final int activeMembers;
-  late final int fineCollected;
 
   @override
   void initState() {
     super.initState();
-    if (mounted) {
-      issuedToday = context.read<IssueProvider>().issuedTodayCount;
-      activeMembers = context.read<MembersProvider>().activeMembers;
-      fineCollected = context.read<IssueProvider>().fineOwed;
-    }
+    // if (mounted) {
+    // }
     _loadUserData();
   }
 
@@ -123,7 +118,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildKeyStats(Color color) {
-    // final Color color = MyColors.primaryColor;
+    final activeMembersCount = context.watch<IssueProvider>().activeCount;
+    final issuedTodayCount = context.watch<IssueProvider>().issuedTodayCount;
+    final fineOwes = context.watch<IssueProvider>().fineOwed;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
@@ -135,22 +132,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           _buildStatCard(
             icon: Icons.book_rounded,
-            stat: issuedToday,
+            stat: issuedTodayCount,
             label: "Issued Today",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.people_rounded,
-            stat: activeMembers,
+            stat: activeMembersCount,
             label: "Active Members",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.currency_rupee_rounded,
-            stat: fineCollected,
-            label: "Fine Collected",
+            stat: fineOwes,
+            label: "Fine Owes",
             color: color,
           ),
         ],
@@ -172,9 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             textColor: color,
             icon: Icons.add_rounded,
             text: "Add Book",
-            method: () {
-              Navigator.push(context, transition(child: AddBookScreen()));
-            },
+            method: ()=>Navigator.push(context, transition(child: AddBookScreen()))
           ),
           Divider(),
           actionButton(
@@ -256,7 +251,6 @@ Widget actionButton({
   required Color textColor,
   required VoidCallback method,
 }) {
-  final Color color = MyColors.primaryColor;
   return GestureDetector(
     onTap: method,
     child: Row(
