@@ -557,7 +557,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     if (fine > 0) {
       final confirmed = await _showFinePaymentDialog(fine);
       if (!confirmed) return;
-
+      print("fine is $fine");
       await _payFine(issue, fine);
     }
   }

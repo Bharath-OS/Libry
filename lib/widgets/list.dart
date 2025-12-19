@@ -21,6 +21,7 @@ class ListScreen<T> extends StatefulWidget {
   final Widget Function(T item) tileBuilder;
   final void Function(T item)? onTap;
   final VoidCallback fabMethod;
+  final Widget filters;
 
   const ListScreen({
     super.key,
@@ -31,6 +32,7 @@ class ListScreen<T> extends StatefulWidget {
     required this.items,
     required this.tileBuilder,
     required this.fabMethod,
+    required this.filters,
     this.onTap,
   });
 
@@ -128,7 +130,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               child: Row(
                 spacing: 10,
                 children: [
-                  MyButton.filterButton(method: () {}),
+                  widget.filters,
                   MyButton.deleteButton(method: () => _clearAllItems(context)),
                 ],
               ),

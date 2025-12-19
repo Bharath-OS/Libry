@@ -1,4 +1,3 @@
-// lib/database/issue_db_hive.dart
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import '../models/issue_records_model.dart';
@@ -18,7 +17,7 @@ class IssueDBHive {
       final allIssues = getAllIssues();
       if (allIssues.isNotEmpty) {
         final ids = allIssues.map((i) {
-          final idStr = i.issueId.substring(1); // Remove 'I'
+          final idStr = i.issueId.substring(1);
           return int.tryParse(idStr) ?? 0;
         }).toList();
         _nextId = (ids.reduce((a, b) => a > b ? a : b)) + 1;
@@ -46,8 +45,6 @@ class IssueDBHive {
     }
     return _issueBox!;
   }
-
-  // ========== SIMPLE CRUD OPERATIONS ==========
 
   // 1. Add new issue
   static Future<String> addIssue({

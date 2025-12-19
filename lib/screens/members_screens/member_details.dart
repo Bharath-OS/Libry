@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/members_screens/edit_member.dart';
 import 'package:libry/utilities/helpers.dart';
@@ -20,10 +21,11 @@ class MemberDetailsScreen extends StatefulWidget {
 
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final String dateFormatString = 'dd/MM/yyyy';
-
+  // late final issue;
   @override
   Widget build(BuildContext context) {
     final memberDetail = context.watch<MembersProvider>().getMemberById(widget.memberId);
+    final issue = context.watch<IssueProvider>().getMemberFine(widget.memberId);
 
     if (memberDetail == null) {
       return LayoutWidgets.customScaffold(
@@ -34,23 +36,25 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(barTitle: "Member Details", context: context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Member Header Section
-            _buildHeaderSection(memberDetail),
-
-            // Member Information
-            _buildInformationSection(memberDetail),
-
-            // Statistics
-            _buildStatisticsSection(memberDetail),
-
-            // Action Buttons
-            _buildActionButtons(memberDetail),
-
-            SizedBox(height: 20),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Member Header Section
+              _buildHeaderSection(memberDetail),
+        
+              // Member Information
+              _buildInformationSection(memberDetail),
+        
+              // Statistics
+              _buildStatisticsSection(memberDetail, issue),
+        
+              // Action Buttons
+              _buildActionButtons(memberDetail),
+        
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -62,13 +66,6 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
 
     return Container(
       padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [MyColors.bgColor, MyColors.bgColor.withOpacity(0.8)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
       child: Column(
         children: [
           // Member Initial Circle
@@ -227,7 +224,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildStatisticsSection(Members member) {
+  Widget _buildStatisticsSection(Members member, int issue) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(20),
@@ -282,7 +279,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Fines',
-                  '₹${member.fine.toStringAsFixed(2)}',
+                  '₹${issue.toStringAsFixed(2)}',
                   Icons.account_balance_wallet,
                   member.fine > 0 ? Colors.red : Colors.green,
                 ),

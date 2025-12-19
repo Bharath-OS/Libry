@@ -18,7 +18,7 @@ class IssueProvider with ChangeNotifier {
         .where((issue) => DateUtils.isSameDay(issue.dueDate, DateTime.now()))
         .length;
   }
-  
+
   int get returnTodayCount {
     return _allIssues.where((issue)=>DateUtils.isSameDay(issue.returnDate, DateTime.now())&&issue.isReturned).length;
   }
@@ -35,7 +35,7 @@ class IssueProvider with ChangeNotifier {
       .where((i) => DateUtils.isSameDay(i.borrowDate, DateTime.now()))
       .length;
   int get overDueCount =>
-      _allIssues.where((i) => i.dueDate.isAfter(DateTime.now())).length;
+      _allIssues.where((i) => DateTime.now().isAfter(i.dueDate) && !i.isReturned).length;
 
   int get totalPendingFines {
     return _allIssues
@@ -90,6 +90,20 @@ class IssueProvider with ChangeNotifier {
   Future<void> deleteIssue(String issueId) async {
     await IssueDBHive.deleteIssue(issueId);
     await refresh();
+  }
+
+  Future<List<IssueRecords>> getIssueByMember(int memberId)async{
+    final issues = IssueDBHive.getIssuesByMember(memberId);
+    await refresh();
+    return issues;
+  }
+
+  int getMemberFine(int memberId){
+    final issues = IssueDBHive.getIssuesByMember(memberId);
+    return issues
+        .where((issue) => !issue.isReturned)
+        .fold(0, (sum, issue) => sum + calculateFine(issue));
+
   }
 
   // Get issue by ID
