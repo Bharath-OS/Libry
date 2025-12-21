@@ -1,4 +1,3 @@
-// lib/database/issue_db_hive.dart
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import '../models/issue_records_model.dart';
@@ -11,14 +10,13 @@ class IssueDBHive {
   // Initialize Hive
   static Future<void> initIssueBox() async {
     try {
-      // Just open the box, Hive is already initialized in main.dart
       _issueBox = await Hive.openBox<IssueRecords>(boxName);
 
       // Find highest issue ID to continue sequence
       final allIssues = getAllIssues();
       if (allIssues.isNotEmpty) {
         final ids = allIssues.map((i) {
-          final idStr = i.issueId.substring(1); // Remove 'I'
+          final idStr = i.issueId.substring(1);
           return int.tryParse(idStr) ?? 0;
         }).toList();
         _nextId = (ids.reduce((a, b) => a > b ? a : b)) + 1;
@@ -47,13 +45,13 @@ class IssueDBHive {
     return _issueBox!;
   }
 
-  // ========== SIMPLE CRUD OPERATIONS ==========
-
   // 1. Add new issue
   static Future<String> addIssue({
     required int bookId,
     required int memberId,
     required DateTime dueDate,
+    required String memberName,
+    required String bookName,
   }) async {
     final issueId = _generateIssueId();
 
@@ -63,6 +61,8 @@ class IssueDBHive {
       memberId: memberId,
       borrowDate: DateTime.now(),
       dueDate: dueDate,
+      bookName: bookName,
+      memberName: memberName,
     );
 
     await box.put(issueId, record);
@@ -109,9 +109,9 @@ class IssueDBHive {
 
   // 8. Get active issues by member
   static List<IssueRecords> getActiveIssuesByMember(int memberId) {
-    return box.values.where((issue) =>
-    issue.memberId == memberId && !issue.isReturned
-    ).toList();
+    return box.values
+        .where((issue) => issue.memberId == memberId && !issue.isReturned)
+        .toList();
   }
 
   // 9. Get issues by book
@@ -121,8 +121,8 @@ class IssueDBHive {
 
   // 10. Check if book is borrowed
   static bool isBookBorrowed(int bookId) {
-    return box.values.any((issue) =>
-    issue.bookId == bookId && !issue.isReturned
+    return box.values.any(
+      (issue) => issue.bookId == bookId && !issue.isReturned,
     );
   }
 

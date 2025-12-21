@@ -19,7 +19,9 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
     return IssueRecords(
       issueId: fields[0] as String,
       bookId: fields[1] as int,
+      bookName: fields[8] as String?,
       memberId: fields[2] as int,
+      memberName: fields[9] as String?,
       borrowDate: fields[3] as DateTime,
       dueDate: fields[4] as DateTime,
       returnDate: fields[5] as DateTime?,
@@ -31,7 +33,7 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
   @override
   void write(BinaryWriter writer, IssueRecords obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.issueId)
       ..writeByte(1)
@@ -47,7 +49,11 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
       ..writeByte(6)
       ..write(obj.isReturned)
       ..writeByte(7)
-      ..write(obj.fineAmount);
+      ..write(obj.fineAmount)
+      ..writeByte(8)
+      ..write(obj.bookName)
+      ..writeByte(9)
+      ..write(obj.memberName);
   }
 
   @override

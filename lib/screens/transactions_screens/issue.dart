@@ -48,7 +48,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     final bookProvider = context.read<BookProvider>();
 
     _filteredMembers = memberProvider.members;
-    _filteredBooks = bookProvider.books.where((book) => book.copiesAvailable > 0).toList();
+    _filteredBooks = bookProvider.books
+        .where((book) => book.copiesAvailable > 0)
+        .toList();
   }
 
   @override
@@ -87,26 +89,26 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-          
+
                       // Member Search Section
                       _buildMemberSection(),
-          
+
                       const SizedBox(height: 24),
-          
+
                       // Book Search Section (only if member verified)
                       if (_isMemberVerified) _buildBookSection(),
-          
+
                       const SizedBox(height: 24),
-          
+
                       // Due Date Section (only if book selected)
                       if (_isBookSelected) _buildDueDateSection(),
-          
+
                       const SizedBox(height: 32),
-          
+
                       // Issue Button
                       if (_isBookSelected)
                         MyButton.primaryButton(
-                          method: _isProcessing ? (){} : _processIssue,
+                          method: _isProcessing ? () {} : _processIssue,
                           text: _isProcessing ? "Processing..." : "Issue Book",
                         ),
                     ],
@@ -141,9 +143,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             suffixIcon: _isMemberVerified
                 ? Icon(Icons.verified, color: MyColors.successColor)
                 : IconButton(
-              icon: Icon(Icons.search, color: MyColors.bgColor),
-              onPressed: _searchMembers,
-            ),
+                    icon: Icon(Icons.search, color: MyColors.bgColor),
+                    onPressed: _searchMembers,
+                  ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: MyColors.bgColor.withOpacity(0.3)),
@@ -271,9 +273,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             suffixIcon: _isBookSelected
                 ? Icon(Icons.check, color: MyColors.successColor)
                 : IconButton(
-              icon: Icon(Icons.search, color: MyColors.bgColor),
-              onPressed: _searchBooks,
-            ),
+                    icon: Icon(Icons.search, color: MyColors.bgColor),
+                    onPressed: _searchBooks,
+                  ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: MyColors.bgColor.withOpacity(0.3)),
@@ -315,16 +317,18 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
                       // color: MyColors.bgColor.withOpacity(0.1),
-                      color: MyColors.bgColor
+                      color: MyColors.bgColor,
                     ),
-                    child: book.coverPicture.isNotEmpty && File(book.coverPicture).existsSync()
+                    child:
+                        book.coverPicture.isNotEmpty &&
+                            File(book.coverPicture).existsSync()
                         ? ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Image.file(
-                        File(book.coverPicture),
-                        fit: BoxFit.cover,
-                      ),
-                    )
+                            borderRadius: BorderRadius.circular(4),
+                            child: Image.file(
+                              File(book.coverPicture),
+                              fit: BoxFit.cover,
+                            ),
+                          )
                         : Icon(Icons.book, color: MyColors.bgColor),
                   ),
                   title: Text(
@@ -356,10 +360,13 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   trailing: book.copiesAvailable > 0
                       ? Icon(Icons.arrow_forward_ios, size: 16)
                       : Chip(
-                    label: Text("Out of Stock"),
-                    backgroundColor: Colors.red[50],
-                    labelStyle: TextStyle(fontSize: 10, color: Colors.red),
-                  ),
+                          label: Text("Out of Stock"),
+                          backgroundColor: Colors.red[50],
+                          labelStyle: TextStyle(
+                            fontSize: 10,
+                            color: Colors.red,
+                          ),
+                        ),
                   onTap: book.copiesAvailable > 0
                       ? () => _selectBook(book)
                       : null,
@@ -389,12 +396,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   ),
                   child: _selectedBook!.coverPicture.isNotEmpty
                       ? ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.file(
-                      File(_selectedBook!.coverPicture),
-                      fit: BoxFit.cover,
-                    ),
-                  )
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.file(
+                            File(_selectedBook!.coverPicture),
+                            fit: BoxFit.cover,
+                          ),
+                        )
                       : Icon(Icons.book, color: MyColors.bgColor, size: 30),
                 ),
                 const SizedBox(width: 12),
@@ -530,7 +537,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   void _filterBooks(String query) {
     final books = context.read<BookProvider>().books;
-    final availableBooks = books.where((book) => book.copiesAvailable > 0).toList();
+    final availableBooks = books
+        .where((book) => book.copiesAvailable > 0)
+        .toList();
 
     if (query.isEmpty) {
       setState(() => _filteredBooks = availableBooks);
@@ -550,9 +559,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   void _searchMembers() {
     if (_memberFieldController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please enter member name or ID"))
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Please enter member name or ID")));
       return;
     }
 
@@ -565,7 +574,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   void _searchBooks() {
     if (_bookFieldController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please enter book title or author"))
+        SnackBar(content: Text("Please enter book title or author")),
       );
       return;
     }
@@ -589,10 +598,10 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     // Check if member can borrow more books
     if (member.currentlyBorrow >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("This member has reached the borrow limit (5 books)"),
-            backgroundColor: Colors.orange,
-          )
+        SnackBar(
+          content: Text("This member has reached the borrow limit (5 books)"),
+          backgroundColor: Colors.orange,
+        ),
       );
     }
   }
@@ -622,7 +631,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _selectedBook = null;
       _isBookSelected = false;
       _bookFieldController.clear();
-      _filteredBooks = context.read<BookProvider>().books
+      _filteredBooks = context
+          .read<BookProvider>()
+          .books
           .where((book) => book.copiesAvailable > 0)
           .toList();
     });
@@ -659,20 +670,20 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     // Validation checks
     if (_selectedMember!.currentlyBorrow >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Member has reached borrow limit (5 books)"),
-            backgroundColor: Colors.red,
-          )
+        SnackBar(
+          content: Text("Member has reached borrow limit (5 books)"),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     if (_selectedBook!.copiesAvailable <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Book is not available"),
-            backgroundColor: Colors.red,
-          )
+        SnackBar(
+          content: Text("Book is not available"),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -689,6 +700,8 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         bookId: _selectedBook!.id!,
         memberId: _selectedMember!.id!,
         dueDate: _dueDate,
+        memberName: _selectedMember!.name,
+        bookName: _selectedBook!.title,
       );
 
       // 2. Update book in SQLite
@@ -728,13 +741,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
       // Reset form
       _resetForm();
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error: ${e.toString()}"),
-            backgroundColor: Colors.red,
-          )
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() => _isProcessing = false);
@@ -762,16 +774,26 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Issue ID: $issueId", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Member: ${_selectedMember!.name}",style: TextStyle(color: MyColors.darkGrey)),
-                  Text("Book: ${_selectedBook!.title}",style: TextStyle(color: MyColors.darkGrey)),
-                  Text("Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",style: TextStyle(color: MyColors.darkGrey)),
+                  Text(
+                    "Issue ID: $issueId",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Member: ${_selectedMember!.name}",
+                    style: TextStyle(color: MyColors.darkGrey),
+                  ),
+                  Text(
+                    "Book: ${_selectedBook!.title}",
+                    style: TextStyle(color: MyColors.darkGrey),
+                  ),
+                  Text(
+                    "Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",
+                    style: TextStyle(color: MyColors.darkGrey),
+                  ),
                 ],
               ),
             ),
@@ -798,7 +820,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _memberFieldController.clear();
       _bookFieldController.clear();
       _filteredMembers = context.read<MembersProvider>().members;
-      _filteredBooks = context.read<BookProvider>().books
+      _filteredBooks = context
+          .read<BookProvider>()
+          .books
           .where((book) => book.copiesAvailable > 0)
           .toList();
     });

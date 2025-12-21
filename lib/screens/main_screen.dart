@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:libry/screens/settings.dart';
 import 'package:libry/screens/transactions.dart';
+import 'package:libry/screens/transactions_screens/issue_screens/issue_history_screen.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 import '../constants/app_colors.dart';
@@ -24,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     BooksScreen(),
     MembersScreen(),
-    TransactionsScreen(),
+    IssueHistoryScreen(),
     SettingsScreen(),
   ];
 

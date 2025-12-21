@@ -28,7 +28,7 @@ class BooksScreen extends StatelessWidget {
       ),
       fabMethod: () {
         Navigator.push(context, transition(child: AddBookScreen()));
-      }
+      },
     );
   }
 }

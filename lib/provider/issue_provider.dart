@@ -1,4 +1,3 @@
-// lib/provider/issue_provider.dart
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../database/issue_records_db.dart';
@@ -19,6 +18,10 @@ class IssueProvider with ChangeNotifier {
         .length;
   }
 
+  int get returnTodayCount {
+    return _allIssues.where((issue)=>DateUtils.isSameDay(issue.returnDate, DateTime.now())&&issue.isReturned).length;
+  }
+
   static Box<IssueRecords>? _issueBox;
   String _filter = 'all'; // 'all', 'active', 'returned'
 
@@ -31,7 +34,7 @@ class IssueProvider with ChangeNotifier {
       .where((i) => DateUtils.isSameDay(i.borrowDate, DateTime.now()))
       .length;
   int get overDueCount =>
-      _allIssues.where((i) => i.dueDate.isAfter(DateTime.now())).length;
+      _allIssues.where((i) => DateTime.now().isAfter(i.dueDate) && !i.isReturned).length;
 
   int get totalPendingFines {
     return _allIssues
@@ -60,6 +63,8 @@ class IssueProvider with ChangeNotifier {
     required int bookId,
     required int memberId,
     required DateTime dueDate,
+    required String memberName,
+    required String bookName,
   }) async {
     // Check if Hive is ready
     if (!IssueDBHive.isReady) {
@@ -70,6 +75,8 @@ class IssueProvider with ChangeNotifier {
       bookId: bookId,
       memberId: memberId,
       dueDate: dueDate,
+      memberName: memberName,
+      bookName: bookName,
     );
 
     await refresh();
@@ -86,6 +93,20 @@ class IssueProvider with ChangeNotifier {
   Future<void> deleteIssue(String issueId) async {
     await IssueDBHive.deleteIssue(issueId);
     await refresh();
+  }
+
+  Future<List<IssueRecords>> getIssueByMember(int memberId)async{
+    final issues = IssueDBHive.getIssuesByMember(memberId);
+    await refresh();
+    return issues;
+  }
+
+  int getMemberFine(int memberId){
+    final issues = IssueDBHive.getIssuesByMember(memberId);
+    return issues
+        .where((issue) => !issue.isReturned)
+        .fold(0, (sum, issue) => sum + calculateFine(issue));
+
   }
 
   // Get issue by ID
@@ -117,7 +138,6 @@ class IssueProvider with ChangeNotifier {
         await IssueDBHive.box.put(issue.issueId, updatedIssue);
       }
     }
-    await refresh(); // Refresh to update UI
   }
 
   // Calculate fine for overdue book

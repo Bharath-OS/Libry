@@ -2,6 +2,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:libry/screens/transactions_screens/issue.dart';
+import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/app_colors.dart';
 import '../../../database/issue_records_db.dart';
@@ -42,9 +44,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         .length;
 
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(
-        barTitle: 'All Transactions',
-        context: context,
+      appBar: AppBar(
+        title: Text('All Transactions'),
       ),
       body: SafeArea(
         child: Column(
@@ -103,6 +104,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: ElevatedButton(
+        child: Text("Issue Book"),
+        onPressed: () =>
+            Navigator.push(context, transition(child: IssueBookScreen())),
       ),
     );
   }
@@ -227,10 +233,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final isOverdue =
         !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
-    final bookTitle = book?.title ?? '[Book Deleted - ID: ${issue.bookId}]';
+    final bookTitle = book?.title ?? '${issue.bookName} (Book Deleted)';
     final bookAuthor = book?.author ?? 'Unknown Author';
     final memberName =
-        member?.name ?? '[Member Deleted - ID: ${issue.memberId}]';
+        member?.name ?? '${issue.memberId} (Member Deleted)';
 
     return Card(
       margin: EdgeInsets.only(bottom: 12),
@@ -278,7 +284,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'by ${bookAuthor}',
+                        'by $bookAuthor',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       SizedBox(height: 8),
@@ -550,11 +556,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     if (fine > 0) {
       final confirmed = await _showFinePaymentDialog(fine);
       if (!confirmed) return;
-
+      print("fine is $fine");
       await _payFine(issue, fine);
     }
-
   }
+
   Future<bool> _showFinePaymentDialog(int fine) async {
     return await showDialog<bool>(
           context: context,

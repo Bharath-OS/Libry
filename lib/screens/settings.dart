@@ -5,7 +5,7 @@ import 'package:libry/provider/language_provider.dart';
 import 'package:libry/widgets/dialogs.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_colors.dart';
 import '../provider/genre_provider.dart';
 import '../utilities/validation.dart';
@@ -18,392 +18,557 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
+  static const String FINE_PER_DAY_KEY = 'fine_per_day';
+  static const String DEFAULT_ISSUE_DAYS_KEY = 'default_issue_days';
+
+  double finePerDay = 5.0;
+  int defaultIssueDays = 14;
 
   @override
   void initState() {
     super.initState();
+    _loadSettings();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      finePerDay = prefs.getDouble(FINE_PER_DAY_KEY) ?? 5.0;
+      defaultIssueDays = prefs.getInt(DEFAULT_ISSUE_DAYS_KEY) ?? 14;
+    });
+  }
+
+  Future<void> _saveFinePerDay(double value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(FINE_PER_DAY_KEY, value);
+    setState(() => finePerDay = value);
+  }
+
+  Future<void> _saveDefaultIssueDays(int value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(DEFAULT_ISSUE_DAYS_KEY, value);
+    setState(() => defaultIssueDays = value);
   }
 
   @override
   Widget build(BuildContext context) {
     final genres = context.watch<GenreProvider>().getGenre;
     final languages = context.watch<LanguageProvider>().getLanguages;
+
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(barTitle: "Settings", context: context),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.all(30),
-                padding: EdgeInsets.all(30),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: MyColors.whiteBG,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    spacing: 20,
-                    children: [
-                      createWidgets(
-                        items: genres,
-                        context: context,
-                        title: "Genre",
-                        onAdd: (ctx, genre) =>
-                            addGenre(context: ctx, items: genres),
-                        onEdit: (ctx, genre) => editGenre(ctx, genre),
-                        onDelete: (ctx, genre) => deleteGenre(ctx, genre),
-                      ),
-
-                      createWidgets(
-                        context: context,
-                        title: "Language",
-                        items: languages,
-                        onEdit: (ctx, language) => editLanguage(ctx, language),
-                        onDelete: (ctx, language) => deleteLanguage(ctx, language),
-                        onAdd: (ctx,language) => addLanguage(context: ctx, items: language),
-                      ),
-                    ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Library Settings Section
+              _buildSectionTitle('Library Settings'),
+              SizedBox(height: 12),
+              _buildSettingsCard(
+                children: [
+                  _buildSettingTile(
+                    icon: Icons.attach_money,
+                    title: 'Fine Per Day',
+                    subtitle: '₹$finePerDay per day for overdue books',
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit, color: MyColors.primaryColor),
+                      onPressed: () => _showFineDialog(),
+                    ),
                   ),
-                ),
+                  Divider(height: 1),
+                  _buildSettingTile(
+                    icon: Icons.calendar_month,
+                    title: 'Default Issue Period',
+                    subtitle: '$defaultIssueDays days',
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit, color: MyColors.primaryColor),
+                      onPressed: () => _showIssuePeriodDialog(),
+                    ),
+                  ),
+                  Divider(height: 1),
+                  _buildSettingTile(
+                    icon: Icons.book_online,
+                    title: 'Max Books Per Member',
+                    subtitle: '5 books at a time',
+                    trailing: Icon(Icons.info_outline, color: Colors.grey),
+                  ),
+                ],
               ),
-            ),
-          ],
+
+              SizedBox(height: 24),
+
+              // Content Management Section
+              _buildSectionTitle('Content Management'),
+              SizedBox(height: 12),
+
+              // Genres
+              _buildManagementCard(
+                title: 'Book Genres',
+                icon: Icons.category,
+                items: genres,
+                emptyMessage: 'No genres added yet',
+                onAdd: () => _showAddGenreDialog(genres),
+                onEdit: (genre) => _showEditGenreDialog(genre),
+                onDelete: (genre) => _showDeleteGenreDialog(genre),
+              ),
+
+              SizedBox(height: 16),
+
+              // Languages
+              _buildManagementCard(
+                title: 'Languages',
+                icon: Icons.language,
+                items: languages,
+                emptyMessage: 'No languages added yet',
+                onAdd: () => _showAddLanguageDialog(languages),
+                onEdit: (language) => _showEditLanguageDialog(language),
+                onDelete: (language) => _showDeleteLanguageDialog(language),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-Future<void> addLanguage({
-  required BuildContext context,
-  required List<String> items,
-}) async {
-  final languageController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  await showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      content: Form(
-        key: formKey,
-        child: Column(
-          spacing: 20,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Add new language", style: CardStyles.cardTitleStyle),
-            TextFormField(
-              controller: languageController,
-              decoration: InputDecoration(labelText: "Enter new language"),
-              validator: (value) => Validator.genreValidator(value, items),
-            ),
-          ],
-        ),
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: MyColors.whiteBG,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
       ),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "Cancel",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<LanguageProvider>().addLanguage(languageController.text);
-            } catch (_) {
-              AppDialogs.showSnackBar(message: "Error adding language", context: context);
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Add",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
-Future<void> addGenre({
-  required BuildContext context,
-  required List<String> items,
-}) async {
-  final genreController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  await showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      content: Form(
-        key: formKey,
-        child: Column(
-          spacing: 20,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Add new genre", style: CardStyles.cardTitleStyle),
-            TextFormField(
-              controller: genreController,
-              decoration: InputDecoration(labelText: "Enter new genre"),
-              validator: (value) => Validator.genreValidator(value, items),
-            ),
-          ],
-        ),
+  Widget _buildSettingsCard({required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: MyColors.whiteBG,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "Cancel",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<GenreProvider>().addGenre(genreController.text);
-            } catch (_) {
-              AppDialogs.showSnackBar(message: "Error adding genre", context: context);
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Add",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
+      child: Column(children: children),
+    );
+  }
 
-Future<void> editLanguage(BuildContext context, String language) async {
-  final languageController = TextEditingController();
-  languageController.text = language;
-  final formKey = GlobalKey<FormState>();
-  await showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Form(
-        key: formKey,
-        child: Column(
-          spacing: 20,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Edit Language", style: CardStyles.cardTitleStyle),
-            TextFormField(
-              controller: languageController,
-              decoration: InputDecoration(labelText: "Enter new language"),
-              validator: (value) => Validator.emptyValidator(value),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "Cancel",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<LanguageProvider>().editLanguage(
-                language,
-                languageController.text.trim(),
-              );
-            } catch (e) {
-              AppDialogs.showSnackBar(
-                message: "Error editing language",
-                context: context,
-              );
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Edit",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
-
-Future<void> editGenre(BuildContext context, String genre) async {
-  final genreController = TextEditingController();
-  genreController.text = genre;
-  final formKey = GlobalKey<FormState>();
-  await showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Form(
-        key: formKey,
-        child: Column(
-          spacing: 20,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Edit genre", style: CardStyles.cardTitleStyle),
-            TextFormField(
-              controller: genreController,
-              decoration: InputDecoration(labelText: "Enter new genre"),
-              validator: (value) => Validator.emptyValidator(value),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "Cancel",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<GenreProvider>().editGenre(
-                genre,
-                genreController.text.trim(),
-              );
-            } catch (e) {
-              AppDialogs.showSnackBar(
-                message: "Error editing genre",
-                context: context,
-              );
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Edit",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
-
-Future<void> deleteLanguage(BuildContext context, String language) async {
-  await showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text("Delete language"),
-      content: Text("Do you really want to delete this language?"),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "No",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<LanguageProvider>().deleteLanguage(language);
-            } catch (e) {
-              AppDialogs.showSnackBar(
-                message: "Error deleting language",
-                context: context,
-              );
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Yes",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
-
-Future<void> deleteGenre(BuildContext context, String genre) async {
-  await showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text("Delete Genre"),
-      content: Text("Do you really want to delete this genre?"),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: "No",
-          fontSize: 12,
-        ),
-        MyButton.primaryButton(
-          method: () {
-            try {
-              context.read<GenreProvider>().deleteGenre(genre);
-            } catch (e) {
-              AppDialogs.showSnackBar(
-                message: "Error deleting genre",
-                context: context,
-              );
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          text: "Yes",
-          fontSize: 12,
-        ),
-      ],
-    ),
-  );
-}
-
-Widget createWidgets({
-  required List<String> items,
-  required BuildContext context,
-  required String title,
-  required Future<void> Function(BuildContext, String) onEdit,
-  required Future<void> Function(BuildContext, String) onDelete,
-  required Future<void> Function(BuildContext, List<String>) onAdd,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    spacing: 10,
-    children: [
-      Text(title, style: CardStyles.cardTitleStyle),
-      Container(
-        height: 150,
+  Widget _buildSettingTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Widget trailing,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: Container(
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: MyColors.bgColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 2, color: MyColors.lightGrey),
+          color: MyColors.bgColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: items.isEmpty
-            ? Center(
-                child: Text(
-                  "No $title found",
-                  style: TextStyle(color: Colors.grey),
+        child: Icon(icon, color: MyColors.bgColor),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+      ),
+      trailing: trailing,
+    );
+  }
+
+  Widget _buildManagementCard({
+    required String title,
+    required IconData icon,
+    required List<String> items,
+    required String emptyMessage,
+    required VoidCallback onAdd,
+    required Function(String) onEdit,
+    required Function(String) onDelete,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MyColors.whiteBG,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: MyColors.bgColor),
+              SizedBox(width: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-            : ListView.builder(
-                itemBuilder: (ctx, index) => Card(
-                  color: MyColors.whiteBG,
-                  child: ListTile(
+              ),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: MyColors.bgColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${items.length}',
+                  style: TextStyle(
+                    color: MyColors.bgColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+
+          if (items.isEmpty)
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  emptyMessage,
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ),
+            )
+          else
+            Container(
+              constraints: BoxConstraints(maxHeight: 200),
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: items.length,
+                separatorBuilder: (_, __) => Divider(height: 1),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     title: Text(items[index]),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ElevatedButton(
-                          onPressed: () => onEdit(context, items[index]),
-                          child: Icon(
-                            Icons.create_outlined,
-                            color: MyColors.primaryColor,
-                          ),
+                        IconButton(
+                          icon: Icon(Icons.edit_outlined, size: 20),
+                          color: MyColors.primaryColor,
+                          onPressed: () => onEdit(items[index]),
                         ),
-                        MyButton.deleteButton(
-                          method: () => onDelete(context, items[index]),
+                        IconButton(
+                          icon: Icon(Icons.delete_outline, size: 20),
+                          color: Colors.red,
+                          onPressed: () => onDelete(items[index]),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                itemCount: items.length,
+                  );
+                },
               ),
+            ),
+
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: onAdd,
+              icon: Icon(Icons.add),
+              label: Text('Add $title'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MyColors.primaryButtonColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-      MyButton.primaryButton(
-        method: () => onAdd(context, items),
-        text: "Add $title",
-        fontSize: 15,
+    );
+  }
+
+  // Dialog methods
+  //todo Create a reusable pop up widget from this.
+  void _showFineDialog() {
+    final controller = TextEditingController(text: finePerDay.toString());
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MyColors.primaryColor,
+        title: Text('Set Fine Amount',style: BodyTextStyles.headingSmallStyle(MyColors.bgColor),),
+        content: TextField(
+          style: TextFieldStyle.inputTextStyle,
+          controller: controller,
+          keyboardType: TextInputType.numberWithOptions(decimal: true),
+          decoration: InputDecoration(
+            labelStyle: TextFieldStyle.inputTextStyle,
+            labelText: 'Fine per day (₹)',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel',style: TextFieldStyle.inputTextStyle,),
+          ),
+          MyButton.primaryButton(
+            method: () {
+              final value = double.tryParse(controller.text);
+              if (value != null && value > 0) {
+                _saveFinePerDay(value);
+                Navigator.pop(context);
+              }
+            }, text: 'Save',
+          ),
+        ],
       ),
-    ],
-  );
+    );
+  }
+
+  void _showIssuePeriodDialog() {
+    final controller = TextEditingController(text: defaultIssueDays.toString());
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Set Default Issue Period'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: 'Number of days',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = int.tryParse(controller.text);
+              if (value != null && value > 0) {
+                _saveDefaultIssueDays(value);
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddGenreDialog(List<String> genres) {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add Genre'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Genre name',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) => Validator.genreValidator(value, genres),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                context.read<GenreProvider>().addGenre(controller.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditGenreDialog(String genre) {
+    final controller = TextEditingController(text: genre);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Genre'),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: 'Genre name',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                context.read<GenreProvider>().editGenre(genre, controller.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteGenreDialog(String genre) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Genre'),
+        content: Text('Are you sure you want to delete "$genre"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<GenreProvider>().deleteGenre(genre);
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddLanguageDialog(List<String> languages) {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add Language'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Language name',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) => Validator.genreValidator(value, languages),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                context.read<LanguageProvider>().addLanguage(controller.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditLanguageDialog(String language) {
+    final controller = TextEditingController(text: language);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Language'),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: 'Language name',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                context.read<LanguageProvider>().editLanguage(language, controller.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteLanguageDialog(String language) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Language'),
+        content: Text('Are you sure you want to delete "$language"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<LanguageProvider>().deleteLanguage(language);
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
 }

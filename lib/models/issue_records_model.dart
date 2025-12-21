@@ -29,10 +29,18 @@ class IssueRecords {
   @HiveField(7)
   int fineAmount;
 
+  @HiveField(8)
+  String? bookName;
+
+  @HiveField(9)
+  String? memberName;
+
   IssueRecords({
     required this.issueId,
     required this.bookId,
+    this.bookName,
     required this.memberId,
+    this.memberName,
     required this.borrowDate,
     required this.dueDate,
     this.returnDate,
@@ -45,6 +53,8 @@ class IssueRecords {
     bool? isReturned,
     DateTime? returnDate,
     int? fineAmount,
+    String? booksName,
+    String? membersName
   }) {
     return IssueRecords(
       issueId: issueId,
@@ -52,6 +62,8 @@ class IssueRecords {
       memberId: memberId,
       borrowDate: borrowDate,
       dueDate: dueDate,
+      memberName: membersName ?? this.memberName,
+      bookName: booksName ?? this.bookName,
       returnDate: returnDate ?? this.returnDate,
       isReturned: isReturned ?? this.isReturned,
       fineAmount: fineAmount ?? this.fineAmount,
