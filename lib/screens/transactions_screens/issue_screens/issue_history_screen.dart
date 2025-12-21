@@ -44,9 +44,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         .length;
 
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(
-        barTitle: 'All Transactions',
-        context: context,
+      appBar: AppBar(
+        title: Text('All Transactions'),
       ),
       body: SafeArea(
         child: Column(
@@ -234,10 +233,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final isOverdue =
         !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
-    final bookTitle = book?.title ?? '[Book Deleted - ID: ${issue.bookId}]';
+    final bookTitle = book?.title ?? '${issue.bookName} (Book Deleted)';
     final bookAuthor = book?.author ?? 'Unknown Author';
     final memberName =
-        member?.name ?? '[Member Deleted - ID: ${issue.memberId}]';
+        member?.name ?? '${issue.memberId} (Member Deleted)';
 
     return Card(
       margin: EdgeInsets.only(bottom: 12),
@@ -285,7 +284,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'by ${bookAuthor}',
+                        'by $bookAuthor',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       SizedBox(height: 8),

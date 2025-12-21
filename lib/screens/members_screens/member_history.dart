@@ -62,7 +62,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         child: Column(
           children: [
             // Member Info Header
-            _buildMemberHeader(member),
+            _buildMemberHeader(member,activeIssues),
 
             // Stats Cards
             _buildStatsCards(
@@ -112,7 +112,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     );
   }
 
-  Widget _buildMemberHeader(Members member) {
+  Widget _buildMemberHeader(Members member, int activeIssues) {
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
@@ -149,7 +149,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                   style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
                 ),
                 Text(
-                  'Currently Borrowed: ${member.currentlyBorrow}/5',
+                  'Currently Borrowed: ${activeIssues}/5',
                   style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
                 ),
               ],
@@ -318,7 +318,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        book?.title ?? 'Unknown Book',
+                        book?.title ?? issue.bookName!,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

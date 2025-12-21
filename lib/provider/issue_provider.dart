@@ -1,4 +1,3 @@
-// lib/provider/issue_provider.dart
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../database/issue_records_db.dart';
@@ -64,6 +63,8 @@ class IssueProvider with ChangeNotifier {
     required int bookId,
     required int memberId,
     required DateTime dueDate,
+    required String memberName,
+    required String bookName,
   }) async {
     // Check if Hive is ready
     if (!IssueDBHive.isReady) {
@@ -74,6 +75,8 @@ class IssueProvider with ChangeNotifier {
       bookId: bookId,
       memberId: memberId,
       dueDate: dueDate,
+      memberName: memberName,
+      bookName: bookName,
     );
 
     await refresh();
@@ -135,7 +138,6 @@ class IssueProvider with ChangeNotifier {
         await IssueDBHive.box.put(issue.issueId, updatedIssue);
       }
     }
-    await refresh(); // Refresh to update UI
   }
 
   // Calculate fine for overdue book

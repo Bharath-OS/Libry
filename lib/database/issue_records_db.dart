@@ -10,7 +10,6 @@ class IssueDBHive {
   // Initialize Hive
   static Future<void> initIssueBox() async {
     try {
-      // Just open the box, Hive is already initialized in main.dart
       _issueBox = await Hive.openBox<IssueRecords>(boxName);
 
       // Find highest issue ID to continue sequence
@@ -51,6 +50,8 @@ class IssueDBHive {
     required int bookId,
     required int memberId,
     required DateTime dueDate,
+    required String memberName,
+    required String bookName,
   }) async {
     final issueId = _generateIssueId();
 
@@ -60,6 +61,8 @@ class IssueDBHive {
       memberId: memberId,
       borrowDate: DateTime.now(),
       dueDate: dueDate,
+      bookName: bookName,
+      memberName: memberName,
     );
 
     await box.put(issueId, record);
@@ -106,9 +109,9 @@ class IssueDBHive {
 
   // 8. Get active issues by member
   static List<IssueRecords> getActiveIssuesByMember(int memberId) {
-    return box.values.where((issue) =>
-    issue.memberId == memberId && !issue.isReturned
-    ).toList();
+    return box.values
+        .where((issue) => issue.memberId == memberId && !issue.isReturned)
+        .toList();
   }
 
   // 9. Get issues by book
@@ -118,8 +121,8 @@ class IssueDBHive {
 
   // 10. Check if book is borrowed
   static bool isBookBorrowed(int bookId) {
-    return box.values.any((issue) =>
-    issue.bookId == bookId && !issue.isReturned
+    return box.values.any(
+      (issue) => issue.bookId == bookId && !issue.isReturned,
     );
   }
 

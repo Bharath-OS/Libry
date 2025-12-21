@@ -29,7 +29,9 @@ class MembersScreen extends StatelessWidget {
           builder: (context) => MemberDetailsScreen(memberId: member.id!),
         ),
       ),
-      fabMethod: (){Navigator.push(context, transition(child: AddMembersScreen()));},
+      fabMethod: () {
+        Navigator.push(context, transition(child: AddMembersScreen()));
+      },
     );
   }
 }
