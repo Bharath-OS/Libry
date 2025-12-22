@@ -12,7 +12,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
 import 'database/language_db.dart';
 import 'models/issue_records_model.dart';
-import 'models/user_model.dart';
+import 'features/auth/data/model/user_model.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:libry/features/auth/view/register.dart';
+import 'package:libry/features/auth/view_models/user_viewmodel.dart';
+import 'package:provider/provider.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../core/widgets/text_field.dart';
+import 'package:flutter/gestures.dart';
+import 'main_screen.dart';
+
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool isLoading = context.watch<AuthViewModel>().isLoading;
+    return LayoutWidgets.customScaffold(
+      body: FormWidgets.formContainer(
+        title: "Welcome Back",
+        formWidget: _form(isLoading),
+      ),
+    );
+  }
+
+  Widget _form(bool isLoading) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        spacing: 25,
+        children: [
+          customTextField(
+            hintText: "Email",
+            icon: Icons.email_outlined,
+            inputController: emailController,
+            validator: (value) {
+              return Validator.emailValidator(value);
+            },
+          ),
+          customTextField(
+            hintText: "Password",
+            icon: Icons.password_outlined,
+            inputController: passwordController,
+            isObscure: true,
+            validator: (value) {
+              return Validator.passwordValidator(value);
+            },
+          ),
+          MyButton.primaryButton(
+            method: () => validateLogin(),
+            text: !isLoading ? "processing..." : "Login",
+          ),
+          RichText(
+            text: TextSpan(
+              text: "Don't have an account? ",
+              style: TextStyle(color: MyColors.whiteBG),
+              children: [
+                TextSpan(
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.pushReplacement(
+                        context,
+                        transition(child: RegisterView()),
+                      );
+                    },
+                  text: "Register",
+                  style: TextStyle(
+                    color: MyColors.primaryButtonColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void validateLogin() {
+    String message = "Something went wrong! Please Try Again or Register!";
+    if (_formKey.currentState!.validate()) {
+      if (context.read<AuthViewModel>().loginUser(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        context: context,
+      )) {
+        message = "Logged In Successfully!";
+        Navigator.pushReplacement(context, transition(child: MainScreen()));
+      } else {
+        message = "Invalid Credentials!";
+      }
+    }
+    showSnackBar(text: message, context: context);
+  }
+}
