@@ -72,9 +72,14 @@ class _LoginViewState extends State<LoginView> {
               return Validator.passwordValidator(value);
             },
           ),
-          MyButton.primaryButton(
-            method: () => validateLogin(),
-            text: !isLoading ? "processing..." : "Login",
+          Selector<AuthViewModel, bool>(
+            selector: (_, auth) => auth.isLoading,
+            builder: (_, isLoading, __) {
+              return MyButton.primaryButton(
+                method: () => validateLogin(),
+                text: isLoading ? "Processing..." : "Login",
+              );
+            },
           ),
           RichText(
             text: TextSpan(

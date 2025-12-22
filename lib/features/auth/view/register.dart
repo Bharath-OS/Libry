@@ -50,15 +50,18 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLoading = context.select<AuthViewModel, bool>(
+      (auth) => auth.isLoading,
+    );
     return LayoutWidgets.customScaffold(
       body: FormWidgets.formContainer(
         title: "Get Started",
-        formWidget: _form(),
+        formWidget: _form(isLoading),
       ),
     );
   }
 
-  Widget _form() {
+  Widget _form(bool isLoading) {
     return Form(
       key: _formKey,
       child: Column(
@@ -91,19 +94,23 @@ class _RegisterViewState extends State<RegisterView> {
               return Validator.passwordValidator(value);
             },
           ),
-          MyButton.primaryButton(
-            method: () {
-              userValidation(
-                context: context,
-                formKey: _formKey,
-                controllers: [
-                  userNameController,
-                  emailController,
-                  passwordController,
-                ],
+          Selector<AuthViewModel, bool>(
+            selector: (_, auth) => auth.isLoading,
+            builder: (_, isLoading, __) {
+              return MyButton.primaryButton(
+                method: () {
+                  userValidation(
+                    formKey: _formKey,
+                    controllers: [
+                      userNameController,
+                      emailController,
+                      passwordController,
+                    ],
+                  );
+                },
+                text: isLoading ? "Validating" : "Register",
               );
             },
-            text: "Register",
           ),
           RichText(
             text: TextSpan(
@@ -133,7 +140,6 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   void userValidation({
-    required BuildContext context,
     required GlobalKey<FormState> formKey,
     required List<TextEditingController> controllers,
   }) {
