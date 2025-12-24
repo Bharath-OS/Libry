@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/utilities/helpers.dart';
-import '../../core/widgets/cards.dart';
-import '../../provider/book_provider.dart';
-import '../../core/widgets/list.dart';
-import 'add_book_screen.dart';
 import 'package:libry/models/books_model.dart';
-
+import '../../../core/utilities/helpers.dart';
+import '../../../core/widgets/cards.dart';
+import '../../../core/widgets/list.dart';
+import '../../../provider/book_provider.dart';
+import 'add_book_screen.dart';
 import 'books_details.dart';
 
-class BooksScreen extends StatelessWidget {
-  const BooksScreen({super.key});
+class BookListScreenView extends StatelessWidget {
+  const BookListScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +23,10 @@ class BooksScreen extends StatelessWidget {
       tileBuilder: (book) => Cards.bookCard(bookDetails: book,context: context),
       onTap: (book) => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context)=>BookDetailScreen(bookId: book.id!))
+          MaterialPageRoute(builder: (context)=>BookInfoScreenView(bookId: book.id!))
       ),
       fabMethod: () {
-        Navigator.push(context, transition(child: AddBookScreen()));
+        Navigator.push(context, transition(child: AddBookScreenView()));
       },
     );
   }

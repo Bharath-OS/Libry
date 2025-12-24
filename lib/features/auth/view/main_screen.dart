@@ -2,7 +2,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../books/books_screen.dart';
+import '../../books/views/books_screen.dart';
 import '../../home/home.dart';
 import '../../issues/issue_history_screen.dart';
 import '../../members/members.dart';
@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    BooksScreen(),
+    BookListScreenView(),
     MembersScreen(),
     IssueHistoryScreen(),
     SettingsScreen(),

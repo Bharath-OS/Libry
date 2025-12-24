@@ -1,26 +1,28 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/utilities/helpers.dart' as AppDialogs;
-import '../../core/utilities/validation.dart';
-import '../../core/widgets/forms.dart';
-import '../../models/books_model.dart';
-import '../../provider/book_provider.dart';
-import '../../provider/genre_provider.dart';
-import '../../provider/language_provider.dart';
-import '../../core/utilities/image_services.dart';
-import '../../core/widgets/layout_widgets.dart';
 
-class EditBookScreen extends StatefulWidget {
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/utilities/image_services.dart';
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../models/books_model.dart';
+import '../../../provider/book_provider.dart';
+import '../../../provider/genre_provider.dart';
+import '../../../provider/language_provider.dart';
+
+
+class EditBookScreenView extends StatefulWidget {
   final Books book;
-  const EditBookScreen({super.key, required this.book});
+  const EditBookScreenView({super.key, required this.book});
 
   @override
-  State<EditBookScreen> createState() => _EditBookScreenState();
+  State<EditBookScreenView> createState() => _EditBookScreenState();
 }
 
-class _EditBookScreenState extends State<EditBookScreen> {
+class _EditBookScreenState extends State<EditBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;

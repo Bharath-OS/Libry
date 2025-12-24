@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:libry/provider/genre_provider.dart';
 import 'package:libry/core/utilities/image_services.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/themes/styles.dart';
-import '../../core/utilities/helpers.dart' as AppDialogs;
-import '../../core/utilities/validation.dart';
-import '../../core/widgets/buttons.dart';
-import '../../core/widgets/forms.dart';
-import '../../core/widgets/layout_widgets.dart';
-import '../../models/books_model.dart';
-import '../../provider/book_provider.dart';
-import '../../provider/language_provider.dart';
-import '../settings/settings.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/themes/styles.dart';
+import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../models/books_model.dart';
+import '../../../provider/book_provider.dart';
+import '../../../provider/language_provider.dart';
+import '../../settings/settings.dart';
 
-class AddBookScreen extends StatefulWidget {
-  const AddBookScreen({super.key});
+class AddBookScreenView extends StatefulWidget {
+  const AddBookScreenView({super.key});
 
   @override
-  State<AddBookScreen> createState() => _AddBookScreenState();
+  State<AddBookScreenView> createState() => _AddBookScreenState();
 }
 
-class _AddBookScreenState extends State<AddBookScreen> {
+class _AddBookScreenState extends State<AddBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;

@@ -63,7 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
         mainAxisSize: MainAxisSize.min,
         spacing: 25,
         children: [
-          customTextField(
+          buildDarkTextField(
             hintText: "Full name",
             icon: Icons.person_outlined,
             inputController: userNameController,
@@ -71,7 +71,7 @@ class _RegisterViewState extends State<RegisterView> {
               return Validator.emptyValidator(value);
             },
           ),
-          customTextField(
+          buildDarkTextField(
             hintText: "Email",
             icon: Icons.email_outlined,
             inputController: emailController,
@@ -79,7 +79,7 @@ class _RegisterViewState extends State<RegisterView> {
               return Validator.registerEmailValidator(value);
             },
           ),
-          customTextField(
+          buildDarkTextField(
             hintText: "Password",
             icon: Icons.password_outlined,
             isObscure: true,

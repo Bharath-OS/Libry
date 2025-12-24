@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import '../../models/books_model.dart';
-import '../../models/issue_records_model.dart';
-import '../../models/members_model.dart';
-import '../../provider/book_provider.dart';
-import '../../provider/issue_provider.dart';
-import '../../provider/members_provider.dart';
-import '../../core/widgets/layout_widgets.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../models/books_model.dart';
+import '../../../models/issue_records_model.dart';
+import '../../../models/members_model.dart';
+import '../../../provider/book_provider.dart';
+import '../../../provider/issue_provider.dart';
+import '../../../provider/members_provider.dart';
+import '../../../core/widgets/layout_widgets.dart';
 
-class BookHistoryScreen extends StatefulWidget {
+class BookHistoryScreenView extends StatefulWidget {
   final int bookId;
 
-  const BookHistoryScreen({super.key, required this.bookId});
+  const BookHistoryScreenView({super.key, required this.bookId});
 
   @override
-  State<BookHistoryScreen> createState() => _BookHistoryScreenState();
+  State<BookHistoryScreenView> createState() => _BookHistoryScreenState();
 }
 
-class _BookHistoryScreenState extends State<BookHistoryScreen> {
+class _BookHistoryScreenState extends State<BookHistoryScreenView> {
   String _filter = 'all'; // 'all', 'active', 'returned', 'overdue'
 
   @override

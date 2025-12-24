@@ -2,23 +2,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/utilities/helpers.dart';
-import '../../models/books_model.dart';
-import '../../core/widgets/layout_widgets.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../models/books_model.dart';
+import '../../../core/widgets/layout_widgets.dart';
 import 'book_history.dart';
 import 'edit_book_screen.dart';
 
-class BookDetailScreen extends StatefulWidget {
+class BookInfoScreenView extends StatefulWidget {
   final int bookId;
 
-  const BookDetailScreen({super.key, required this.bookId});
+  const BookInfoScreenView({super.key, required this.bookId});
 
   @override
-  State<BookDetailScreen> createState() => _BookDetailScreenState();
+  State<BookInfoScreenView> createState() => _BookDetailScreenState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen> {
+class _BookDetailScreenState extends State<BookInfoScreenView> {
   final Color infoIconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
@@ -294,7 +294,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      BookHistoryScreen(bookId: widget.bookId),
+                      BookHistoryScreenView(bookId: widget.bookId),
                 ),
               ),
               icon: Icon(Icons.history),
@@ -316,7 +316,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  transition(child: EditBookScreen(book: book)),
+                  transition(child: EditBookScreenView(book: book)),
                 );
               },
               icon: Icon(Icons.edit),
