@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../constants/app_colors.dart';
 
 class SplashScreenStyles {
@@ -30,36 +29,36 @@ class CustomTheme {
         color: Colors.white,
       ),
       // centerTitle: true,
-      iconTheme: IconThemeData(color: MyColors.whiteBG),
+      iconTheme: IconThemeData(color: AppColors.white),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: fillColor,
       labelStyle: TextFieldStyle.inputTextStyle,
       hintStyle: TextStyle(
-        color: MyColors.bgColor,
+        color: AppColors.background,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
       errorStyle: TextStyle(
-        color: MyColors.warningColor,
+        color: AppColors.error,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide(color: MyColors.bgColor, width: 3),
+        borderSide: BorderSide(color: AppColors.background, width: 3),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(cornerRadius),
         borderSide: BorderSide.none,
       ),
       errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(width: 3, color: MyColors.warningColor),
+        borderSide: BorderSide(width: 3, color: AppColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide(color: MyColors.warningColor, width: 3),
+        borderSide: BorderSide(color: AppColors.error, width: 3),
       ),
     ),
   );
@@ -106,21 +105,21 @@ class BodyTextStyles {
 }
 
 class TextFieldStyle {
-  static textFieldStyle({required String hintText}) {
-    InputDecoration(
+  static InputDecoration textFieldStyle({required String hintText}) {
+    return InputDecoration(
       filled: true,
-      fillColor: MyColors.lightGrey,
+      fillColor: AppColors.lightGrey,
       hintText: hintText,
       enabledBorder: InputBorder.none,
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(width: 3, color: MyColors.primaryButtonColor),
+        borderSide: BorderSide(width: 3, color: AppColors.primaryButton),
         borderRadius: BorderRadius.circular(20),
       ),
     );
   }
 
   static TextStyle inputTextStyle = TextStyle(
-    color: MyColors.bgColor,
+    color: AppColors.background,
     fontSize: 16,
     fontWeight: FontWeight.w600,
   );

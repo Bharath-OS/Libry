@@ -22,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final Color color = MyColors.primaryColor;
+  final Color color = AppColors.primary;
   late User? user;
 
   @override
@@ -72,12 +72,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundColor: MyColors.primaryButtonColor,
+          backgroundColor: AppColors.primaryButton,
           child: Text(
              profileLetters,
             style: BodyTextStyles.mainHeadingStyle.copyWith(
               fontSize: 40,
-              color: MyColors.whiteBG,
+              color: AppColors.white,
             ),
           ),
         ),
@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           text: TextSpan(
             text: "${user!.name}\n",
             style: TextStyle(
-              color: MyColors.whiteBG,
+              color: AppColors.white,
               fontFamily: "Lobster",
               fontSize: 42,
               fontWeight: FontWeight.w800,
@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -159,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -196,9 +196,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Divider(),
           actionButton(
               icon: Icons.exit_to_app,
-              iconColor: MyColors.warningColor,
+              iconColor: AppColors.error,
               text: "Logout",
-              textColor: MyColors.warningColor,
+              textColor: AppColors.error,
               method: () async{
                 UserDatabase.setLogValue(false);
                 await Navigator.push(context, transition(child: LoginScreen()));

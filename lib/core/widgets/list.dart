@@ -200,10 +200,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: widget.searchHint,
-              prefixIcon: Icon(Icons.search, color: MyColors.bgColor),
+              prefixIcon: Icon(Icons.search, color: AppColors.background),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                icon: Icon(Icons.clear, color: MyColors.bgColor),
+                icon: Icon(Icons.clear, color: AppColors.background),
                 onPressed: () {
                   _searchController.clear();
                 },
@@ -231,17 +231,17 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               children: [
                 Text(
                   "Showing: ${_filteredItems.length} of ${widget.totalCount}",
-                  style: BodyTextStyles.headingSmallStyle(MyColors.whiteBG),
+                  style: BodyTextStyles.headingSmallStyle(AppColors.white),
                 ),
                 if (_filteredItems is List<Books>)
                   Text(
                     "Available: ${widget.availableCount}",
-                    style: BodyTextStyles.bodySmallStyle(MyColors.whiteBG),
+                    style: BodyTextStyles.bodySmallStyle(AppColors.white),
                   )
                 else if (_filteredItems is List<Members>)
                   Text(
                     "Active: ${widget.availableCount}",
-                    style: BodyTextStyles.bodySmallStyle(MyColors.whiteBG),
+                    style: BodyTextStyles.bodySmallStyle(AppColors.white),
                   ),
               ],
             ),
@@ -256,7 +256,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                       icon: Icon(Icons.filter_alt_off, color: Colors.orange),
                       tooltip: 'Reset Filters',
                       style: IconButton.styleFrom(
-                        backgroundColor: MyColors.whiteBG,
+                        backgroundColor: AppColors.white,
                       ),
                     ),
                   ),
@@ -266,7 +266,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                   onPressed: () => _showFilterDialog(context),
                   icon: Stack(
                     children: [
-                      Icon(Icons.filter_list, color: MyColors.bgColor),
+                      Icon(Icons.filter_list, color: AppColors.background),
                       if (_hasActiveFilters)
                         Positioned(
                           right: 0,
@@ -283,7 +283,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     ],
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: MyColors.whiteBG,
+                    backgroundColor: AppColors.white,
                   ),
                 ),
                 SizedBox(width: 10),
@@ -382,10 +382,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onTap(),
-      backgroundColor: MyColors.whiteBG.withOpacity(0.3),
-      selectedColor: color ?? MyColors.bgColor,
+      backgroundColor: AppColors.white.withOpacity(0.3),
+      selectedColor: color ?? AppColors.background,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : MyColors.whiteBG,
+        color: isSelected ? Colors.white : AppColors.white,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
@@ -400,7 +400,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-          color: MyColors.bgColor,
+          color: AppColors.background,
         ),
         child: Padding(
           padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -467,7 +467,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.filter_list, color: MyColors.bgColor),
+            Icon(Icons.filter_list, color: AppColors.background),
             SizedBox(width: 8),
             Text('Filter Options'),
           ],
@@ -566,7 +566,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: MyColors.bgColor,
+            color: AppColors.background,
           ),
         ),
         SizedBox(height: 8),

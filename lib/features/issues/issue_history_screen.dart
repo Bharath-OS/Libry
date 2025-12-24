@@ -216,7 +216,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       selected: isSelected,
       onSelected: (_) => _setFilter(value),
       backgroundColor: Colors.grey[200],
-      selectedColor: MyColors.bgColor,
+      selectedColor: AppColors.background,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -262,7 +262,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: MyColors.bgColor,
+                    color: AppColors.background,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(Icons.book, color: Colors.white),
@@ -463,7 +463,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                         icon: Icon(Icons.assignment_return, size: 18),
                         label: Text('Return Book'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: MyColors.primaryButtonColor,
+                          backgroundColor: AppColors.primaryButton,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -482,8 +482,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       icon: Icon(Icons.remove_red_eye, size: 18),
                       label: Text('View Details'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: MyColors.bgColor,
-                        side: BorderSide(color: MyColors.bgColor),
+                        foregroundColor: AppColors.background,
+                        side: BorderSide(color: AppColors.background),
                         padding: EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -693,7 +693,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: MyColors.bgColor,
+            color: AppColors.background,
           ),
         ),
         SizedBox(height: 8),
@@ -702,7 +702,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: MyColors.darkGrey),
+            border: Border.all(color: AppColors.darkGrey),
           ),
           child: Column(children: children),
         ),

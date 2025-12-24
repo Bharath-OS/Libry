@@ -75,7 +75,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         "Issue Book to Member",
                         textAlign: TextAlign.center,
                         style: CardStyles.cardTitleStyle.copyWith(
-                          color: MyColors.bgColor,
+                          color: AppColors.background,
                           fontSize: 24,
                         ),
                       ),
@@ -84,7 +84,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         "Search and select member and book",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: MyColors.bgColor.withOpacity(0.8),
+                          color: AppColors.background.withOpacity(0.8),
                           fontSize: 14,
                         ),
                       ),
@@ -129,7 +129,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         Text(
           "1. Select Member",
           style: TextStyle(
-            color: MyColors.bgColor,
+            color: AppColors.background,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -139,21 +139,21 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           controller: _memberFieldController,
           decoration: InputDecoration(
             hintText: "Search by name or member ID",
-            prefixIcon: Icon(Icons.person_search, color: MyColors.bgColor),
+            prefixIcon: Icon(Icons.person_search, color: AppColors.background),
             suffixIcon: _isMemberVerified
-                ? Icon(Icons.verified, color: MyColors.successColor)
+                ? Icon(Icons.verified, color: AppColors.successColor)
                 : IconButton(
-                    icon: Icon(Icons.search, color: MyColors.bgColor),
+                    icon: Icon(Icons.search, color: AppColors.background),
                     onPressed: _searchMembers,
                   ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: MyColors.bgColor.withOpacity(0.3)),
+              borderSide: BorderSide(color: AppColors.background.withOpacity(0.3)),
             ),
             filled: true,
             fillColor: Colors.white.withOpacity(0.1),
           ),
-          style: TextStyle(color: MyColors.bgColor),
+          style: TextStyle(color: AppColors.background),
           onChanged: (value) => _filterMembers(value),
           onFieldSubmitted: (_) => _searchMembers(),
           validator: (value) => Validator.emptyValidator(value),
@@ -208,14 +208,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: MyColors.successColor.withOpacity(0.1),
+              color: AppColors.successColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: MyColors.successColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
             ),
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: MyColors.successColor,
+                  backgroundColor: AppColors.successColor,
                   child: Icon(Icons.person, color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 12),
@@ -226,14 +226,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         _selectedMember!.name,
                         style: TextStyle(
-                          color: MyColors.bgColor,
+                          color: AppColors.background,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         "ID: ${_selectedMember!.memberId} • Borrowed: ${_selectedMember!.currentlyBorrow}/5",
                         style: TextStyle(
-                          color: MyColors.bgColor.withOpacity(0.7),
+                          color: AppColors.background.withOpacity(0.7),
                           fontSize: 12,
                         ),
                       ),
@@ -259,7 +259,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         Text(
           "2. Select Book",
           style: TextStyle(
-            color: MyColors.bgColor,
+            color: AppColors.background,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -269,21 +269,21 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           controller: _bookFieldController,
           decoration: InputDecoration(
             hintText: "Search by title or author",
-            prefixIcon: Icon(Icons.book, color: MyColors.bgColor),
+            prefixIcon: Icon(Icons.book, color: AppColors.background),
             suffixIcon: _isBookSelected
-                ? Icon(Icons.check, color: MyColors.successColor)
+                ? Icon(Icons.check, color: AppColors.successColor)
                 : IconButton(
-                    icon: Icon(Icons.search, color: MyColors.bgColor),
+                    icon: Icon(Icons.search, color: AppColors.background),
                     onPressed: _searchBooks,
                   ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: MyColors.bgColor.withOpacity(0.3)),
+              borderSide: BorderSide(color: AppColors.background.withOpacity(0.3)),
             ),
             filled: true,
             fillColor: Colors.white.withOpacity(0.1),
           ),
-          style: TextStyle(color: MyColors.bgColor),
+          style: TextStyle(color: AppColors.background),
           onChanged: (value) => _filterBooks(value),
           onFieldSubmitted: (_) => _searchBooks(),
           validator: (value) => Validator.emptyValidator(value),
@@ -316,8 +316,8 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      // color: MyColors.bgColor.withOpacity(0.1),
-                      color: MyColors.bgColor,
+                      // color: AppColors.background.withOpacity(0.1),
+                      color: AppColors.background,
                     ),
                     child:
                         book.coverPicture.isNotEmpty &&
@@ -329,7 +329,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Icon(Icons.book, color: MyColors.bgColor),
+                        : Icon(Icons.book, color: AppColors.background),
                   ),
                   title: Text(
                     book.title,
@@ -381,9 +381,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: MyColors.successColor.withOpacity(0.1),
+              color: AppColors.successColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: MyColors.successColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -392,7 +392,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   height: 60,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
-                    color: MyColors.bgColor.withOpacity(0.1),
+                    color: AppColors.background.withOpacity(0.1),
                   ),
                   child: _selectedBook!.coverPicture.isNotEmpty
                       ? ClipRRect(
@@ -402,7 +402,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                             fit: BoxFit.cover,
                           ),
                         )
-                      : Icon(Icons.book, color: MyColors.bgColor, size: 30),
+                      : Icon(Icons.book, color: AppColors.background, size: 30),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -412,7 +412,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         _selectedBook!.title,
                         style: TextStyle(
-                          color: MyColors.bgColor,
+                          color: AppColors.background,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 2,
@@ -421,7 +421,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "by ${_selectedBook!.author}",
                         style: TextStyle(
-                          color: MyColors.bgColor.withOpacity(0.7),
+                          color: AppColors.background.withOpacity(0.7),
                           fontSize: 12,
                         ),
                       ),
@@ -457,7 +457,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         Text(
           "3. Set Due Date",
           style: TextStyle(
-            color: MyColors.bgColor,
+            color: AppColors.background,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -470,11 +470,11 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: MyColors.bgColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.background.withOpacity(0.3)),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: MyColors.bgColor),
+                Icon(Icons.calendar_today, color: AppColors.background),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -483,14 +483,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "Due Date",
                         style: TextStyle(
-                          color: MyColors.bgColor.withOpacity(0.7),
+                          color: AppColors.background.withOpacity(0.7),
                           fontSize: 12,
                         ),
                       ),
                       Text(
                         "${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",
                         style: TextStyle(
-                          color: MyColors.bgColor,
+                          color: AppColors.background,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -498,7 +498,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_drop_down, color: MyColors.bgColor),
+                Icon(Icons.arrow_drop_down, color: AppColors.background),
               ],
             ),
           ),
@@ -507,7 +507,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         Text(
           "Book must be returned by this date to avoid fines",
           style: TextStyle(
-            color: MyColors.bgColor.withOpacity(0.6),
+            color: AppColors.background.withOpacity(0.6),
             fontSize: 12,
             fontStyle: FontStyle.italic,
           ),
@@ -649,7 +649,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: MyColors.bgColor,
+              primary: AppColors.background,
               onPrimary: Colors.white,
             ),
           ),
@@ -758,12 +758,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.bgColor,
+        backgroundColor: AppColors.background,
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: MyColors.successColor),
+            Icon(Icons.check_circle, color: AppColors.successColor),
             const SizedBox(width: 8),
-            Text("Success!", style: TextStyle(color: MyColors.successColor)),
+            Text("Success!", style: TextStyle(color: AppColors.successColor)),
           ],
         ),
         content: Column(
@@ -784,15 +784,15 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   ),
                   Text(
                     "Member: ${_selectedMember!.name}",
-                    style: TextStyle(color: MyColors.darkGrey),
+                    style: TextStyle(color: AppColors.darkGrey),
                   ),
                   Text(
                     "Book: ${_selectedBook!.title}",
-                    style: TextStyle(color: MyColors.darkGrey),
+                    style: TextStyle(color: AppColors.darkGrey),
                   ),
                   Text(
                     "Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",
-                    style: TextStyle(color: MyColors.darkGrey),
+                    style: TextStyle(color: AppColors.darkGrey),
                   ),
                 ],
               ),

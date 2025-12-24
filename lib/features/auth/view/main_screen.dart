@@ -46,27 +46,27 @@ class _MainScreenState extends State<MainScreen> {
         items: [
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/home-icon.svg", index: 0),
-            selectedColor: MyColors.primaryButtonColor,
+            selectedColor: AppColors.primaryButton,
             title: const Text('Home'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/books-icon.svg", index: 1),
-            selectedColor: MyColors.primaryButtonColor,
+            selectedColor: AppColors.primaryButton,
             title: const Text('Books'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/members-icon.svg", index: 2),
-            selectedColor: MyColors.primaryButtonColor,
+            selectedColor: AppColors.primaryButton,
             title: const Text('Members'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/transactions-icon.svg", index: 3),
-            selectedColor: MyColors.primaryButtonColor,
+            selectedColor: AppColors.primaryButton,
             title: const Text('Transactions'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/settings-icon.svg", index: 4),
-            selectedColor: MyColors.primaryButtonColor,
+            selectedColor: AppColors.primaryButton,
             title: const Text('Settings'),
           ),
         ],
@@ -86,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
       width: 24,
       height: 24,
       colorFilter: ColorFilter.mode(
-        _selectedIndex == index ? MyColors.primaryButtonColor : const Color(0xff000000),
+        _selectedIndex == index ? AppColors.primaryButton : const Color(0xff000000),
         BlendMode.srcIn,
       ),
     );

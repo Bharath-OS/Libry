@@ -88,7 +88,7 @@ class Cards {
   static Widget detailsCard({required int count, required String parameter}) {
     return Container(
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
       ),
       child: Center(

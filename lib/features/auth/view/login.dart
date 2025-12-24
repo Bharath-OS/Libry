@@ -84,7 +84,7 @@ class _LoginViewState extends State<LoginView> {
           RichText(
             text: TextSpan(
               text: "Don't have an account? ",
-              style: TextStyle(color: MyColors.whiteBG),
+              style: TextStyle(color: AppColors.white),
               children: [
                 TextSpan(
                   recognizer: TapGestureRecognizer()
@@ -96,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
                     },
                   text: "Register",
                   style: TextStyle(
-                    color: MyColors.primaryButtonColor,
+                    color: AppColors.primaryButton,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -109,19 +109,19 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void validateLogin() {
-    String message = "Something went wrong! Please Try Again or Register!";
+    String? message;
     if (_formKey.currentState!.validate()) {
-      if (context.read<AuthViewModel>().loginUser(
+      message = context.read<AuthViewModel>().loginUser(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
-        context: context,
-      )) {
-        message = "Logged In Successfully!";
+      );
+      if (message == null) {
+        message = "Welcome back!";
         Navigator.pushReplacement(context, transition(child: MainScreen()));
       } else {
         message = "Invalid Credentials!";
       }
+      showSnackBar(text: message, context: context);
     }
-    showSnackBar(text: message, context: context);
   }
 }

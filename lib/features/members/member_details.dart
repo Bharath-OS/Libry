@@ -89,7 +89,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: MyColors.bgColor,
+                  color: AppColors.background,
                 ),
               ),
             ),
@@ -306,7 +306,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: MyColors.bgColor, size: 20),
+          Icon(icon, color: AppColors.background, size: 20),
           SizedBox(width: 12),
           Text(
             '$label:',
@@ -383,7 +383,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               icon: Icon(Icons.history),
               label: Text('View Borrow History'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.secondaryButtonColor,
+                backgroundColor: AppColors.secondaryButton,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -405,7 +405,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               icon: Icon(Icons.edit),
               label: Text('Edit Member'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.primaryButtonColor,
+                backgroundColor: AppColors.primaryButton,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

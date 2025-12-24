@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utilities/helpers.dart' as AppDialogs;
+import '../../core/utilities/validation.dart';
+import '../../core/widgets/forms.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
 import '../../provider/genre_provider.dart';
 import '../../provider/language_provider.dart';
 import '../../core/utilities/image_services.dart';
-import '../../utilities/validation.dart';
-import '../../widgets/forms.dart';
-import '../../widgets/dialogs.dart';
 import '../../core/widgets/layout_widgets.dart';
 
 class EditBookScreen extends StatefulWidget {
@@ -86,7 +86,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
         });
       }
     } catch (e) {
-      AppDialogs.showSnackBar(message: "Failed to pick Image", context: context);
+      AppDialogs.showSnackBar(text: "Failed to pick Image", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -117,7 +117,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
       // Validate that new total isn't less than borrowed
       if (newCopiesAvailable < 0) {
         AppDialogs.showSnackBar(
-          message: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
+          text: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
           context: context,
         );
         return;
@@ -346,8 +346,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.secondaryButtonColor,
-                      foregroundColor: MyColors.whiteBG,
+                      backgroundColor: AppColors.secondaryButton,
+                      foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: _cancel,
@@ -358,8 +358,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primaryButtonColor,
-                      foregroundColor: MyColors.whiteBG,
+                      backgroundColor: AppColors.primaryButton,
+                      foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: _saveBook,
@@ -425,7 +425,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  MyColors.primaryButtonColor,
+                  AppColors.primaryButton,
                 ),
               ),
             )

@@ -35,7 +35,7 @@ class LayoutWidgets {
       title: Text(
         barTitle,
         style: TextStyle(
-          color: MyColors.whiteBG,
+          color: AppColors.white,
           fontFamily: "Livvic",
           fontSize: 24,
           fontWeight: FontWeight.bold,

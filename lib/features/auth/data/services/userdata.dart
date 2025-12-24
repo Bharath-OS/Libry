@@ -4,7 +4,7 @@ import 'package:libry/features/auth/data/model/user_model.dart';
 import 'package:libry/models/keys/keys.dart';
 
 class UserModelService {
-  static bool saveData({required UserModel user,required BuildContext context}) {
+  static bool saveData({required UserModel user}) {
     try {
       userDataBoxNew.put(
         DatabaseKeys.userDataKey,
@@ -14,7 +14,6 @@ class UserModelService {
       setLogValue(true);
       return true;
     } catch (e) {
-      showSnackBar(text: "An error occurred while saving the data", context: context);
       return false;
     }
   }

@@ -35,7 +35,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: MyColors.whiteBG,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -64,7 +64,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: MyColors.whiteBG,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(

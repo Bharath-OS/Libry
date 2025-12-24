@@ -73,7 +73,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     title: 'Fine Per Day',
                     subtitle: '₹$finePerDay per day for overdue books',
                     trailing: IconButton(
-                      icon: Icon(Icons.edit, color: MyColors.primaryColor),
+                      icon: Icon(Icons.edit, color: AppColors.primary),
                       onPressed: () => _showFineDialog(),
                     ),
                   ),
@@ -83,7 +83,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     title: 'Default Issue Period',
                     subtitle: '$defaultIssueDays days',
                     trailing: IconButton(
-                      icon: Icon(Icons.edit, color: MyColors.primaryColor),
+                      icon: Icon(Icons.edit, color: AppColors.primary),
                       onPressed: () => _showIssuePeriodDialog(),
                     ),
                   ),
@@ -137,7 +137,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     return Text(
       title,
       style: TextStyle(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
@@ -147,7 +147,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSettingsCard({required List<Widget> children}) {
     return Container(
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -172,10 +172,10 @@ class SettingsScreenState extends State<SettingsScreen> {
       leading: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: MyColors.bgColor.withOpacity(0.1),
+          color: AppColors.background.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: MyColors.bgColor),
+        child: Icon(icon, color: AppColors.background),
       ),
       title: Text(
         title,
@@ -204,7 +204,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -219,7 +219,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         children: [
           Row(
             children: [
-              Icon(icon, color: MyColors.bgColor),
+              Icon(icon, color: AppColors.background),
               SizedBox(width: 12),
               Text(
                 title,
@@ -232,13 +232,13 @@ class SettingsScreenState extends State<SettingsScreen> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: MyColors.bgColor.withOpacity(0.1),
+                  color: AppColors.background.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${items.length}',
                   style: TextStyle(
-                    color: MyColors.bgColor,
+                    color: AppColors.background,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -277,7 +277,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit_outlined, size: 20),
-                          color: MyColors.primaryColor,
+                          color: AppColors.primary,
                           onPressed: () => onEdit(items[index]),
                         ),
                         IconButton(
@@ -300,7 +300,7 @@ class SettingsScreenState extends State<SettingsScreen> {
               icon: Icon(Icons.add),
               label: Text('Add $title'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.primaryButtonColor,
+                backgroundColor: AppColors.primaryButton,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -321,8 +321,8 @@ class SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyColors.primaryColor,
-        title: Text('Set Fine Amount',style: BodyTextStyles.headingSmallStyle(MyColors.bgColor),),
+        backgroundColor: AppColors.primary,
+        title: Text('Set Fine Amount',style: BodyTextStyles.headingSmallStyle(AppColors.background),),
         content: TextField(
           style: TextFieldStyle.inputTextStyle,
           controller: controller,

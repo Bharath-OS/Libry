@@ -4,7 +4,6 @@ import 'package:libry/features/auth/view/main_screen.dart';
 import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/utilities/auth_methods.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/buttons.dart';
@@ -12,9 +11,7 @@ import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
 import 'package:flutter/gestures.dart';
-
 import '../data/model/user_model.dart';
-import '../data/services/userdata.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -50,18 +47,15 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLoading = context.select<AuthViewModel, bool>(
-      (auth) => auth.isLoading,
-    );
     return LayoutWidgets.customScaffold(
       body: FormWidgets.formContainer(
         title: "Get Started",
-        formWidget: _form(isLoading),
+        formWidget: _form(),
       ),
     );
   }
 
-  Widget _form(bool isLoading) {
+  Widget _form() {
     return Form(
       key: _formKey,
       child: Column(
@@ -115,7 +109,7 @@ class _RegisterViewState extends State<RegisterView> {
           RichText(
             text: TextSpan(
               text: "Already have an account? ",
-              style: TextStyle(color: MyColors.whiteBG),
+              style: TextStyle(color: AppColors.white),
               children: [
                 TextSpan(
                   recognizer: TapGestureRecognizer()
@@ -127,7 +121,7 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                   text: "Login",
                   style: TextStyle(
-                    color: MyColors.primaryButtonColor,
+                    color: AppColors.primaryButton,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -144,22 +138,20 @@ class _RegisterViewState extends State<RegisterView> {
     required List<TextEditingController> controllers,
   }) {
     FocusScope.of(context).unfocus();
-    String message = "";
     if (formKey.currentState!.validate()) {
+      String? message;
       final UserModel user = UserModel(
         name: controllers[0].text.trim(),
         email: controllers[1].text.trim(),
         password: controllers[2].text.trim(),
       );
-      bool isSuccess = context.read<AuthViewModel>().registerUser(
+      message = context.read<AuthViewModel>().registerUser(
         user: user,
         context: context,
       );
-      if (isSuccess) {
+      if (message == null) {
         Navigator.push(context, transition(child: MainScreen()));
         message = "Account created!";
-      } else {
-        message = "Something went wrong. Try again";
       }
       showSnackBar(text: message, context: context);
     }

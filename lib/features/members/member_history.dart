@@ -117,7 +117,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.bgColor,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
@@ -127,8 +127,8 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: MyColors.primaryColor,
-            child: Icon(Icons.person, color: MyColors.bgColor, size: 35),
+            backgroundColor: AppColors.primary,
+            child: Icon(Icons.person, color: AppColors.background, size: 35),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -138,7 +138,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Text(
                   member.name,
                   style: TextStyle(
-                    color: MyColors.primaryColor,
+                    color: AppColors.primary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -146,11 +146,11 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 SizedBox(height: 4),
                 Text(
                   'Member ID: ${member.memberId}',
-                  style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
+                  style: TextStyle(color: AppColors.darkGrey, fontSize: 14),
                 ),
                 Text(
                   'Currently Borrowed: ${activeIssues}/5',
-                  style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
+                  style: TextStyle(color: AppColors.darkGrey, fontSize: 14),
                 ),
               ],
             ),
@@ -212,7 +212,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     Color color,
     IconData icon,
   ) {
-    final textColor = MyColors.whiteBG;
+    final textColor = AppColors.white;
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -265,7 +265,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
       selected: isSelected,
       onSelected: (_) => _setFilter(value),
       backgroundColor: Colors.grey[200],
-      selectedColor: MyColors.bgColor,
+      selectedColor: AppColors.background,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -304,12 +304,12 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                   width: 50,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: MyColors.bgColor.withOpacity(0.1),
+                    color: AppColors.background.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  // child: Icon(Icons.book, color: MyColors.bgColor, size: 30),
+                  // child: Icon(Icons.book, color: AppColors.background, size: 30),
                   child: book?.coverPicture == null || book!.coverPicture.isEmpty
-                      ? Icon(Icons.book, color: MyColors.primaryColor)
+                      ? Icon(Icons.book, color: AppColors.primary)
                       : Image.file(File(book.coverPicture), fit: BoxFit.cover),
                 ),
                 SizedBox(width: 12),
@@ -442,7 +442,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                     icon: Icon(Icons.assignment_return),
                     label: Text('Return Book'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primaryButtonColor,
+                      backgroundColor: AppColors.primaryButton,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(

@@ -28,12 +28,12 @@ TextFormField customTextField({
       prefixIcon: Icon(icon, color: textColor),
       hintText: hintText,
       hintStyle: TextStyle(
-        color: MyColors.bgColor,
+        color: AppColors.background,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
       errorStyle: TextStyle(
-        color: MyColors.warningColor,
+        color: AppColors.error,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
@@ -46,11 +46,11 @@ TextFormField customTextField({
         borderRadius: BorderRadius.all(Radius.circular(cornerRadius))
       ),
       errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(width: 3,color: MyColors.warningColor)
+        borderSide: BorderSide(width: 3,color: AppColors.error)
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(cornerRadius)),
-        borderSide: BorderSide(color: MyColors.warningColor, width: 3),
+        borderSide: BorderSide(color: AppColors.error, width: 3),
       ),
     ),
   );

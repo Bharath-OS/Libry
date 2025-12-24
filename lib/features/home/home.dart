@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 greeting,
                 style: TextStyle(
-                  color: MyColors.whiteBG,
+                  color: AppColors.white,
                   fontFamily: "Livvic",
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 UserDatabase.getUserName,
                 style: TextStyle(
-                  color: MyColors.whiteBG,
+                  color: AppColors.white,
                   fontFamily: "Lobster",
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 formattedDate,
                 style: TextStyle(
-                  color: MyColors.whiteBG.withOpacity(0.8),
+                  color: AppColors.white.withOpacity(0.8),
                   fontFamily: "Livvic",
                   fontSize: 14,
                 ),
@@ -101,13 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: CircleAvatar(
             radius: 30,
-            backgroundColor: MyColors.whiteBG,
+            backgroundColor: AppColors.white,
             child: Text(
               UserDatabase.getUserName.trim()[0].toUpperCase(),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: MyColors.bgColor,
+                color: AppColors.background,
               ),
             ),
           ),
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           'Library Overview',
           style: TextStyle(
-            color: MyColors.whiteBG,
+            color: AppColors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -367,7 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: MyColors.whiteBG,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

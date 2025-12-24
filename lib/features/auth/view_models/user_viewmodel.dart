@@ -13,22 +13,25 @@ class AuthViewModel with ChangeNotifier {
     _user = user;
   }
 
-  bool registerUser({required UserModel user, required BuildContext context}) {
+  String? registerUser({
+    required UserModel user,
+    required BuildContext context,
+  }) {
     _isLoading = true;
     notifyListeners();
 
-    bool isSuccess = UserModelService.saveData(user: user, context: context);
+    bool isSuccess = UserModelService.saveData(user: user);
 
     _isLoading = false;
     notifyListeners();
-    return isSuccess;
+    if (isSuccess) {
+      return null;
+    } else {
+      return "Something went wrong. Try again later.";
+    }
   }
 
-  bool loginUser({
-    required String email,
-    required String password,
-    required BuildContext context,
-  }) {
+  String? loginUser({required String email, required String password}) {
     _isLoading = true;
     notifyListeners();
     bool isSuccess = false;
@@ -37,9 +40,16 @@ class AuthViewModel with ChangeNotifier {
         savedUser.email == email &&
         savedUser.password == password) {
       isSuccess = UserModelService.setLogValue(true);
+      if (isSuccess) {
+        _isLoading = false;
+        notifyListeners();
+        return null;
+      }
+      else{
+        return "Something went wrong. Try again later";
+      }
+    } else {
+      return "Invalid credentials";
     }
-    _isLoading = false;
-    notifyListeners();
-    return isSuccess;
   }
 }

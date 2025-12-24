@@ -6,10 +6,10 @@ class MyButton {
   static FloatingActionButton fab({required VoidCallback method}) {
     return FloatingActionButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      backgroundColor: MyColors.primaryButtonColor,
+      backgroundColor: AppColors.primaryButton,
       elevation: 0,
       onPressed: method,
-      child: Icon(Icons.add, color: MyColors.whiteBG, size: 40),
+      child: Icon(Icons.add, color: AppColors.primaryButtonText, size: 40),
     );
   }
 
@@ -21,7 +21,7 @@ class MyButton {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primaryButtonColor,
+        backgroundColor: AppColors.primaryButton,
         foregroundColor: Colors.white,
         // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         shape: RoundedRectangleBorder(
@@ -47,8 +47,8 @@ class MyButton {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primaryButtonColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.secondaryButton,
+        foregroundColor: AppColors.secondaryButtonText,
         // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -70,8 +70,8 @@ class MyButton {
       icon: Icon(Icons.arrow_back_ios),
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primaryButtonColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primaryButton,
+        foregroundColor: AppColors.primaryButtonText,
         padding: EdgeInsets.only(top: 9, bottom: 9, left: 20, right: 25),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -93,8 +93,8 @@ class MyButton {
       icon: SvgPicture.asset("assets/icons/delete-icon.svg"),
       onPressed: method,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.warningColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.dangerButton,
+        foregroundColor: AppColors.dangerButtonText,
         // padding: EdgeInsets.only(top: 9,bottom: 9,left: 20,right: 25),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 import '../../models/books_model.dart';
 import '../../models/issue_records_model.dart';
 import '../../models/members_model.dart';
@@ -8,7 +8,6 @@ import '../../provider/book_provider.dart';
 import '../../provider/issue_provider.dart';
 import '../../provider/members_provider.dart';
 import '../../core/widgets/layout_widgets.dart';
-import '../../widgets/buttons.dart';
 
 class BookHistoryScreen extends StatefulWidget {
   final int bookId;
@@ -106,7 +105,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.bgColor,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
         // boxShadow: [
         //   BoxShadow(
@@ -118,7 +117,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.book, color: MyColors.primaryColor, size: 40),
+          Icon(Icons.book, color: AppColors.primary, size: 40),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -127,7 +126,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                 Text(
                   book.title,
                   style: TextStyle(
-                    color: MyColors.primaryColor,
+                    color: AppColors.primary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -138,7 +137,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                 Text(
                   'by ${book.author}',
                   style: TextStyle(
-                    color: MyColors.lightGrey,
+                    color: AppColors.lightGrey,
                     fontSize: 14,
                   ),
                 ),
@@ -186,7 +185,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             child: _buildStatCard(
               'Overdue',
               overdue.toString(),
-              MyColors.warningColor,
+              AppColors.error,
               Icons.warning,
             ),
           ),
@@ -196,7 +195,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
   }
 
   Widget _buildStatCard(String label, String value, Color color, IconData icon) {
-    final textColor = MyColors.whiteBG;
+    final textColor = AppColors.white;
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -255,7 +254,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
       selected: isSelected,
       onSelected: (_) => _setFilter(value),
       backgroundColor: Colors.grey[200],
-      selectedColor: MyColors.bgColor,
+      selectedColor: AppColors.background,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -286,8 +285,8 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: MyColors.primaryColor,
-                  child: Icon(Icons.person, color: MyColors.bgColor),
+                  backgroundColor: AppColors.primary,
+                  child: Icon(Icons.person, color: AppColors.background),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -424,7 +423,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreen> {
                     icon: Icon(Icons.assignment_return),
                     label: Text('Return Book'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primaryButtonColor,
+                      backgroundColor: AppColors.primaryButton,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(

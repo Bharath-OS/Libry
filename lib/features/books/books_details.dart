@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:libry/provider/book_provider.dart';
-import 'package:libry/screens/books_screens/edit_book_screen.dart';
-import 'package:libry/utilities/helpers.dart';
-import 'package:libry/widgets/buttons.dart';
 import 'package:provider/provider.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utilities/helpers.dart';
 import '../../models/books_model.dart';
-import '../../constants/app_colors.dart';
 import '../../core/widgets/layout_widgets.dart';
-import '../../screens/books_screens/book_history.dart';
+import 'book_history.dart';
+import 'edit_book_screen.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final int bookId;
@@ -20,7 +19,7 @@ class BookDetailScreen extends StatefulWidget {
 }
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
-  final Color infoIconColor = MyColors.primaryColor;
+  final Color infoIconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
     final bookDetails = context.watch<BookProvider>().getBookById(
@@ -58,7 +57,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildHeaderSection(Books book) {
     final isAvailable = book.copiesAvailable > 0;
     const Color titleTextColor = Colors.black;
-    final Color authorTextColor = MyColors.darkGrey;
+    final Color authorTextColor = AppColors.darkGrey;
 
     return Container(
       padding: EdgeInsets.all(20),
@@ -108,7 +107,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           ),
           Text(
             book.year,
-            style: TextStyle(color: MyColors.darkGrey, fontSize: 14),
+            style: TextStyle(color: AppColors.darkGrey, fontSize: 14),
           ),
 
           SizedBox(height: 16),
@@ -301,7 +300,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               icon: Icon(Icons.history),
               label: Text('View Borrow History'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.secondaryButtonColor,
+                backgroundColor: AppColors.secondaryButton,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -323,7 +322,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               icon: Icon(Icons.edit),
               label: Text('Edit Book'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.primaryButtonColor,
+                backgroundColor: AppColors.primaryButton,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:libry/provider/genre_provider.dart';
 import 'package:libry/core/utilities/image_services.dart';
 import 'package:provider/provider.dart';
-import '../../Themes/styles.dart';
-import '../../Widgets/buttons.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/themes/styles.dart';
+import '../../core/utilities/helpers.dart' as AppDialogs;
+import '../../core/utilities/validation.dart';
+import '../../core/widgets/buttons.dart';
+import '../../core/widgets/forms.dart';
+import '../../core/widgets/layout_widgets.dart';
 import '../../models/books_model.dart';
 import '../../provider/book_provider.dart';
 import '../../provider/language_provider.dart';
-import '../../utilities/validation.dart';
-import '../../widgets/forms.dart';
-import '../../widgets/layout_widgets.dart';
-import '../../widgets/dialogs.dart';
 import '../settings/settings.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         });
       }
     } catch (e) {
-      AppDialogs.showSnackBar(message: "Failed to pick an image.", context: context);
+      AppDialogs.showSnackBar(text: "Failed to pick an image.", context: context);
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -78,11 +78,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void _submitForm() async{
     if (_formKey.currentState!.validate()) {
       if (_selectedGenre == null || _selectedGenre!.isEmpty) {
-        AppDialogs.showSnackBar(message: "Please select a genre", context: context);
+        AppDialogs.showSnackBar(text: "Please select a genre", context: context);
         return;
       }
       if (_selectedLanguage == null || _selectedLanguage!.isEmpty) {
-        AppDialogs.showSnackBar(message: "Please select a language", context: context);
+        AppDialogs.showSnackBar(text: "Please select a language", context: context);
         return;
       }
       String? imagePath;
@@ -110,7 +110,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
       Navigator.pop(context);
       AppDialogs.showSnackBar(
-        message: "${book.title} successfully added",
+        text: "${book.title} successfully added",
         context: context,
       );
     }
@@ -138,7 +138,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           child: Container(
             margin: EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: MyColors.bgColor,
+              color: AppColors.background,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(
@@ -224,7 +224,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    dropdownColor: MyColors.darkGrey,
+                    dropdownColor: AppColors.darkGrey,
                     value: _selectedLanguage,
                     isExpanded: true,
                     style: textStyle,
@@ -273,7 +273,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    dropdownColor: MyColors.darkGrey,
+                    dropdownColor: AppColors.darkGrey,
                     value: _selectedGenre,
                     isExpanded: true,
                     style: textStyle,
@@ -311,26 +311,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.secondaryButtonColor,
-                      foregroundColor: MyColors.whiteBG,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _cancel,
-                    child: Text("Cancel"),
+                  child: MyButton.secondaryButton(
+                    method: _cancel,
+                    text: "Cancel",
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primaryButtonColor,
-                      foregroundColor: MyColors.whiteBG,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _submitForm,
-                    child: Text("Save"),
+                  child: MyButton.primaryButton(
+                    method: _submitForm,
+                    text: "Save",
                   ),
                 ),
               ],
@@ -391,7 +381,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  MyColors.primaryButtonColor,
+                  AppColors.primaryButton,
                 ),
               ),
             )

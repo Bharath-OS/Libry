@@ -128,8 +128,8 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.secondaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
+                    backgroundColor: AppColors.secondaryButton,
+                    foregroundColor: AppColors.white,
                   ),
                   onPressed: () => Navigator.pop(context),
                   child: Text('Cancel'),
@@ -139,8 +139,8 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.primaryButtonColor,
-                    foregroundColor: MyColors.whiteBG,
+                    backgroundColor: AppColors.primaryButton,
+                    foregroundColor: AppColors.white,
                   ),
                   onPressed: _submitForm,
                   child: Text('Edit Member'),
