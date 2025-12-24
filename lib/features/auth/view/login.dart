@@ -55,18 +55,16 @@ class _LoginViewState extends State<LoginView> {
       child: Column(
         spacing: 25,
         children: [
-          buildDarkTextField(
-            hintText: "Email",
-            icon: Icons.email_outlined,
-            inputController: emailController,
+          AppTextField.customTextField(
+            label: "Email",
+            controller: emailController,
             validator: (value) {
               return Validator.emailValidator(value);
             },
           ),
-          buildDarkTextField(
-            hintText: "Password",
-            icon: Icons.password_outlined,
-            inputController: passwordController,
+          AppTextField.customTextField(
+            label: "Password",
+            controller: passwordController,
             isObscure: true,
             validator: (value) {
               return Validator.passwordValidator(value);

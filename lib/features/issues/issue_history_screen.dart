@@ -7,10 +7,10 @@ import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../database/issue_records_db.dart';
-import '../../models/books_model.dart';
+import '../books/data/model/books_model.dart';
 import '../../models/issue_records_model.dart';
-import '../../models/members_model.dart';
-import '../../provider/book_provider.dart';
+import '../members/data/model/members_model.dart';
+import '../books/viewmodel/book_provider.dart';
 import '../../provider/issue_provider.dart';
 import '../../provider/members_provider.dart';
 import '../../widgets/layout_widgets.dart';
@@ -28,7 +28,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final issueProvider = context.watch<IssueProvider>();
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     // Get all issues and apply filter
@@ -87,7 +87,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       itemCount: filteredIssues.length,
                       itemBuilder: (context, index) {
                         final issue = filteredIssues[index];
-                        final book = context.watch<BookProvider>().getBookById(
+                        final book = context.watch<BookViewModel>().getBookById(
                           issue.bookId,
                         );
                         final member = context

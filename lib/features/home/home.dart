@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/core/themes/styles.dart';
-import 'package:libry/provider/book_provider.dart';
+import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/screens/home_screens/profile.dart';
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickStats() {
-    final bookProvider = context.watch<BookProvider>();
+    final bookProvider = context.watch<BookViewModel>();
     final memberProvider = context.watch<MembersProvider>();
     final issueProvider = context.watch<IssueProvider>();
 
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildRecentActivity() {
     final issueProvider = context.watch<IssueProvider>();
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     // Get recent issues (last 5)

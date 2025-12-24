@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../core/themes/styles.dart';
-import '../../models/books_model.dart';
-import '../../models/members_model.dart';
+import '../books/data/model/books_model.dart';
+import '../members/data/model/members_model.dart';
 import '../../provider/book_provider.dart';
 import '../../provider/members_provider.dart';
 import '../../provider/issue_provider.dart';
@@ -45,7 +45,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   void _loadInitialData() {
     final memberProvider = context.read<MembersProvider>();
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.read<BookViewModel>();
 
     _filteredMembers = memberProvider.members;
     _filteredBooks = bookProvider.books
@@ -536,7 +536,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _filterBooks(String query) {
-    final books = context.read<BookProvider>().books;
+    final books = context.read<BookViewModel>().books;
     final availableBooks = books
         .where((book) => book.copiesAvailable > 0)
         .toList();
@@ -632,7 +632,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _isBookSelected = false;
       _bookFieldController.clear();
       _filteredBooks = context
-          .read<BookProvider>()
+          .read<BookViewModel>()
           .books
           .where((book) => book.copiesAvailable > 0)
           .toList();
@@ -692,7 +692,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
     try {
       final issueProvider = context.read<IssueProvider>();
-      final bookProvider = context.read<BookProvider>();
+      final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 
       // 1. Create issue record in Hive
@@ -821,7 +821,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _bookFieldController.clear();
       _filteredMembers = context.read<MembersProvider>().members;
       _filteredBooks = context
-          .read<BookProvider>()
+          .read<BookViewModel>()
           .books
           .where((book) => book.copiesAvailable > 0)
           .toList();

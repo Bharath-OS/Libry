@@ -1,9 +1,9 @@
 import 'package:libry/provider/members_provider.dart';
-import 'package:libry/features/members/add_members.dart';
+import 'package:libry/features/members/view/add_members.dart';
 import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/members_model.dart';
+import 'data/model/members_model.dart';
 import '../../widgets/cards.dart';
 import '../../core/widgets/list.dart';
 import 'package:flutter/material.dart';

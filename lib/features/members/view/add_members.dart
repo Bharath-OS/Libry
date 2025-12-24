@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:libry/Themes/styles.dart';
-import '../../constants/app_colors.dart';
-import '../../utilities/validation.dart';
-import '../../widgets/dialogs.dart';
-import '../../widgets/forms.dart';
-import '../../widgets/layout_widgets.dart';
-import '../../provider/members_provider.dart'; // You'll need this
+import '../../../constants/app_colors.dart';
+import '../../../utilities/validation.dart';
+import '../../../widgets/dialogs.dart';
+import '../../../widgets/forms.dart';
+import '../../../widgets/layout_widgets.dart';
+import '../../../provider/members_provider.dart'; // You'll need this
 import 'package:provider/provider.dart'; // You'll need this
-import '../../models/members_model.dart'; // You'll need this
+import '../data/model/members_model.dart'; // You'll need this
 
 class AddMembersScreen extends StatefulWidget {
   const AddMembersScreen({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class AppTextField {
-  Widget customTextField({
+  static Widget customTextField({
     required TextEditingController controller,
     required String label,
     required String? Function(String?)? validator,
@@ -29,6 +29,7 @@ class AppTextField {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
+
           labelStyle: TextStyle(
             color: textColor.withOpacity(0.7),
             fontSize: 14,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../models/books_model.dart';
-import '../../../provider/book_provider.dart';
+import '../../../features/books/data/model/books_model.dart';
+import '../../../features/books/viewmodel/book_provider.dart';
 
 void showPopUpScreen({
   required String title,
@@ -37,7 +37,7 @@ void deleteBook({required BuildContext context, required Books bookDetails, inDe
         TextButton(
           onPressed: () {
             // 🔥 Use the actual book ID, not index 0
-            context.read<BookProvider>().removeBook(bookDetails.id!);
+            context.read<BookViewModel>().removeBook(bookDetails.id!);
             Navigator.pop(context); // Close dialog
             inDetailsScreen ? Navigator.pop(context) : null; // Go back to books list
             showAlertMessage(

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../models/members_model.dart';
-import '../../models/books_model.dart';
+import '../../features/members/data/model/members_model.dart';
+import '../../features/books/data/model/books_model.dart';
 import '../constants/app_colors.dart';
 import '../themes/styles.dart';
 import '../utilities/helpers.dart';

@@ -7,7 +7,7 @@ import 'package:libry/utilities/helpers/date_formater.dart';
 import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
-import '../../models/members_model.dart';
+import 'data/model/members_model.dart';
 import '../../screens/members_screens/member_history.dart';
 
 class MemberDetailsScreen extends StatefulWidget {

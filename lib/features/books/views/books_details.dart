@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:libry/provider/book_provider.dart';
+import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
-import '../../../models/books_model.dart';
+import '../data/model/books_model.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import 'book_history.dart';
 import 'edit_book_screen.dart';
@@ -22,7 +22,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
   final Color infoIconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
-    final bookDetails = context.watch<BookProvider>().getBookById(
+    final bookDetails = context.watch<BookViewModel>().getBookById(
       widget.bookId,
     );
 

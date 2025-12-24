@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
-import '../../models/books_model.dart';
-import '../../models/issue_records_model.dart';
-import '../../models/members_model.dart';
-import '../../provider/book_provider.dart';
-import '../../provider/issue_provider.dart';
-import '../../provider/members_provider.dart';
-import '../../widgets/layout_widgets.dart';
+import '../../../constants/app_colors.dart';
+import '../../books/data/model/books_model.dart';
+import '../../../models/issue_records_model.dart';
+import '../data/model/members_model.dart';
+import '../../../provider/book_provider.dart';
+import '../../../provider/issue_provider.dart';
+import '../../../provider/members_provider.dart';
+import '../../../widgets/layout_widgets.dart';
 
 class MemberHistoryScreen extends StatefulWidget {
   final int memberId;
@@ -26,7 +26,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final issueProvider = context.watch<IssueProvider>();
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     final member = memberProvider.getMemberById(widget.memberId);
@@ -505,7 +505,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   Future<void> _returnBook(IssueRecords issue, Books? book) async {
     try {
       final issueProvider = context.read<IssueProvider>();
-      final bookProvider = context.read<BookProvider>();
+      final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 
       // 1. Mark as returned in Hive

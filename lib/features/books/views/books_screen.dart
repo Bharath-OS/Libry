@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:libry/models/books_model.dart';
+import 'package:libry/features/books/data/model/books_model.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/list.dart';
-import '../../../provider/book_provider.dart';
+import '../viewmodel/book_provider.dart';
 import 'add_book_screen.dart';
 import 'books_details.dart';
 
@@ -16,10 +16,10 @@ class BookListScreenView extends StatelessWidget {
 
     return ListScreen<Books>(
       title: "Books",
-      totalCount: context.watch<BookProvider>().totalBooks,
-      availableCount: context.watch<BookProvider>().availableBooks,
+      totalCount: context.watch<BookViewModel>().totalBooks,
+      availableCount: context.watch<BookViewModel>().availableBooks,
       searchHint: "Search Books...",
-      items: context.watch<BookProvider>().books,
+      items: context.watch<BookViewModel>().books,
       tileBuilder: (book) => Cards.bookCard(bookDetails: book,context: context),
       onTap: (book) => Navigator.push(
           context,

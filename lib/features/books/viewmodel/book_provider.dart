@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:libry/database/books_db.dart';
+import 'package:libry/features/books/data/service/books_db.dart';
 import 'package:libry/database/libry_db.dart';
 
-import '../models/books_model.dart';
+import '../data/model/books_model.dart';
 
-class BookProvider extends ChangeNotifier {
-  BookProvider() {
+class BookViewModel extends ChangeNotifier {
+  BookViewModel() {
     fetchBooks();
   }
   List<Books> _books = [];

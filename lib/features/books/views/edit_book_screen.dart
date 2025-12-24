@@ -8,8 +8,9 @@ import '../../../core/utilities/image_services.dart';
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../../../models/books_model.dart';
-import '../../../provider/book_provider.dart';
+import '../../../core/widgets/text_field.dart';
+import '../data/model/books_model.dart';
+import '../viewmodel/book_provider.dart';
 import '../../../provider/genre_provider.dart';
 import '../../../provider/language_provider.dart';
 
@@ -152,7 +153,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         coverPicture: imagePath,
       );
 
-      context.read<BookProvider>().updateBook(updatedBook);
+      context.read<BookViewModel>().updateBook(updatedBook);
       Navigator.pop(context);
       ScaffoldMessenger.of(
         context,
@@ -202,12 +203,12 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         key: _formKey,
         child: Column(
           children: [
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[0],
               label: "Book title",
               validator: (value) => Validator.emptyValidator(value),
             ),
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[1],
               label: "Author name",
               validator: (value) => Validator.emptyValidator(value),
@@ -243,17 +244,18 @@ class _EditBookScreenState extends State<EditBookScreenView> {
                 ),
               ),
             ),
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[3],
               label: "Publish year",
+              keyboardType: TextInputType.number,
               validator: (value) => Validator.yearValidator(value),
             ),
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[4],
               label: "Publisher",
               validator: (value) => Validator.emptyValidator(value),
             ),
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[5],
               label: "Number of pages",
               keyboardType: TextInputType.number,
@@ -290,7 +292,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
                 ),
               ),
             ),
-            _buildTextField(
+            AppTextField.customTextField(
               controller: controllers[7],
               label: "Total copies",
               keyboardType: TextInputType.number,
@@ -372,35 +374,6 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  //isolate the _buildTextField widget.
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-    required String? Function(String?)? validator,
-  }) {
-    final textStyle = const TextStyle(
-      color: Color(0xffC1DCFF),
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    );
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
-        style: textStyle,
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: textStyle.copyWith(fontSize: 14),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        validator: validator,
       ),
     );
   }

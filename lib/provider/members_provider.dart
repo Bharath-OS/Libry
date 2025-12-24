@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:libry/database/members_db.dart';
-import 'package:libry/models/members_model.dart';
+import 'package:libry/features/members/data/model/members_model.dart';
 
 class MembersProvider extends ChangeNotifier {
   MembersProvider() {

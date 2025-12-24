@@ -1,7 +1,7 @@
 import 'package:libry/database/libry_db.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../models/books_model.dart';
+import '../model/books_model.dart';
 
 class BooksDB {
   static const String _tableName = "books";

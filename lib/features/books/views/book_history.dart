@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../models/books_model.dart';
+import '../data/model/books_model.dart';
 import '../../../models/issue_records_model.dart';
-import '../../../models/members_model.dart';
-import '../../../provider/book_provider.dart';
+import '../../members/data/model/members_model.dart';
+import '../viewmodel/book_provider.dart';
 import '../../../provider/issue_provider.dart';
 import '../../../provider/members_provider.dart';
 import '../../../core/widgets/layout_widgets.dart';
@@ -24,7 +24,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
   @override
   Widget build(BuildContext context) {
     final issueProvider = context.watch<IssueProvider>();
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     final book = bookProvider.getBookById(widget.bookId);
@@ -489,7 +489,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
   Future<void> _returnBook(IssueRecords issue) async {
     try {
       final issueProvider = context.read<IssueProvider>();
-      final bookProvider = context.read<BookProvider>();
+      final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 
       // 1. Mark as returned in Hive

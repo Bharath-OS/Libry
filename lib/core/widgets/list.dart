@@ -1,10 +1,10 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:libry/models/members_model.dart';
+import 'package:libry/features/members/data/model/members_model.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:provider/provider.dart';
-import '../../models/books_model.dart';
-import '../../provider/book_provider.dart';
+import '../../features/books/data/model/books_model.dart';
+import '../../features/books/viewmodel/book_provider.dart';
 import '../constants/app_colors.dart';
 import '../themes/styles.dart';
 import '../utilities/helpers.dart';
@@ -589,7 +589,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildGenreDropdown() {
-    final bookProvider = context.watch<BookProvider>();
+    final bookProvider = context.watch<BookViewModel>();
     final allBooks = widget.items as List<Books>;
     final genres = ['All', ...allBooks.map((b) => b.genre).toSet().toList()..sort()];
 
@@ -661,7 +661,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
 
     if (confirmed == true) {
       if (widget.items is List<Books>) {
-        await context.read<BookProvider>().clearAllBooks();
+        await context.read<BookViewModel>().clearAllBooks();
         showSnackBar(text: "All Books cleared", context: context);
       } else if (widget.items is List<Members>) {
         await context.read<MembersProvider>().clearAllMembers();

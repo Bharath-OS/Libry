@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import '../models/members_model.dart';
+import '../features/members/data/model/members_model.dart';
 import 'libry_db.dart';
 
 // BookRepository - Handles only book operations

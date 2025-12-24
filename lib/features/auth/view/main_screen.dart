@@ -5,7 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../books/views/books_screen.dart';
 import '../../home/home.dart';
 import '../../issues/issue_history_screen.dart';
-import '../../members/members.dart';
+import '../../members/view/members.dart';
 import '../../settings/settings.dart';
 
 class MainScreen extends StatefulWidget {

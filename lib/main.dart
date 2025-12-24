@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/database/genre_db.dart';
 import 'package:libry/database/issue_records_db.dart';
-import 'package:libry/provider/book_provider.dart';
+import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/provider/genre_provider.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/language_provider.dart';
@@ -34,7 +34,7 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider<BookProvider>(create: (_) => BookProvider()),
+          ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
           ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
           ChangeNotifierProvider<LanguageProvider>(create: (_) => LanguageProvider()),
           ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
