@@ -92,7 +92,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
       child: Column(
         spacing: 20,
         children: [
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[0],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(
@@ -101,21 +101,21 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             ),
             validator: (value) => Validator.emptyValidator(value),
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[1],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Email'),
             keyboardType: TextInputType.emailAddress,
             validator: (email) => Validator.emailValidator(email),
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[2],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Phone'),
             keyboardType: TextInputType.phone,
             validator: (phone) => Validator.phoneValidator(phone),
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[3],
             style: TextFieldStyle.inputTextStyle,
             decoration: InputDecoration(labelText: 'Address'),

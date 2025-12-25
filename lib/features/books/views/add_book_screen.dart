@@ -35,7 +35,10 @@ class _AddBookScreenState extends State<AddBookScreenView> {
   @override
   void initState() {
     super.initState();
-    controllers = List.generate(8, (_) => TextEditingController()); // Changed from 9 to 8
+    controllers = List.generate(
+      8,
+      (_) => TextEditingController(),
+    ); // Changed from 9 to 8
     _imageController = TextEditingController();
   }
 
@@ -62,7 +65,10 @@ class _AddBookScreenState extends State<AddBookScreenView> {
         });
       }
     } catch (e) {
-      AppDialogs.showSnackBar(text: "Failed to pick an image.", context: context);
+      AppDialogs.showSnackBar(
+        text: "Failed to pick an image.",
+        context: context,
+      );
     } finally {
       setState(() => _isPickingImage = false);
     }
@@ -76,14 +82,20 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     ImageService.cleanupTemporaryImage();
   }
 
-  void _submitForm() async{
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (_selectedGenre == null || _selectedGenre!.isEmpty) {
-        AppDialogs.showSnackBar(text: "Please select a genre", context: context);
+        AppDialogs.showSnackBar(
+          text: "Please select a genre",
+          context: context,
+        );
         return;
       }
       if (_selectedLanguage == null || _selectedLanguage!.isEmpty) {
-        AppDialogs.showSnackBar(text: "Please select a language", context: context);
+        AppDialogs.showSnackBar(
+          text: "Please select a language",
+          context: context,
+        );
         return;
       }
       String? imagePath;
@@ -100,7 +112,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
         language: _selectedLanguage!,
         year: controllers[3].text.trim(),
         publisher: controllers[4].text.trim(),
-        pages: int.parse(controllers[5].text),
+        pages: int.parse(controllers[5].text.trim()),
         genre: _selectedGenre!,
         totalCopies: totalCopies,
         copiesAvailable: totalCopies, // Set to same as totalCopies
@@ -182,19 +194,24 @@ class _AddBookScreenState extends State<AddBookScreenView> {
         child: SingleChildScrollView(
           child: FormWidgets.formContainer(
             title: "Add Book",
-            formWidget: _addBookForm(context, textStyle, genres, languages),
+            formWidget: addBookForm(
+              genres: genres,
+              languages: languages,
+              inputControllers: controllers,
+              textStyle: textStyle,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _addBookForm(
-      BuildContext context,
-      TextStyle textStyle,
-      List<String> genres,
-      List<String> languages,
-      ) {
+  Widget addBookForm({
+    required List<String> genres,
+    required List<String> languages,
+    required List<TextEditingController> inputControllers,
+    required TextStyle textStyle,
+  }) {
     return SizedBox(
       width: double.infinity,
       child: Form(
@@ -203,12 +220,12 @@ class _AddBookScreenState extends State<AddBookScreenView> {
           children: [
             // Text Fields
             AppTextField.customTextField(
-              controller: controllers[0],
+              controller: inputControllers[0],
               label: "Book title",
               validator: (value) => Validator.emptyValidator(value),
             ),
             AppTextField.customTextField(
-              controller: controllers[1],
+              controller: inputControllers[1],
               label: "Author name",
               validator: (value) => Validator.emptyValidator(value),
             ),
@@ -245,18 +262,18 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               ),
             ),
             AppTextField.customTextField(
-              controller: controllers[3],
+              controller: inputControllers[3],
               label: "Publish year",
               keyboardType: TextInputType.number,
               validator: (value) => Validator.yearValidator(value),
             ),
             AppTextField.customTextField(
-              controller: controllers[4],
+              controller: inputControllers[4],
               label: "Publisher",
               validator: (value) => Validator.emptyValidator(value),
             ),
             AppTextField.customTextField(
-              controller: controllers[5],
+              controller: inputControllers[5],
               label: "Number of pages",
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
@@ -294,12 +311,11 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               ),
             ),
             AppTextField.customTextField(
-              controller: controllers[7],
+              controller: inputControllers[7],
               label: "Total copies",
               keyboardType: TextInputType.number,
               validator: (value) => Validator.numberValidator(value),
             ),
-            // REMOVED: Copies available field - it will be set automatically
 
             const SizedBox(height: 20),
 
@@ -331,7 +347,6 @@ class _AddBookScreenState extends State<AddBookScreenView> {
       ),
     );
   }
-
 
   Widget _buildImageSection(TextStyle textStyle) {
     return Column(

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:libry/utilities/helpers.dart';
-
-import '../../core/themes/styles.dart';
-import '../../../widgets/buttons.dart';
-import '../../../widgets/layout_widgets.dart';
-import '../../../database/userdata.dart';
-import '../auth/data/model/user_model.dart';
-import '../../../widgets/forms.dart';
-import '../../utilities/validation.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../core/widgets/text_field.dart';
+import '../data/model/user_model.dart';
+import '../data/services/userdata.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -17,7 +16,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  late User userData;
+  late UserModel userData;
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
@@ -61,28 +60,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: Column(
         spacing: 20,
         children: [
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: "Name"
-            ),
+          AppTextField.customTextField(
+            label: "Name",
             controller: _nameController,
-            style: TextFieldStyle.inputTextStyle,
             validator: (value) => Validator.emptyValidator(value),
           ),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: "Email"
-            ),
+          AppTextField.customTextField(
+            label: "Email",
             controller: _emailController,
-            style: TextFieldStyle.inputTextStyle,
             validator: (email) => Validator.emailValidator(email),
           ),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: "Password"
-            ),
+          AppTextField.customTextField(
+            label: "Password",
             controller: _passwordController,
-            style: TextFieldStyle.inputTextStyle,
             validator: (password) => Validator.passwordValidator(password),
           ),
           MyButton.primaryButton(text: 'Save', method: _editUserData),
@@ -91,8 +81,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  User? _getUserData() {
-    User? user = UserDatabase.getData();
+  UserModel? _getUserData() {
+    UserModel? user = UserModelService.getData();
     if (user != null) return user;
     return null;
   }
@@ -102,12 +92,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (userData.name != _nameController.text ||
           userData.email != _emailController.text ||
           userData.password != _passwordController.text) {
-        final updatedUser = User(
+        final updatedUser = UserModel(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        final success = UserDatabase.editData(user: updatedUser);
+        final success = UserModelService.editData(user: updatedUser);
         if (success) {
           showSnackBar(text: "Profile successfully updated", context: context);
           Navigator.pop(context);

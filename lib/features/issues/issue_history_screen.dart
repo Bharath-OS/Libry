@@ -2,10 +2,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:libry/screens/transactions_screens/issue.dart';
-import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utilities/helpers.dart';
+import '../../core/widgets/layout_widgets.dart';
 import '../../database/issue_records_db.dart';
 import '../books/data/model/books_model.dart';
 import '../../models/issue_records_model.dart';
@@ -13,7 +13,7 @@ import '../members/data/model/members_model.dart';
 import '../books/viewmodel/book_provider.dart';
 import '../../provider/issue_provider.dart';
 import '../../provider/members_provider.dart';
-import '../../widgets/layout_widgets.dart';
+import 'issue.dart';
 
 class IssueHistoryScreen extends StatefulWidget {
   const IssueHistoryScreen({super.key});

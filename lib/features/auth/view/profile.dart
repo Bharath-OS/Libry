@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Screens/books_screen.dart';
-import 'package:libry/provider/members_provider.dart';
+import 'package:libry/features/auth/data/services/userdata.dart';
 import 'package:libry/features/books/views/add_book_screen.dart';
 import 'package:libry/core/themes/styles.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/features/auth/view/login.dart';
-import 'package:libry/constants/app_colors.dart';
-import 'package:libry/screens/transactions_screens/issue.dart';
 import 'package:provider/provider.dart';
-import '../../../widgets/layout_widgets.dart';
-import '../../../database/userdata.dart';
-import '../auth/data/model/user_model.dart';
-import '../../../utilities/helpers.dart';
-import '../../features/home/edit_profile.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../issues/issue.dart';
+import '../data/model/user_model.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,7 +21,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final Color color = AppColors.primary;
-  late User? user;
+  late UserModel? user;
 
   @override
   void initState() {
@@ -34,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _loadUserData() {
-    user = UserDatabase.getData();
+    user = UserModelService.getData();
     setState(() {});
   }
 
@@ -200,8 +198,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               text: "Logout",
               textColor: AppColors.error,
               method: () async{
-                UserDatabase.setLogValue(false);
-                await Navigator.push(context, transition(child: LoginScreen()));
+                UserModelService.setLogValue(false);
+                await Navigator.push(context, transition(child: LoginView()));
                 _loadUserData();
               }
           ),
@@ -209,62 +207,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-}
 
-Widget _buildStatCard({
-  required IconData icon,
-  required int stat,
-  required String label,
-  Color color = Colors.black,
-}) {
-  return SizedBox(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Icon(icon, size: 30, color: color, fontWeight: FontWeight.bold),
-          Text(
-            stat.toString(),
-            style: BodyTextStyles.headingMediumStyle(color),
-          ),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: BodyTextStyles.bodySmallStyle(
-              color,
-            ).copyWith(fontWeight: FontWeight.w600, fontSize: 12),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget verticalDivider() {
-  return Container(height: 100, width: 1.5, color: Colors.black12);
-}
-
-Widget actionButton({
-  required IconData icon,
-  required Color iconColor,
-  required String text,
-  required Color textColor,
-  required VoidCallback method,
-}) {
-  return GestureDetector(
-    onTap: method,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          spacing: 10,
+  Widget _buildStatCard({
+    required IconData icon,
+    required int stat,
+    required String label,
+    Color color = Colors.black,
+  }) {
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
           children: [
-            Icon(icon, color: iconColor, size: 40),
-            Text(text, style: CardStyles.cardSubTitleStyle.copyWith(color: textColor)),
+            Icon(icon, size: 30, color: color, fontWeight: FontWeight.bold),
+            Text(
+              stat.toString(),
+              style: BodyTextStyles.headingMediumStyle(color),
+            ),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: BodyTextStyles.bodySmallStyle(
+                color,
+              ).copyWith(fontWeight: FontWeight.w600, fontSize: 12),
+            ),
           ],
         ),
-        Icon(Icons.arrow_forward_ios_rounded,color: iconColor,),
-      ],
-    ),
-  );
+      ),
+    );
+  }
+
+  Widget verticalDivider() {
+    return Container(height: 100, width: 1.5, color: Colors.black12);
+  }
+
+  Widget actionButton({
+    required IconData icon,
+    required Color iconColor,
+    required String text,
+    required Color textColor,
+    required VoidCallback method,
+  }) {
+    return GestureDetector(
+      onTap: method,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            spacing: 10,
+            children: [
+              Icon(icon, color: iconColor, size: 40),
+              Text(text, style: CardStyles.cardSubTitleStyle.copyWith(color: textColor)),
+            ],
+          ),
+          Icon(Icons.arrow_forward_ios_rounded,color: iconColor,),
+        ],
+      ),
+    );
+  }
+
 }
+

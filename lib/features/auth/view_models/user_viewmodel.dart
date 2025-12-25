@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:libry/features/auth/data/model/user_model.dart';
 import 'package:libry/features/auth/data/services/userdata.dart';
 
-import '../view/main_screen.dart';
+import '../../home/main_screen.dart';
 
 class AuthViewModel with ChangeNotifier {
   late UserModel _user;
@@ -50,6 +50,17 @@ class AuthViewModel with ChangeNotifier {
       }
     } else {
       return "Invalid credentials";
+    }
+  }
+
+  String? editUser({required UserModel updatedUser}){
+    final result = UserModelService.editData(user: updatedUser);
+    notifyListeners();
+    if(result){
+      return "Profile updated successfully";
+    }
+    else{
+      return "Failed to update profile";
     }
   }
 }

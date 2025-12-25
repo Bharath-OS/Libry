@@ -1,12 +1,12 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../books/views/books_screen.dart';
-import '../../home/home.dart';
-import '../../issues/issue_history_screen.dart';
-import '../../members/view/members.dart';
-import '../../settings/settings.dart';
+import '../../core/constants/app_colors.dart';
+import '../books/views/books_screen.dart';
+import 'home.dart';
+import '../issues/issue_history_screen.dart';
+import '../members/view/members.dart';
+import '../settings/settings.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

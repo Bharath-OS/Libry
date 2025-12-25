@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Themes/styles.dart';
-import '../../../constants/app_colors.dart';
-import '../../../utilities/validation.dart';
-import '../../../widgets/dialogs.dart';
-import '../../../widgets/forms.dart';
-import '../../../widgets/layout_widgets.dart';
+import 'package:libry/core/widgets/text_field.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/themes/styles.dart';
+import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/layout_widgets.dart';
 import '../../../provider/members_provider.dart'; // You'll need this
 import 'package:provider/provider.dart'; // You'll need this
 import '../data/model/members_model.dart'; // You'll need this
@@ -53,7 +54,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
 
       membersProvider.addMember(newMember);
       Navigator.pop(context);
-      AppDialogs.showSnackBar(message: "${newMember.name} successfully added", context: context);
+      AppDialogs.showSnackBar(text: "${newMember.name} successfully added", context: context);
     }
   }
 
@@ -79,30 +80,26 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
       child: Column(
         spacing: 20,
         children: [
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[0],
-            style: TextFieldStyle.inputTextStyle,
-            decoration: InputDecoration(labelText: 'Full Name', labelStyle: TextFieldStyle.inputTextStyle),
+            label: 'Full Name',
             validator: (value)=>Validator.emptyValidator(value)
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[1],
-            style: TextFieldStyle.inputTextStyle,
-            decoration: InputDecoration(labelText: 'Email'),
+            label: 'Email',
             keyboardType: TextInputType.emailAddress,
             validator: (email)=>Validator.emailValidator(email)
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[2],
-            style: TextFieldStyle.inputTextStyle,
-            decoration: InputDecoration(labelText: 'Phone'),
+            label: 'Phone',
             keyboardType: TextInputType.phone,
             validator: (phone)=>Validator.phoneValidator(phone)
           ),
-          TextFormField(
+          AppTextField.customTextField(
             controller: controllers[3],
-            style: TextFieldStyle.inputTextStyle,
-            decoration: InputDecoration(labelText: 'Address'),
+            label: 'Address',
             maxLines: 3,
             validator: (value)=>Validator.emptyValidator(value)
           ),

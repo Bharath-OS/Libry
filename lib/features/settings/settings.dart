@@ -395,7 +395,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         title: Text('Add Genre'),
         content: Form(
           key: formKey,
-          child: TextFormField(
+          child: AppTextField.customTextField(
             controller: controller,
             decoration: InputDecoration(
               labelText: 'Genre name',
@@ -488,7 +488,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         title: Text('Add Language'),
         content: Form(
           key: formKey,
-          child: TextFormField(
+          child: AppTextField.customTextField(
             controller: controller,
             decoration: InputDecoration(
               labelText: 'Language name',

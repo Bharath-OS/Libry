@@ -1,18 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:libry/core/utilities/helpers/date_formater.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/themes/styles.dart';
+import '../../core/utilities/validation.dart';
+import '../../core/widgets/buttons.dart';
+import '../../core/widgets/glassmorphism.dart';
+import '../../core/widgets/layout_widgets.dart';
+import '../../core/widgets/text_field.dart';
 import '../books/data/model/books_model.dart';
+import '../books/viewmodel/book_provider.dart';
 import '../members/data/model/members_model.dart';
-import '../../provider/book_provider.dart';
 import '../../provider/members_provider.dart';
 import '../../provider/issue_provider.dart';
-import '../../utilities/validation.dart';
-import '../../widgets/buttons.dart';
-import '../../widgets/layout_widgets.dart';
-import '../../widgets/glassmorphism.dart';
 
 class IssueBookScreen extends StatefulWidget {
   const IssueBookScreen({super.key});
@@ -135,28 +137,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: _memberFieldController,
-          decoration: InputDecoration(
-            hintText: "Search by name or member ID",
-            prefixIcon: Icon(Icons.person_search, color: AppColors.background),
-            suffixIcon: _isMemberVerified
-                ? Icon(Icons.verified, color: AppColors.successColor)
-                : IconButton(
-                    icon: Icon(Icons.search, color: AppColors.background),
-                    onPressed: _searchMembers,
-                  ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.background.withOpacity(0.3)),
-            ),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.1),
-          ),
-          style: TextStyle(color: AppColors.background),
+        AppTextField.customIssueTextField(
+          inputController: _memberFieldController,
+          label: "Search by name or member ID",
+          prefixIcon: Icons.person_search,
+          flagVariable: _isMemberVerified,
+          onPressed: _searchMembers,
           onChanged: (value) => _filterMembers(value),
           onFieldSubmitted: (_) => _searchMembers(),
-          validator: (value) => Validator.emptyValidator(value),
         ),
 
         // Member Suggestions Dropdown
@@ -208,14 +196,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.successColor.withOpacity(0.1),
+              color: AppColors.success.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.success.withOpacity(0.3)),
             ),
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.successColor,
+                  backgroundColor: AppColors.success,
                   child: Icon(Icons.person, color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 12),
@@ -265,28 +253,14 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: _bookFieldController,
-          decoration: InputDecoration(
-            hintText: "Search by title or author",
-            prefixIcon: Icon(Icons.book, color: AppColors.background),
-            suffixIcon: _isBookSelected
-                ? Icon(Icons.check, color: AppColors.successColor)
-                : IconButton(
-                    icon: Icon(Icons.search, color: AppColors.background),
-                    onPressed: _searchBooks,
-                  ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.background.withOpacity(0.3)),
-            ),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.1),
-          ),
-          style: TextStyle(color: AppColors.background),
+        AppTextField.customIssueTextField(
+          inputController: _bookFieldController,
+          label: "Search by title or author",
+          prefixIcon: Icons.book,
+          flagVariable: _isBookSelected,
+          onPressed: _searchBooks,
           onChanged: (value) => _filterBooks(value),
           onFieldSubmitted: (_) => _searchBooks(),
-          validator: (value) => Validator.emptyValidator(value),
         ),
 
         // Book Suggestions Dropdown
@@ -381,9 +355,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.successColor.withOpacity(0.1),
+              color: AppColors.success.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.success.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -758,19 +732,23 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.white,
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: AppColors.successColor),
+            Icon(Icons.check_circle, color: AppColors.success, size: 60),
             const SizedBox(width: 8),
-            Text("Success!", style: TextStyle(color: AppColors.successColor)),
+            Text("Success!", style: TextStyle(color: AppColors.darkGrey,fontWeight: FontWeight.bold)),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Book issued successfully!"),
+            Text(
+              "Book issued successfully!",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.lightGrey),
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -780,7 +758,10 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                 children: [
                   Text(
                     "Issue ID: $issueId",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkGrey,
+                    ),
                   ),
                   Text(
                     "Member: ${_selectedMember!.name}",
@@ -791,7 +772,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     style: TextStyle(color: AppColors.darkGrey),
                   ),
                   Text(
-                    "Due Date: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}",
+                    "Due Date: ${dateFormat(date: _dueDate)}",
                     style: TextStyle(color: AppColors.darkGrey),
                   ),
                 ],
@@ -800,9 +781,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
+          MyButton.primaryButton(
+            method: () => Navigator.pop(context),
+            text: "Done",
           ),
         ],
       ),

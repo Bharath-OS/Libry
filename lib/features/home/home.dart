@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/themes/styles.dart';
+import 'package:libry/features/auth/data/services/userdata.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
-import 'package:libry/screens/home_screens/profile.dart';
-import 'package:libry/utilities/helpers/date_formater.dart';
-import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_colors.dart';
-import '../../database/userdata.dart';
-import '../../models/issue_records_model.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utilities/helpers/date_formater.dart';
+import '../../core/widgets/layout_widgets.dart';
+import '../auth/view/profile.dart';
+
+void main(){
+  runApp(
+    MaterialApp(
+      home: HomeScreen(),
+    )
+  );
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -72,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 4),
               Text(
-                UserDatabase.getUserName,
+                UserModelService.getUserModelName,
                 style: TextStyle(
                   color: AppColors.white,
                   fontFamily: "Lobster",
@@ -103,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             radius: 30,
             backgroundColor: AppColors.white,
             child: Text(
-              UserDatabase.getUserName.trim()[0].toUpperCase(),
+              UserModelService.getUserModelName.trim()[0].toUpperCase(),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
