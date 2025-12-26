@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:libry/database/genre_db.dart';
-import 'package:libry/database/issue_records_db.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/provider/genre_provider.dart';
-import 'package:libry/provider/issue_provider.dart';
-import 'package:libry/provider/language_provider.dart';
-import 'package:libry/provider/members_provider.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
-import 'core/themes/styles.dart';
-import 'database/language_db.dart';
-import 'features/splash/splash.dart';
-import 'models/issue_records_model.dart';
-import 'features/auth/data/model/user_model.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:libry/features/auth/view/profile.dart';
+import 'package:libry/features/home/views/home.dart';
 import 'package:provider/provider.dart';
+import '../../database/genre_db.dart';
+import '../../database/issue_records_db.dart';
+import '../../database/language_db.dart';
+import '../../features/auth/data/model/user_model.dart';
+import '../../features/books/viewmodel/book_provider.dart';
+import '../../models/issue_records_model.dart';
+import '../../provider/genre_provider.dart';
+import '../../provider/issue_provider.dart';
+import '../../provider/language_provider.dart';
+import '../../provider/members_provider.dart';
 
-void main() async {
+void main(List<String> path) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Hive
@@ -29,7 +30,7 @@ void main() async {
   statusBox = await Hive.openBox("status");
 
   await IssueDBHive.initIssueBox();
-  
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
     runApp(
       MultiProvider(
@@ -42,21 +43,8 @@ void main() async {
             create: (context) => MembersProvider(),
           ),
         ],
-        child: LibryApp(),
+        child: path == 'home'? HomeScreen() : ProfileScreen(),
       ),
     );
   });
-}
-
-class LibryApp extends StatelessWidget {
-  const LibryApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: CustomTheme.myTheme,
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
-    );
-  }
 }

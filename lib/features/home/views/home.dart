@@ -1,20 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:libry/features/auth/data/services/userdata.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
+import 'package:libry/features/home/views/widget/widgets.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/utilities/helpers/date_formater.dart';
-import '../../core/widgets/layout_widgets.dart';
-import '../auth/view/profile.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers/date_formater.dart';
+import '../../../core/utilities/helpers/greeting.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../database/genre_db.dart';
+import '../../../database/issue_records_db.dart';
+import '../../../database/language_db.dart';
+import '../../../models/issue_records_model.dart';
+import '../../../provider/genre_provider.dart';
+import '../../../provider/language_provider.dart';
+import '../../auth/data/model/user_model.dart';
+import '../../auth/view/profile.dart';
 
-void main(){
-  runApp(
-    MaterialApp(
-      home: HomeScreen(),
-    )
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(IssueRecordsAdapter());
+
+  genreBox = await Hive.openBox<String>('genre');
+  languageBox = await Hive.openBox<String>('language');
+  userDataBoxNew = await Hive.openBox<UserModel>('users');
+  statusBox = await Hive.openBox("status");
+
+  await IssueDBHive.initIssueBox();
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
+          ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
+          ChangeNotifierProvider<LanguageProvider>(
+            create: (_) => LanguageProvider(),
+          ),
+          ChangeNotifierProvider<IssueProvider>(
+            create: (_) => IssueProvider()..init(),
+          ),
+          ChangeNotifierProvider<MembersProvider>(
+            create: (context) => MembersProvider(),
+          ),
+        ],
+        child: MaterialApp(home: HomeScreen()),
+      ),
+    );
+  });
 }
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     time = DateTime.now();
-    greeting = _getGreeting();
+    greeting = getGreeting(time);
   }
 
   @override
@@ -111,9 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(
               UserModelService.getUserModelName.trim()[0].toUpperCase(),
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: AppColors.background,
+                color: AppColors.primary,
               ),
             ),
           ),
@@ -142,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             Expanded(
-              child: _buildStatCard(
+              child: buildStatCard(
                 'Total Books',
                 bookProvider.totalBooks.toString(),
                 Icons.book,
@@ -151,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(width: 12),
             Expanded(
-              child: _buildStatCard(
+              child: buildStatCard(
                 'Available',
                 bookProvider.availableBooks.toString(),
                 Icons.check_circle,
@@ -164,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             Expanded(
-              child: _buildStatCard(
+              child: buildStatCard(
                 'Members',
                 memberProvider.totalCount.toString(),
                 Icons.people,
@@ -173,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(width: 12),
             Expanded(
-              child: _buildStatCard(
+              child: buildStatCard(
                 'Active Issues',
                 issueProvider.activeCount.toString(),
                 Icons.bookmark,
@@ -186,53 +229,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTodayOverview() {
     final issueProvider = context.watch<IssueProvider>();
 
@@ -242,11 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -264,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildTodayItem(
+                child: buildTodayItem(
                   'Issued',
                   issueProvider.issuedTodayCount.toString(),
                   Icons.upload,
@@ -278,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
               ),
               Expanded(
-                child: _buildTodayItem(
+                child: buildTodayItem(
                   'Returned',
                   issueProvider.returnTodayCount.toString(),
                   Icons.download,
@@ -293,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildTodayItem(
+                child: buildTodayItem(
                   'Due Today',
                   issueProvider.dueTodayCount.toString(),
                   Icons.calendar_today,
@@ -307,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: EdgeInsets.symmetric(horizontal: 12),
               ),
               Expanded(
-                child: _buildTodayItem(
+                child: buildTodayItem(
                   'Overdue',
                   issueProvider.overDueCount.toString(),
                   Icons.warning,
@@ -321,52 +313,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTodayItem(String label, String count, IconData icon, Color color) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              count,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildRecentActivity() {
     final issueProvider = context.watch<IssueProvider>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     // Get recent issues (last 5)
-    final recentIssues = issueProvider.allIssues
-        .where((issue) => !issue.isReturned)
-        .toList()
-      ..sort((a, b) => b.borrowDate.compareTo(a.borrowDate));
+    final recentIssues =
+        issueProvider.allIssues.where((issue) => !issue.isReturned).toList()
+          ..sort((a, b) => b.borrowDate.compareTo(a.borrowDate));
 
     final limitedIssues = recentIssues.take(5).toList();
 
@@ -376,11 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -400,10 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (limitedIssues.isNotEmpty)
                 Text(
                   'Active',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
             ],
           ),
@@ -431,94 +379,15 @@ class _HomeScreenState extends State<HomeScreen> {
               final daysLeft = issue.dueDate.difference(DateTime.now()).inDays;
               final isOverdue = daysLeft < 0;
 
-              return Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isOverdue
-                            ? Colors.red.withOpacity(0.1)
-                            : daysLeft <= 2
-                            ? Colors.orange.withOpacity(0.1)
-                            : Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.book,
-                        color: isOverdue
-                            ? Colors.red
-                            : daysLeft <= 2
-                            ? Colors.orange
-                            : Colors.blue,
-                        size: 20,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            book?.title ?? 'Unknown Book',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            member?.name ?? 'Unknown Member',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isOverdue
-                            ? Colors.red
-                            : daysLeft <= 2
-                            ? Colors.orange
-                            : Colors.green,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        isOverdue
-                            ? '${-daysLeft}d late'
-                            : '$daysLeft days',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              return recentIssueCard(
+                isOverdue: isOverdue,
+                daysLeft: daysLeft,
+                book: book,
+                member: member,
               );
-            }).toList(),
+            }),
         ],
       ),
     );
-  }
-
-  String _getGreeting() {
-    final hour = time.hour;
-    if (hour >= 0 && hour < 12) {
-      return "Good Morning";
-    } else if (hour >= 12 && hour < 17) {
-      return "Good Afternoon";
-    } else {
-      return "Good Evening";
-    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:libry/features/auth/view/login.dart';
-import 'package:libry/features/home/main_screen.dart';
+import 'package:libry/features/home/views/main_screen.dart';
 import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';

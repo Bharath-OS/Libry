@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:libry/Themes/styles.dart';
-import 'package:libry/Widgets/buttons.dart';
 import 'package:libry/provider/language_provider.dart';
-import 'package:libry/widgets/dialogs.dart';
-import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/themes/styles.dart';
+import '../../core/utilities/validation.dart';
+import '../../core/widgets/buttons.dart';
+import '../../core/widgets/layout_widgets.dart';
+import '../../core/widgets/text_field.dart';
 import '../../provider/genre_provider.dart';
-import '../../utilities/validation.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -395,7 +395,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         title: Text('Add Genre'),
         content: Form(
           key: formKey,
-          child: AppTextField.customTextField(
+          child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
               labelText: 'Genre name',
@@ -488,7 +488,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         title: Text('Add Language'),
         content: Form(
           key: formKey,
-          child: AppTextField.customTextField(
+          child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
               labelText: 'Language name',

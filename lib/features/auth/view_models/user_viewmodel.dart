@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:libry/features/auth/data/model/user_model.dart';
 import 'package:libry/features/auth/data/services/userdata.dart';
 
-import '../../home/main_screen.dart';
+import '../../home/views/main_screen.dart';
 
 class AuthViewModel with ChangeNotifier {
   late UserModel _user;

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:libry/provider/issue_provider.dart';
 import 'package:libry/provider/members_provider.dart';
-import 'package:libry/screens/members_screens/edit_member.dart';
-import 'package:libry/utilities/helpers.dart';
-import 'package:libry/utilities/helpers/date_formater.dart';
-import 'package:libry/widgets/layout_widgets.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_colors.dart';
-import 'data/model/members_model.dart';
-import '../../screens/members_screens/member_history.dart';
+
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/utilities/helpers/date_formater.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../data/model/members_model.dart';
+import 'edit_member.dart';
+import 'member_history.dart';
 
 class MemberDetailsScreen extends StatefulWidget {
   final int memberId;

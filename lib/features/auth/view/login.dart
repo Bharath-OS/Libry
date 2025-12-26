@@ -10,7 +10,7 @@ import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
 import 'package:flutter/gestures.dart';
-import '../../home/main_screen.dart';
+import '../../home/views/main_screen.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

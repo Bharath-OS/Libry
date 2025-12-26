@@ -1,11 +1,11 @@
 import 'package:libry/provider/members_provider.dart';
 import 'package:libry/features/members/view/add_members.dart';
-import 'package:libry/utilities/helpers.dart';
 import 'package:provider/provider.dart';
 
-import 'data/model/members_model.dart';
-import '../../widgets/cards.dart';
-import '../../core/widgets/list.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/widgets/cards.dart';
+import '../../../core/widgets/list.dart';
+import '../data/model/members_model.dart';
 import 'package:flutter/material.dart';
 import 'member_details.dart';
 

@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:libry/database/userdata.dart';
-import 'package:libry/Screens/main_screen.dart';
-import 'package:libry/Screens/login.dart';
-import 'package:libry/Screens/register.dart';
-import 'package:libry/Themes/styles.dart';
-import '../../utilities/helpers.dart';
-import '../../widgets/layout_widgets.dart';
+import 'package:libry/features/auth/view/login.dart';
+import 'package:libry/features/auth/view/register.dart';
+import '../../core/themes/styles.dart';
+import '../../core/utilities/helpers.dart';
+import '../../core/widgets/layout_widgets.dart';
+import '../auth/data/services/userdata.dart';
+import '../home/views/main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,8 +48,8 @@ class _SplashScreenState extends State<SplashScreen> {
     late final bool isRegistered;
     try
     {
-      isLogged = UserDatabase.isLogged;
-      isRegistered = UserDatabase.isRegistered;
+      isLogged = UserModelService.isLogged;
+      isRegistered = UserModelService.isRegistered;
       print("isLogged: $isLogged");
       print("isRegistered: $isRegistered");
     }
@@ -62,9 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
     if (isLogged) {
       childWidget = MainScreen();
     } else if (!isLogged && isRegistered) {
-      childWidget = LoginScreen();
+      childWidget = LoginView();
     } else {
-      childWidget = RegisterScreen();
+      childWidget = RegisterView();
     }
     await Future.delayed(Duration(seconds: 2));
     Navigator.pushReplacement(context, transition(child: childWidget));
