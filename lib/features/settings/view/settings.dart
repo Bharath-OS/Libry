@@ -72,6 +72,8 @@ class SettingsScreenState extends State<SettingsView> {
   static const String FINE_PER_DAY_KEY = 'fine_per_day';
   static const String DEFAULT_ISSUE_DAYS_KEY = 'default_issue_days';
   final iconColor = AppColors.primary;
+  final fineController = TextEditingController();
+  final issuePeriodController = TextEditingController();
 
   double finePerDay = 5.0;
   int defaultIssueDays = 14;
@@ -184,7 +186,17 @@ class SettingsScreenState extends State<SettingsView> {
             subtitle: '₹$finePerDay per day for overdue books',
             trailing: IconButton(
               icon: Icon(Icons.edit, color: iconColor),
-              onPressed: () => _showFineDialog(),
+              onPressed: () => buildDialogBox(
+                controller: fineController,
+                context: context,
+                title: 'Set Fine Amount',
+                label: 'Fine per day (₹)',
+                saveMethod: () {
+                  _saveFinePerDay(double.parse(fineController.text));
+                  Navigator.pop(context);
+                },
+                isDouble: true
+              ),
             ),
           ),
           Divider(height: 1),
@@ -194,7 +206,16 @@ class SettingsScreenState extends State<SettingsView> {
             subtitle: '$defaultIssueDays days',
             trailing: IconButton(
               icon: Icon(Icons.edit, color: iconColor),
-              onPressed: () => _showIssuePeriodDialog(),
+              onPressed: () => buildDialogBox(
+                controller: issuePeriodController,
+                context: context,
+                title: 'Set Default Issue Period',
+                label: 'Number of days',
+                saveMethod: (){
+                  _saveDefaultIssueDays(int.parse(issuePeriodController.text));
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ),
           Divider(height: 1),
@@ -331,36 +352,34 @@ class SettingsScreenState extends State<SettingsView> {
   //todo Create a reusable pop up widget from this.
   void _showFineDialog() {
     final controller = TextEditingController(text: finePerDay.toString());
+    final formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.white,
         title: Text(
           'Set Fine Amount',
-          style: BodyTextStyles.headingSmallStyle(AppColors.background),
+          style: BodyTextStyles.headingSmallStyle(AppColors.darkGrey),
         ),
-        content: TextField(
-          style: TextFieldStyle.inputTextStyle,
-          controller: controller,
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            labelStyle: TextFieldStyle.inputTextStyle,
-            labelText: 'Fine per day (₹)',
-            border: OutlineInputBorder(),
+        content: Form(
+          key: formKey,
+          child: AppTextField.customTextField(
+            isDarkTheme: false,
+            validator: (value) =>
+                Validator.numberValidator(value: value, isDouble: true),
+            controller: controller,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            label: 'Fine per day (₹)',
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextFieldStyle.inputTextStyle),
+          MyButton.secondaryButton(
+            method: () => Navigator.pop(context),
+            text: 'cancel',
           ),
           MyButton.primaryButton(
             method: () {
-              final value = double.tryParse(controller.text);
-              if (value != null && value > 0) {
-                _saveFinePerDay(value);
-                Navigator.pop(context);
-              }
+              if (formKey.currentState!.validate()) {}
             },
             text: 'Save',
           ),
@@ -392,8 +411,7 @@ class SettingsScreenState extends State<SettingsView> {
             onPressed: () {
               final value = int.tryParse(controller.text);
               if (value != null && value > 0) {
-                _saveDefaultIssueDays(value);
-                Navigator.pop(context);
+
               }
             },
             child: Text('Save'),
