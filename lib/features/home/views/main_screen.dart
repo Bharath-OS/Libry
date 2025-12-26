@@ -6,7 +6,7 @@ import '../../books/views/books_screen.dart';
 import 'home.dart';
 import '../../issues/issue_history_screen.dart';
 import '../../members/view/members.dart';
-import '../../settings/settings.dart';
+import '../../settings/view/settings.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     BookListScreenView(),
     MembersScreen(),
     IssueHistoryScreen(),
-    SettingsScreen(),
+    SettingsView(),
   ];
 
   @override

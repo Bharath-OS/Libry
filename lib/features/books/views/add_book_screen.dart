@@ -14,7 +14,7 @@ import '../../../core/widgets/text_field.dart';
 import '../data/model/books_model.dart';
 import '../viewmodel/book_provider.dart';
 import '../../../provider/language_provider.dart';
-import '../../settings/settings.dart';
+import '../../settings/view/settings.dart';
 
 class AddBookScreenView extends StatefulWidget {
   const AddBookScreenView({super.key});
@@ -170,7 +170,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   MyButton.primaryButton(
                     method: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => SettingsScreen()),
+                      MaterialPageRoute(builder: (_) => SettingsView()),
                     ),
                     text: genres.isEmpty && languages.isEmpty
                         ? "Add Genres and Languages First"

@@ -12,53 +12,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
 import '../../../core/utilities/helpers/greeting.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../../../database/genre_db.dart';
-import '../../../database/issue_records_db.dart';
-import '../../../database/language_db.dart';
-import '../../../models/issue_records_model.dart';
-import '../../../provider/genre_provider.dart';
-import '../../../provider/language_provider.dart';
-import '../../auth/data/model/user_model.dart';
 import '../../auth/view/profile.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive
-  await Hive.initFlutter();
-  Hive.registerAdapter(UserModelAdapter());
-  Hive.registerAdapter(IssueRecordsAdapter());
-
-  genreBox = await Hive.openBox<String>('genre');
-  languageBox = await Hive.openBox<String>('language');
-  userDataBoxNew = await Hive.openBox<UserModel>('users');
-  statusBox = await Hive.openBox("status");
-
-  await IssueDBHive.initIssueBox();
-
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
-    _,
-  ) {
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
-          ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
-          ChangeNotifierProvider<LanguageProvider>(
-            create: (_) => LanguageProvider(),
-          ),
-          ChangeNotifierProvider<IssueProvider>(
-            create: (_) => IssueProvider()..init(),
-          ),
-          ChangeNotifierProvider<MembersProvider>(
-            create: (context) => MembersProvider(),
-          ),
-        ],
-        child: MaterialApp(home: HomeScreen()),
-      ),
-    );
-  });
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,25 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:libry/features/settings/view/widgets/reusable_widgets.dart';
 import 'package:libry/provider/language_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/themes/styles.dart';
-import '../../core/utilities/validation.dart';
-import '../../core/widgets/buttons.dart';
-import '../../core/widgets/layout_widgets.dart';
-import '../../core/widgets/text_field.dart';
-import '../../provider/genre_provider.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/themes/styles.dart';
+import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/layout_widgets.dart';
+import '../../../core/widgets/text_field.dart';
+import '../../../database/genre_db.dart';
+import '../../../database/issue_records_db.dart';
+import '../../../database/language_db.dart';
+import '../../../models/issue_records_model.dart';
+import '../../../provider/genre_provider.dart';
+import '../../../provider/issue_provider.dart';
+import '../../../provider/members_provider.dart';
+import '../../auth/data/model/user_model.dart';
+import '../../books/viewmodel/book_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(IssueRecordsAdapter());
+
+  genreBox = await Hive.openBox<String>('genre');
+  languageBox = await Hive.openBox<String>('language');
+  userDataBoxNew = await Hive.openBox<UserModel>('users');
+  statusBox = await Hive.openBox("status");
+
+  await IssueDBHive.initIssueBox();
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
+          ChangeNotifierProvider<GenreProvider>(create: (_) => GenreProvider()),
+          ChangeNotifierProvider<LanguageProvider>(
+            create: (_) => LanguageProvider(),
+          ),
+          ChangeNotifierProvider<IssueProvider>(
+            create: (_) => IssueProvider()..init(),
+          ),
+          ChangeNotifierProvider<MembersProvider>(
+            create: (context) => MembersProvider(),
+          ),
+        ],
+        child: MaterialApp(home: SettingsView()),
+      ),
+    );
+  });
+}
+
+class SettingsView extends StatefulWidget {
+  const SettingsView({super.key});
 
   @override
   SettingsScreenState createState() => SettingsScreenState();
 }
 
-class SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsView> {
   static const String FINE_PER_DAY_KEY = 'fine_per_day';
   static const String DEFAULT_ISSUE_DAYS_KEY = 'default_issue_days';
+  final iconColor = AppColors.primary;
 
   double finePerDay = 5.0;
   int defaultIssueDays = 14;
@@ -66,36 +118,7 @@ class SettingsScreenState extends State<SettingsScreen> {
               // Library Settings Section
               _buildSectionTitle('Library Settings'),
               SizedBox(height: 12),
-              _buildSettingsCard(
-                children: [
-                  _buildSettingTile(
-                    icon: Icons.attach_money,
-                    title: 'Fine Per Day',
-                    subtitle: '₹$finePerDay per day for overdue books',
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit, color: AppColors.primary),
-                      onPressed: () => _showFineDialog(),
-                    ),
-                  ),
-                  Divider(height: 1),
-                  _buildSettingTile(
-                    icon: Icons.calendar_month,
-                    title: 'Default Issue Period',
-                    subtitle: '$defaultIssueDays days',
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit, color: AppColors.primary),
-                      onPressed: () => _showIssuePeriodDialog(),
-                    ),
-                  ),
-                  Divider(height: 1),
-                  _buildSettingTile(
-                    icon: Icons.book_online,
-                    title: 'Max Books Per Member',
-                    subtitle: '5 books at a time',
-                    trailing: Icon(Icons.info_outline, color: Colors.grey),
-                  ),
-                ],
-              ),
+              _buildSettingsContainer(),
 
               SizedBox(height: 24),
 
@@ -144,51 +167,45 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsCard({required List<Widget> children}) {
+  Widget _buildSettingsContainer() {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        children: [
+          buildSettingTile(
+            icon: Icons.attach_money,
+            title: 'Fine Per Day',
+            subtitle: '₹$finePerDay per day for overdue books',
+            trailing: IconButton(
+              icon: Icon(Icons.edit, color: iconColor),
+              onPressed: () => _showFineDialog(),
+            ),
+          ),
+          Divider(height: 1),
+          buildSettingTile(
+            icon: Icons.calendar_month,
+            title: 'Default Issue Period',
+            subtitle: '$defaultIssueDays days',
+            trailing: IconButton(
+              icon: Icon(Icons.edit, color: iconColor),
+              onPressed: () => _showIssuePeriodDialog(),
+            ),
+          ),
+          Divider(height: 1),
+          buildSettingTile(
+            icon: Icons.book_online,
+            title: 'Max Books Per Member',
+            subtitle: '5 books at a time',
+            trailing: Icon(Icons.info_outline, color: iconColor),
           ),
         ],
       ),
-      child: Column(children: children),
-    );
-  }
-
-  Widget _buildSettingTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Widget trailing,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: AppColors.background.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: AppColors.background),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-      ),
-      trailing: trailing,
     );
   }
 
@@ -207,11 +224,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -223,10 +236,7 @@ class SettingsScreenState extends State<SettingsScreen> {
               SizedBox(width: 12),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Spacer(),
               Container(
@@ -270,7 +280,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                 separatorBuilder: (_, __) => Divider(height: 1),
                 itemBuilder: (context, index) {
                   return ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     title: Text(items[index]),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -322,7 +335,10 @@ class SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.primary,
-        title: Text('Set Fine Amount',style: BodyTextStyles.headingSmallStyle(AppColors.background),),
+        title: Text(
+          'Set Fine Amount',
+          style: BodyTextStyles.headingSmallStyle(AppColors.background),
+        ),
         content: TextField(
           style: TextFieldStyle.inputTextStyle,
           controller: controller,
@@ -336,7 +352,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel',style: TextFieldStyle.inputTextStyle,),
+            child: Text('Cancel', style: TextFieldStyle.inputTextStyle),
           ),
           MyButton.primaryButton(
             method: () {
@@ -345,7 +361,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                 _saveFinePerDay(value);
                 Navigator.pop(context);
               }
-            }, text: 'Save',
+            },
+            text: 'Save',
           ),
         ],
       ),
@@ -444,7 +461,10 @@ class SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
-                context.read<GenreProvider>().editGenre(genre, controller.text.trim());
+                context.read<GenreProvider>().editGenre(
+                  genre,
+                  controller.text.trim(),
+                );
                 Navigator.pop(context);
               }
             },
@@ -505,7 +525,9 @@ class SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () {
               if (formKey.currentState!.validate()) {
-                context.read<LanguageProvider>().addLanguage(controller.text.trim());
+                context.read<LanguageProvider>().addLanguage(
+                  controller.text.trim(),
+                );
                 Navigator.pop(context);
               }
             },
@@ -537,7 +559,10 @@ class SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
-                context.read<LanguageProvider>().editLanguage(language, controller.text.trim());
+                context.read<LanguageProvider>().editLanguage(
+                  language,
+                  controller.text.trim(),
+                );
                 Navigator.pop(context);
               }
             },
