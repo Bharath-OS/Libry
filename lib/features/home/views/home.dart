@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 4),
+              // SizedBox(height: 4),
               Text(
                 UserModelService.getUserModelName,
                 style: TextStyle(
@@ -131,11 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: 4),
+              // SizedBox(height: 4),
               Text(
                 formattedDate,
                 style: TextStyle(
-                  color: AppColors.white.withOpacity(0.8),
+                  color: AppColors.white.withAlpha((0.8 * 255).toInt()),
                   fontFamily: "Livvic",
                   fontSize: 14,
                 ),
@@ -166,9 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickStats() {
+    final issueProvider = context.watch<IssueProvider>();
     final bookProvider = context.watch<BookViewModel>();
     final memberProvider = context.watch<MembersProvider>();
-    final issueProvider = context.watch<IssueProvider>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,44 +184,36 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: 12),
         Row(
           children: [
-            Expanded(
-              child: buildStatCard(
-                'Total Books',
-                bookProvider.totalBooks.toString(),
-                Icons.book,
-                Colors.blue,
-              ),
+            buildStatCard(
+              'Total Books',
+              bookProvider.totalBooks.toString(),
+              Icons.book,
+              Colors.blue,
             ),
             SizedBox(width: 12),
-            Expanded(
-              child: buildStatCard(
-                'Available',
-                bookProvider.availableBooks.toString(),
-                Icons.check_circle,
-                Colors.green,
-              ),
+            buildStatCard(
+              'Available',
+              bookProvider.availableBooks.toString(),
+              Icons.check_circle,
+              Colors.green,
             ),
           ],
         ),
         SizedBox(height: 12),
         Row(
           children: [
-            Expanded(
-              child: buildStatCard(
-                'Members',
-                memberProvider.totalCount.toString(),
-                Icons.people,
-                Colors.orange,
-              ),
+            buildStatCard(
+              'Members',
+              memberProvider.totalCount.toString(),
+              Icons.people,
+              Colors.orange,
             ),
             SizedBox(width: 12),
-            Expanded(
-              child: buildStatCard(
-                'Active Issues',
-                issueProvider.activeCount.toString(),
-                Icons.bookmark,
-                Colors.purple,
-              ),
+            buildStatCard(
+              'Active Issues',
+              issueProvider.activeCount.toString(),
+              Icons.bookmark,
+              Colors.purple,
             ),
           ],
         ),
@@ -232,85 +224,54 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTodayOverview() {
     final issueProvider = context.watch<IssueProvider>();
 
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
+    return dashboardContainer([
+      Text(
+        "Today's Activity",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      SizedBox(height: 16),
+      Row(
         children: [
-          Text(
-            "Today's Activity",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          buildTodayItem(
+            'Issued',
+            issueProvider.issuedTodayCount.toString(),
+            Icons.upload,
+            Colors.blue,
           ),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: buildTodayItem(
-                  'Issued',
-                  issueProvider.issuedTodayCount.toString(),
-                  Icons.upload,
-                  Colors.blue,
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.grey[300],
-                margin: EdgeInsets.symmetric(horizontal: 12),
-              ),
-              Expanded(
-                child: buildTodayItem(
-                  'Returned',
-                  issueProvider.returnTodayCount.toString(),
-                  Icons.download,
-                  Colors.green,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Divider(),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: buildTodayItem(
-                  'Due Today',
-                  issueProvider.dueTodayCount.toString(),
-                  Icons.calendar_today,
-                  Colors.orange,
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.grey[300],
-                margin: EdgeInsets.symmetric(horizontal: 12),
-              ),
-              Expanded(
-                child: buildTodayItem(
-                  'Overdue',
-                  issueProvider.overDueCount.toString(),
-                  Icons.warning,
-                  Colors.red,
-                ),
-              ),
-            ],
+          addVerticalDivider(),
+          buildTodayItem(
+            'Returned',
+            issueProvider.returnTodayCount.toString(),
+            Icons.download,
+            Colors.green,
           ),
         ],
       ),
-    );
+      SizedBox(height: 16),
+      Divider(),
+      SizedBox(height: 16),
+      Row(
+        children: [
+          buildTodayItem(
+            'Due Today',
+            issueProvider.dueTodayCount.toString(),
+            Icons.calendar_today,
+            Colors.orange,
+          ),
+          addVerticalDivider(),
+          buildTodayItem(
+            'Overdue',
+            issueProvider.overDueCount.toString(),
+            Icons.warning,
+            Colors.red,
+          ),
+        ],
+      ),
+    ]);
   }
 
   Widget _buildRecentActivity() {
@@ -325,69 +286,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final limitedIssues = recentIssues.take(5).toList();
 
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return dashboardContainer([
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Recent Issues',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              if (limitedIssues.isNotEmpty)
-                Text(
-                  'Active',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-            ],
+          Text(
+            'Recent Issues',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-          SizedBox(height: 16),
-          if (limitedIssues.isEmpty)
-            Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  children: [
-                    Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
-                    SizedBox(height: 8),
-                    Text(
-                      'No active issues',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            ...limitedIssues.map((issue) {
-              final book = bookProvider.getBookById(issue.bookId);
-              final member = memberProvider.getMemberById(issue.memberId);
-              final daysLeft = issue.dueDate.difference(DateTime.now()).inDays;
-              final isOverdue = daysLeft < 0;
-
-              return recentIssueCard(
-                isOverdue: isOverdue,
-                daysLeft: daysLeft,
-                book: book,
-                member: member,
-              );
-            }),
+          if (limitedIssues.isNotEmpty)
+            Text(
+              'Active',
+              style: TextStyle(fontSize: 12, color: AppColors.lightGrey),
+            ),
         ],
       ),
-    );
+      SizedBox(height: 16),
+      //Empty case.
+      if (limitedIssues.isEmpty)
+        Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
+                Icon(Icons.inbox, size: 48, color: AppColors.lightGrey),
+                SizedBox(height: 8),
+                Text(
+                  'No recent issues',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+        )
+      //Not empty case
+      else
+        ...limitedIssues.map((issue) {
+          final book = bookProvider.getBookById(issue.bookId);
+          final member = memberProvider.getMemberById(issue.memberId);
+          final daysLeft = issue.dueDate.difference(DateTime.now()).inDays;
+          final isOverdue = daysLeft < 0;
+
+          return recentIssueCard(
+            isOverdue: isOverdue,
+            daysLeft: daysLeft,
+            book: book,
+            member: member,
+          );
+        }),
+    ]);
   }
 }
