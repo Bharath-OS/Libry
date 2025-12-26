@@ -74,11 +74,11 @@ class Validator {
   }
 
   //Validates numbers
-  static String? numberValidator(String? value) {
+  static String? numberValidator({required String? value, bool isDouble = false}) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
     }
-    final number = int.tryParse(value);
+    final number = isDouble ? double.tryParse(value) : int.tryParse(value);
     if (number == null) {
       return 'Enter a valid number';
     }
