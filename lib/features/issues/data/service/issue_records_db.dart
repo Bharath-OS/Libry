@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import '../models/issue_records_model.dart';
+import '../model/issue_records_model.dart';
 
 class IssueDBHive {
   static const String boxName = 'issue_records';

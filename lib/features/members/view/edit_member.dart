@@ -6,7 +6,7 @@ import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
-import '../../../provider/members_provider.dart';
+import '../viewmodel/members_provider.dart';
 import '../data/model/members_model.dart';
 
 class EditMembersScreen extends StatefulWidget {

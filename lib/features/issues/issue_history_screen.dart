@@ -6,13 +6,13 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utilities/helpers.dart';
 import '../../core/widgets/layout_widgets.dart';
-import '../../database/issue_records_db.dart';
+import 'data/service/issue_records_db.dart';
 import '../books/data/model/books_model.dart';
-import '../../models/issue_records_model.dart';
+import 'data/model/issue_records_model.dart';
 import '../members/data/model/members_model.dart';
 import '../books/viewmodel/book_provider.dart';
-import '../../provider/issue_provider.dart';
-import '../../provider/members_provider.dart';
+import 'viewmodel/issue_provider.dart';
+import '../members/viewmodel/members_provider.dart';
 import 'issue.dart';
 
 class IssueHistoryScreen extends StatefulWidget {

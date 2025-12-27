@@ -3,7 +3,6 @@ import 'package:hive_flutter/adapters.dart';
 
 late Box genreBox;
 
-//todo rework on the genre methods
 class GenreDB{
   static List<String> getGenre(){
     return genreBox.values.toList().cast<String>();

@@ -13,8 +13,8 @@ import '../../core/widgets/text_field.dart';
 import '../books/data/model/books_model.dart';
 import '../books/viewmodel/book_provider.dart';
 import '../members/data/model/members_model.dart';
-import '../../provider/members_provider.dart';
-import '../../provider/issue_provider.dart';
+import '../members/viewmodel/members_provider.dart';
+import 'viewmodel/issue_provider.dart';
 
 class IssueBookScreen extends StatefulWidget {
   const IssueBookScreen({super.key});

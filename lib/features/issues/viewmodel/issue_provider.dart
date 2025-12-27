@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../database/issue_records_db.dart';
-import '../models/issue_records_model.dart';
+import '../data/service/issue_records_db.dart';
+import '../data/model/issue_records_model.dart';
 
 class IssueProvider with ChangeNotifier {
   List<IssueRecords> _allIssues = [];

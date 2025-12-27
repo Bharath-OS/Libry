@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:libry/provider/genre_provider.dart';
 import 'package:libry/core/utilities/image_services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -11,9 +10,9 @@ import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
+import '../../settings/viewmodel/settings_viewmodel.dart';
 import '../data/model/books_model.dart';
 import '../viewmodel/book_provider.dart';
-import '../../../provider/language_provider.dart';
 import '../../settings/view/settings.dart';
 
 class AddBookScreenView extends StatefulWidget {
@@ -142,8 +141,8 @@ class _AddBookScreenState extends State<AddBookScreenView> {
       fontSize: 16,
       fontWeight: FontWeight.w600,
     );
-    List<String> genres = context.watch<GenreProvider>().getGenre;
-    List<String> languages = context.watch<LanguageProvider>().getLanguages;
+    List<String> genres = context.watch<SettingsViewModel>().genres;
+    List<String> languages = context.watch<SettingsViewModel>().languages;
 
     if (genres.isEmpty || languages.isEmpty) {
       return LayoutWidgets.customScaffold(
@@ -276,7 +275,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               controller: inputControllers[5],
               label: "Number of pages",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value),
+              validator: (value) => Validator.numberValidator(value: value),
             ),
             //genre dropdown
             Padding(
@@ -314,7 +313,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               controller: inputControllers[7],
               label: "Total copies",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value),
+              validator: (value) => Validator.numberValidator(value:value),
             ),
 
             const SizedBox(height: 20),

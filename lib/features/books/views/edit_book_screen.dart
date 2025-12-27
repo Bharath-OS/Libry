@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/image_services.dart';
@@ -9,10 +8,9 @@ import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
+import '../../settings/viewmodel/settings_viewmodel.dart';
 import '../data/model/books_model.dart';
 import '../viewmodel/book_provider.dart';
-import '../../../provider/genre_provider.dart';
-import '../../../provider/language_provider.dart';
 
 
 class EditBookScreenView extends StatefulWidget {
@@ -174,8 +172,8 @@ class _EditBookScreenState extends State<EditBookScreenView> {
       fontSize: 16,
       fontWeight: FontWeight.w600,
     );
-    List<String> genres = context.watch<GenreProvider>().getGenre;
-    List<String> languages = context.watch<LanguageProvider>().getLanguages;
+    List<String> genres = context.watch<SettingsViewModel>().genres;
+    List<String> languages = context.watch<SettingsViewModel>().languages;
 
     return LayoutWidgets.customScaffold(
       body: SafeArea(
@@ -259,7 +257,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
               controller: controllers[5],
               label: "Number of pages",
               keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value),
+              validator: (value) => Validator.numberValidator(value:value),
             ),
             //genre dropdown
             Padding(
@@ -297,7 +295,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
               label: "Total copies",
               keyboardType: TextInputType.number,
               validator: (value) {
-                final error = Validator.numberValidator(value);
+                final error = Validator.numberValidator(value:value);
                 if (error != null) return error;
 
                 final newTotal = int.tryParse(value ?? '0') ?? 0;

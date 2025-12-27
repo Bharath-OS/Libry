@@ -6,7 +6,7 @@ import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../../../provider/members_provider.dart'; // You'll need this
+import '../viewmodel/members_provider.dart'; // You'll need this
 import 'package:provider/provider.dart'; // You'll need this
 import '../data/model/members_model.dart'; // You'll need this
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/provider/issue_provider.dart';
-import 'package:libry/provider/members_provider.dart';
+import 'package:libry/features/issues/viewmodel/issue_provider.dart';
+import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
