@@ -1,11 +1,6 @@
-//reusable widgets from settingsview
-
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/themes/styles.dart';
-import '../../../../core/utilities/validation.dart';
 import '../../../../core/widgets/buttons.dart';
-import '../../../../core/widgets/text_field.dart';
 
 Widget buildSettingTile({
   required IconData icon,
@@ -33,52 +28,6 @@ Widget buildSettingTile({
       style: TextStyle(fontSize: 13, color: Colors.grey[600]),
     ),
     trailing: trailing,
-  );
-}
-
-void buildDialogBox({
-  required TextEditingController controller,
-  required BuildContext context,
-  required String title,
-  required String label,
-  required VoidCallback saveMethod,
-  bool isDouble = false
-}) {
-  final formKey = GlobalKey<FormState>();
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: AppColors.white,
-      title: Text(
-        title,
-        style: BodyTextStyles.headingSmallStyle(AppColors.darkGrey),
-      ),
-      content: Form(
-        key: formKey,
-        child: AppTextField.customTextField(
-          isDarkTheme: false,
-          validator: (value) =>
-              Validator.numberValidator(value: value, isDouble: isDouble),
-          controller: controller,
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          label: label,
-        ),
-      ),
-      actions: [
-        MyButton.secondaryButton(
-          method: () => Navigator.pop(context),
-          text: 'cancel',
-        ),
-        MyButton.primaryButton(
-          method: () {
-            if (formKey.currentState!.validate()) {
-              saveMethod();
-            }
-          },
-          text: 'Save',
-        ),
-      ],
-    ),
   );
 }
 
@@ -200,47 +149,6 @@ Widget buildManagementCard({
   );
 }
 
-// Generic Dialog for Adding/Editing a single String value
-void showManagerDialog({
-  required BuildContext context,
-  required String title,
-  String? initialValue,
-  required String label,
-  required List<String> existingItems,
-  required Function(String) onSave, // This is the Callback
-}) {
-  final controller = TextEditingController(text: initialValue);
-  final formKey = GlobalKey<FormState>();
-
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: Form(
-        key: formKey,
-        child: TextFormField(
-          controller: controller,
-          decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
-          // Reusing your existing validator logic
-          validator: (value) => Validator.genreValidator(value, existingItems),
-        ),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        ElevatedButton(
-          onPressed: () {
-            if (formKey.currentState!.validate()) {
-              onSave(controller.text.trim()); // Execute the callback
-              Navigator.pop(context);
-            }
-          },
-          child: const Text('Save'),
-        ),
-      ],
-    ),
-  );
-}
-
 // Generic Dialog for Deleting
 void showDeleteConfirmDialog({
   required BuildContext context,
@@ -255,13 +163,66 @@ void showDeleteConfirmDialog({
       content: Text('Are you sure you want to delete "$itemName"?'),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        ElevatedButton(
-          onPressed: () {
+        MyButton.deleteButton(
+          method: () {
             onConfirm();
             Navigator.pop(context);
           },
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('Delete'),
+          isTextButton: true
+          // style: ElevatedButton.styleFrom(backgroundColor: Colors.red,foregroundColor: AppColors.white),
+          // child: const Text('Delete'),
+        ),
+      ],
+    ),
+  );
+}
+
+// In reusable_widgets.dart
+
+void showSettingsEditDialog({
+  required BuildContext context,
+  required String title,
+  required String label,
+  String? initialValue,
+  required Function(String) onSave,
+  String? Function(String?)? validator,
+  TextInputType keyboardType = TextInputType.text,
+}) {
+  final controller = TextEditingController(text: initialValue);
+  final formKey = GlobalKey<FormState>();
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title),
+      content: Form(
+        key: formKey,
+        child: TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          validator: validator,
+        ),
+      ),
+      actions: [
+        MyButton.outlinedButton(
+          method: () => Navigator.pop(context),
+          text: 'Cancel',
+          color: AppColors.lightGrey
+        ),
+        MyButton.primaryButton(
+          method: () {
+            // Only save if the validation passes (or if no validator is provided)
+            if (formKey.currentState!.validate()) {
+              onSave(controller.text.trim());
+              Navigator.pop(context);
+            }
+          },
+          text: 'Save',
         ),
       ],
     ),
