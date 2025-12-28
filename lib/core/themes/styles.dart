@@ -31,36 +31,36 @@ class CustomTheme {
       // centerTitle: true,
       iconTheme: IconThemeData(color: AppColors.white),
     ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: fillColor,
-      labelStyle: TextFieldStyle.inputTextStyle,
-      hintStyle: TextStyle(
-        color: AppColors.background,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-      errorStyle: TextStyle(
-        color: AppColors.error,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide(color: AppColors.background, width: 3),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide.none,
-      ),
-      errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(width: 3, color: AppColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(cornerRadius),
-        borderSide: BorderSide(color: AppColors.error, width: 3),
-      ),
-    ),
+    // inputDecorationTheme: InputDecorationTheme(
+    //   filled: true,
+    //   fillColor: fillColor,
+    //   labelStyle: TextFieldStyle.inputTextStyle,
+    //   hintStyle: TextStyle(
+    //     color: AppColors.background,
+    //     fontSize: 16,
+    //     fontWeight: FontWeight.w600,
+    //   ),
+    //   errorStyle: TextStyle(
+    //     color: AppColors.error,
+    //     fontSize: 16,
+    //     fontWeight: FontWeight.w600,
+    //   ),
+    //   focusedBorder: OutlineInputBorder(
+    //     borderRadius: BorderRadius.circular(cornerRadius),
+    //     borderSide: BorderSide(color: AppColors.background, width: 3),
+    //   ),
+    //   enabledBorder: OutlineInputBorder(
+    //     borderRadius: BorderRadius.circular(cornerRadius),
+    //     borderSide: BorderSide.none,
+    //   ),
+    //   errorBorder: UnderlineInputBorder(
+    //     borderSide: BorderSide(width: 3, color: AppColors.error),
+    //   ),
+    //   focusedErrorBorder: OutlineInputBorder(
+    //     borderRadius: BorderRadius.circular(cornerRadius),
+    //     borderSide: BorderSide(color: AppColors.error, width: 3),
+    //   ),
+    // ),
   );
 }
 

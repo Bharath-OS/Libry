@@ -31,7 +31,7 @@ class AppTextField {
           labelText: label,
 
           labelStyle: TextStyle(
-            color: textColor.withOpacity(0.7),
+            color: textColor.withAlpha((0.7 * 255).toInt()),
             fontSize: 14,
           ),
           // Border when the field is NOT selected
@@ -81,10 +81,10 @@ class AppTextField {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.background.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.background.withAlpha((0.3 * 255).toInt())),
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withAlpha((0.1 * 255).toInt()),
       ),
       style: TextStyle(color: AppColors.background),
       onChanged: onChanged,
