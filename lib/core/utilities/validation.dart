@@ -117,4 +117,16 @@ class Validator {
     }
     return null;
   }
+
+  static String? languageValidator(String? language, List<String> existingLanguages){
+    if(language == null || language.isEmpty){
+      return 'Language is required';
+    }
+    else if(existingLanguages.contains(language.trim())){
+      return 'Language already exists';
+    }
+    else{
+      return null;
+    }
+  }
 }
