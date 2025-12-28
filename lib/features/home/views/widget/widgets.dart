@@ -30,7 +30,7 @@ Widget buildStatCard(String label, String value, IconData icon, Color color) {
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -59,7 +59,7 @@ Widget buildTodayItem(String label, String count, IconData icon, Color color) {
         Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withAlpha((0.1 * 255).toInt()),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -99,10 +99,10 @@ Widget recentIssueCard({required bool isOverdue, required int daysLeft, required
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isOverdue
-                ? Colors.red.withOpacity(0.1)
+                ? Colors.red.withAlpha((0.1 * 255).toInt())
                 : daysLeft <= 2
-                ? Colors.orange.withOpacity(0.1)
-                : Colors.blue.withOpacity(0.1),
+                ? Colors.orange.withAlpha((0.1 * 255).toInt())
+                : Colors.blue.withAlpha((0.1 * 255).toInt()),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

@@ -115,7 +115,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withAlpha((0.2 * 255).toInt()),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -337,9 +337,9 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha((0.3 * 255).toInt())),
       ),
       child: Column(
         children: [

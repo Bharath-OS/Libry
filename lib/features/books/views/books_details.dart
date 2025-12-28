@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:libry/core/widgets/dialogs.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -257,9 +258,9 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1*255).toInt()),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha((0.3*255).toInt())),
       ),
       child: Column(
         children: [

@@ -382,7 +382,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onTap(),
-      backgroundColor: AppColors.white.withOpacity(0.3),
+      backgroundColor: AppColors.white.withAlpha((0.3 * 255).toInt()),
       selectedColor: color ?? AppColors.background,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : AppColors.white,

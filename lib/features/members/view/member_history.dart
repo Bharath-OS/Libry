@@ -216,9 +216,9 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha((0.3 * 255).toInt())),
       ),
       child: Column(
         children: [
@@ -304,7 +304,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                   width: 50,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: AppColors.background.withOpacity(0.1),
+                    color: AppColors.background.withAlpha((0.1 * 255).toInt()),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   // child: Icon(Icons.book, color: AppColors.background, size: 30),

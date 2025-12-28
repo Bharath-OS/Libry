@@ -86,7 +86,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         "Search and select member and book",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.background.withOpacity(0.8),
+                          color: AppColors.background.withAlpha((0.8 * 255).toInt()),
                           fontSize: 14,
                         ),
                       ),
@@ -196,9 +196,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
+              color: AppColors.success.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.success.withOpacity(0.3)),
+              border: Border.all(color: AppColors.success.withAlpha((0.1 * 255).toInt())),
             ),
             child: Row(
               children: [
@@ -221,7 +221,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "ID: ${_selectedMember!.memberId} • Borrowed: ${_selectedMember!.currentlyBorrow}/5",
                         style: TextStyle(
-                          color: AppColors.background.withOpacity(0.7),
+                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
                           fontSize: 12,
                         ),
                       ),
@@ -290,7 +290,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      // color: AppColors.background.withOpacity(0.1),
+                      // color: AppColors.background.withAlpha((0.1 * 255).toInt()),
                       color: AppColors.background,
                     ),
                     child:
@@ -355,9 +355,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             margin: const EdgeInsets.only(top: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
+              color: AppColors.success.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.success.withOpacity(0.3)),
+              border: Border.all(color: AppColors.success.withAlpha((0.1 * 255).toInt())),
             ),
             child: Row(
               children: [
@@ -366,7 +366,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   height: 60,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
-                    color: AppColors.background.withOpacity(0.1),
+                    color: AppColors.background.withAlpha((0.1 * 255).toInt()),
                   ),
                   child: _selectedBook!.coverPicture.isNotEmpty
                       ? ClipRRect(
@@ -395,7 +395,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "by ${_selectedBook!.author}",
                         style: TextStyle(
-                          color: AppColors.background.withOpacity(0.7),
+                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
                           fontSize: 12,
                         ),
                       ),
@@ -442,9 +442,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.background.withOpacity(0.3)),
+              border: Border.all(color: AppColors.background.withAlpha((0.1 * 255).toInt())),
             ),
             child: Row(
               children: [
@@ -457,7 +457,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "Due Date",
                         style: TextStyle(
-                          color: AppColors.background.withOpacity(0.7),
+                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
                           fontSize: 12,
                         ),
                       ),
@@ -481,7 +481,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         Text(
           "Book must be returned by this date to avoid fines",
           style: TextStyle(
-            color: AppColors.background.withOpacity(0.6),
+            color: AppColors.background.withAlpha((0.6 * 255).toInt()),
             fontSize: 12,
             fontStyle: FontStyle.italic,
           ),
