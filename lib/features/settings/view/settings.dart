@@ -1,55 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:libry/features/settings/view/widgets/reusable_widgets.dart';
 import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../../issues/data/service/issue_records_db.dart';
-import '../../issues/data/model/issue_records_model.dart';
-import '../../issues/viewmodel/issue_provider.dart';
-import '../../members/viewmodel/members_provider.dart';
-import '../../auth/data/model/user_model.dart';
-import '../../books/viewmodel/book_provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive
-  await Hive.initFlutter();
-  Hive.registerAdapter(UserModelAdapter());
-  Hive.registerAdapter(IssueRecordsAdapter());
-
-  userDataBoxNew = await Hive.openBox<UserModel>('users');
-  statusBox = await Hive.openBox("status");
-
-  await IssueDBHive.initIssueBox();
-  await SettingsService.instance.init();
-
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
-    _,
-  ) {
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
-          ChangeNotifierProvider<SettingsViewModel>(
-            create: (_) => SettingsViewModel(),
-          ),
-          ChangeNotifierProvider<IssueProvider>(
-            create: (_) => IssueProvider()..init(),
-          ),
-          ChangeNotifierProvider<MembersProvider>(
-            create: (context) => MembersProvider(),
-          ),
-        ],
-        child: MaterialApp(home: SettingsView()),
-      ),
-    );
-  });
-}
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -60,8 +17,6 @@ class SettingsView extends StatefulWidget {
 
 class SettingsScreenState extends State<SettingsView> {
   final iconColor = AppColors.primary;
-  final fineController = TextEditingController();
-  final issuePeriodController = TextEditingController();
   late double finePerDay;
   late int defaultIssueDays;
 
@@ -78,7 +33,7 @@ class SettingsScreenState extends State<SettingsView> {
     defaultIssueDays = context.watch<SettingsViewModel>().issuePeriod;
 
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(barTitle: "Settings", context: context),
+      appBar: AppBar(title: Text('Settings')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(20),
@@ -89,39 +44,43 @@ class SettingsScreenState extends State<SettingsView> {
               _buildSectionTitle('Library Settings'),
               SizedBox(height: 12),
               _buildSettingsContainer(),
-
               SizedBox(height: 24),
-
-              // Content Management Section
               _buildSectionTitle('Content Management'),
               SizedBox(height: 12),
-
               // Genres
               buildManagementCard(
                 title: 'Book Genres',
                 icon: Icons.category,
                 items: genres,
                 emptyMessage: 'No genres added yet',
-                onAdd: () => showManagerDialog(
+                onAdd: () => showSettingsEditDialog(
                   context: context,
                   title: 'Add Genre',
                   label: 'Genre Name',
-                  existingItems: genres,
-                  onSave: (val) => context.read<SettingsViewModel>().addGenre(val),
+                  validator: (genre) => Validator.genreValidator(
+                    genre,
+                    genres,
+                  ),
+                  onSave: (val) =>
+                      context.read<SettingsViewModel>().addGenre(val),
                 ),
-                onEdit: (genre) => showManagerDialog(
+                onEdit: (genre) => showSettingsEditDialog(
                   context: context,
                   title: 'Edit Genre',
                   initialValue: genre,
                   label: 'Genre Name',
-                  existingItems: genres,
-                  onSave: (val) => context.read<SettingsViewModel>().editGenre(oldGenre: genre, newGenre: val),
+                  validator: (genre) => Validator.genreValidator(genre, genres),
+                  onSave: (val) => context.read<SettingsViewModel>().editGenre(
+                    oldGenre: genre,
+                    newGenre: val,
+                  ),
                 ),
                 onDelete: (genre) => showDeleteConfirmDialog(
                   context: context,
                   itemName: genre,
                   category: 'Genre',
-                  onConfirm: () => context.read<SettingsViewModel>().deleteGenre(genre),
+                  onConfirm: () =>
+                      context.read<SettingsViewModel>().deleteGenre(genre),
                 ),
               ),
 
@@ -133,26 +92,32 @@ class SettingsScreenState extends State<SettingsView> {
                 icon: Icons.language,
                 items: languages,
                 emptyMessage: 'No languages added yet',
-                onAdd: () => showManagerDialog(
+                onAdd: () => showSettingsEditDialog(
                   context: context,
                   title: 'Add Language',
                   label: 'Language Name',
-                  existingItems: languages,
-                  onSave: (val) => context.read<SettingsViewModel>().addLanguage(val),
+                  validator: (language) =>
+                      Validator.languageValidator(language, languages),
+                  onSave: (val) =>
+                      context.read<SettingsViewModel>().addLanguage(val),
                 ),
-                onEdit: (lang) => showManagerDialog(
+                onEdit: (lang) => showSettingsEditDialog(
                   context: context,
                   title: 'Edit Language',
                   initialValue: lang,
                   label: 'Language Name',
-                  existingItems: languages,
-                  onSave: (val) => context.read<SettingsViewModel>().editLanguage(oldLanguage: lang, newLanguage: val),
+                  validator: (language) =>
+                      Validator.languageValidator(language, languages),
+                  onSave: (val) => context
+                      .read<SettingsViewModel>()
+                      .editLanguage(oldLanguage: lang, newLanguage: val),
                 ),
                 onDelete: (lang) => showDeleteConfirmDialog(
                   context: context,
                   itemName: lang,
                   category: 'Language',
-                  onConfirm: () => context.read<SettingsViewModel>().deleteLanguage(lang),
+                  onConfirm: () =>
+                      context.read<SettingsViewModel>().deleteLanguage(lang),
                 ),
               ),
             ],
@@ -190,16 +155,21 @@ class SettingsScreenState extends State<SettingsView> {
             subtitle: '₹$finePerDay per day for overdue books',
             trailing: IconButton(
               icon: Icon(Icons.edit, color: iconColor),
-              onPressed: () => buildDialogBox(
-                controller: fineController,
+              onPressed: () => showSettingsEditDialog(
                 context: context,
                 title: 'Set Fine Amount',
                 label: 'Fine per day (₹)',
-                saveMethod: () {
-                  context.read<SettingsViewModel>().addFineAmount(double.parse(fineController.text.trim()));
+                initialValue: finePerDay.toString(),
+                validator: (fineAmount) => Validator.numberValidator(
+                  value: fineAmount,
+                  isDouble: true,
+                ),
+                onSave: (fineAmount) {
+                  context.read<SettingsViewModel>().addFineAmount(
+                    double.parse(fineAmount),
+                  );
                   Navigator.pop(context);
                 },
-                isDouble: true
               ),
             ),
           ),
@@ -210,13 +180,16 @@ class SettingsScreenState extends State<SettingsView> {
             subtitle: '$defaultIssueDays days',
             trailing: IconButton(
               icon: Icon(Icons.edit, color: iconColor),
-              onPressed: () => buildDialogBox(
-                controller: issuePeriodController,
+              onPressed: () => showSettingsEditDialog(
                 context: context,
                 title: 'Set Default Issue Period',
                 label: 'Number of days',
-                saveMethod: (){
-                  context.read<SettingsViewModel>().addIssuePeriod(int.parse(issuePeriodController.text));
+                initialValue: defaultIssueDays.toString(),
+                validator: (days) => Validator.numberValidator(value: days),
+                onSave: (value) {
+                  context.read<SettingsViewModel>().addIssuePeriod(
+                    int.parse(value),
+                  );
                   Navigator.pop(context);
                 },
               ),
