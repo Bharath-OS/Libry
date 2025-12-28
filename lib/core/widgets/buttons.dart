@@ -16,7 +16,7 @@ class MyButton {
   static Widget primaryButton({
     required VoidCallback method,
     required String text,
-    double? fontSize = 15
+    double? fontSize = 15,
   }) {
     return ElevatedButton(
       onPressed: method,
@@ -42,7 +42,7 @@ class MyButton {
   static Widget secondaryButton({
     required VoidCallback method,
     required String text,
-    double fontSize = 15
+    double fontSize = 15,
   }) {
     return ElevatedButton(
       onPressed: method,
@@ -59,7 +59,7 @@ class MyButton {
           fontFamily: "Livvic",
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: AppColors.secondaryButtonText
+          color: AppColors.secondaryButtonText,
         ),
       ),
     );
@@ -88,19 +88,45 @@ class MyButton {
     );
   }
 
-  static IconButton deleteButton({required VoidCallback method}) {
-    return IconButton(
-      icon: SvgPicture.asset("assets/icons/delete-icon.svg"),
-      onPressed: method,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.dangerButton,
-        foregroundColor: AppColors.dangerButtonText,
-        // padding: EdgeInsets.only(top: 9,bottom: 9,left: 20,right: 25),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+  static Widget deleteButton({
+    required VoidCallback method,
+    bool isTextButton = false,
+  }) {
+    if (!isTextButton) {
+      return IconButton(
+        icon: SvgPicture.asset("assets/icons/delete-icon.svg"),
+        onPressed: method,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.dangerButton,
+          foregroundColor: AppColors.dangerButtonText,
+          // padding: EdgeInsets.only(top: 9,bottom: 9,left: 20,right: 25),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
         ),
-      ),
-    );
+      );
+    }
+    else{
+      return ElevatedButton(
+        onPressed: method,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.dangerButton,
+          // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+        ),
+        child: Text(
+          "Delete",
+          style: TextStyle(
+            fontFamily: "Livvic",
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: AppColors.dangerButtonText,
+          ),
+        ),
+      );;
+    }
   }
 
   static ElevatedButton filterButton({required VoidCallback method}) {
