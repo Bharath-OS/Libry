@@ -22,7 +22,11 @@ class MembersScreen extends StatelessWidget {
       availableCount: availableCount,
       searchHint: "Search Members...",
       items: context.watch<MembersProvider>().members,
-      tileBuilder: (member) => Cards.memberCard(memberDetails: member),
+      tileBuilder: (member) => Cards.memberCard(
+        memberDetails: member,
+        onDelete: () =>
+            context.read<MembersProvider>().removeMember(member.id!),
+      ),
       onTap: (member) => Navigator.push(
         context,
         MaterialPageRoute(
