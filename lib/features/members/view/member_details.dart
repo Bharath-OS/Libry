@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
+import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../data/model/members_model.dart';
 import 'edit_member.dart';
@@ -21,8 +22,8 @@ class MemberDetailsScreen extends StatefulWidget {
 }
 
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
-  final String dateFormatString = 'dd/MM/yyyy';
-  // late final issue;
+  final String dateFormatString = 'MMM dd yyyy';
+  final iconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
     final memberDetail = context.watch<MembersProvider>().getMemberById(widget.memberId);
@@ -90,7 +91,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.background,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -307,13 +308,13 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.background, size: 20),
+          Icon(icon, color: iconColor, size: 20),
           SizedBox(width: 12),
           Text(
             '$label:',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: AppColors.darkGrey,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -444,18 +445,18 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
         title: Text('Delete Member'),
         content: Text('Are you sure you want to delete "${member.name}"? This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+          MyButton.outlinedButton(
+            method: () => Navigator.pop(context),
+            text:'Cancel',
+            color: AppColors.lightGrey
           ),
-          ElevatedButton(
-            onPressed: () {
+          MyButton.deleteButton(
+            method: () {
               Navigator.pop(context);
               context.read<MembersProvider>().removeMember(member.id!);
               Navigator.pop(context); // Go back after delete
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Delete'),
+            isTextButton: true
           ),
         ],
       ),

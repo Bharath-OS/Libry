@@ -234,7 +234,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             '$label:',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: AppColors.darkGrey,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -244,7 +244,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
               value,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black,
+                color: AppColors.darkGrey,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -373,9 +373,9 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.book, size: 60, color: Colors.grey[600]),
+          Icon(Icons.book, size: 60, color: AppColors.darkGrey),
           SizedBox(height: 8),
-          Text('No Cover', style: TextStyle(color: Colors.grey[600])),
+          Text('No Cover', style: TextStyle(color: AppColors.darkGrey)),
         ],
       ),
     );
