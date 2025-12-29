@@ -48,7 +48,7 @@ class Validator {
     if (phone == null || phone.isEmpty || phone == " ") {
       return 'Phone number cannot be empty';
     } else if (phone.length != 10) {
-      return 'Phone number should be 10 digit';
+      return 'Enter valid phone number';
     } else if (phone.contains(RegExp(r'[a-zA-Z]'))) {
       return 'Phone number should not contain alphabets';
     }
