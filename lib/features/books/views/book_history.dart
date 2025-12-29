@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../data/model/books_model.dart';
@@ -47,9 +48,9 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     final totalIssues = allBookIssues.length;
     final activeIssues = allBookIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allBookIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allBookIssues.where((i) =>
-    !i.isReturned && DateTime.now().isAfter(i.dueDate)
-    ).length;
+    final overdueIssues = allBookIssues
+        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+        .length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
@@ -62,37 +63,39 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             // Book Info Header
             _buildBookHeader(book),
 
-            // Stats Cards
-            _buildStatsCards(totalIssues, activeIssues, returnedIssues, overdueIssues),
-
-            // Filter Chips
-            _buildFilterChips(totalIssues, activeIssues, returnedIssues, overdueIssues),
-
+            IssueHistoryWidgets.buildStatsCards(
+              total: totalIssues,
+              active: activeIssues,
+              returned: returnedIssues,
+              overdue: overdueIssues,
+            ),
+            IssueHistoryWidgets.buildFilterChips(
+              total: totalIssues,
+              active: activeIssues,
+              returned: returnedIssues,
+              overdue: overdueIssues,
+              currentFilter: _filter,
+              onFilterChanged: _setFilter,
+            ),
             // Issues List
             Expanded(
               child: filteredIssues.isEmpty
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.history, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'No borrow history found',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              )
+                  ? IssueHistoryWidgets.buildEmptyState(
+                      message: 'Borrow a book to see the history',
+                      showClearFilter: _filter != 'all',
+                      onClearFilter: () => setState(() => _filter = 'all'),
+                    )
                   : ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: filteredIssues.length,
-                itemBuilder: (context, index) {
-                  final issue = filteredIssues[index];
-                  final member = memberProvider.getMemberById(issue.memberId);
-                  return _buildIssueCard(issue, member, issueProvider);
-                },
-              ),
+                      padding: EdgeInsets.all(16),
+                      itemCount: filteredIssues.length,
+                      itemBuilder: (context, index) {
+                        final issue = filteredIssues[index];
+                        final member = memberProvider.getMemberById(
+                          issue.memberId,
+                        );
+                        return _buildIssueCard(issue, member, issueProvider);
+                      },
+                    ),
             ),
           ],
         ),
@@ -136,10 +139,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 SizedBox(height: 4),
                 Text(
                   'by ${book.author}',
-                  style: TextStyle(
-                    color: AppColors.lightGrey,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: AppColors.lightGrey, fontSize: 14),
                 ),
               ],
             ),
@@ -149,121 +149,13 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     );
   }
 
-  Widget _buildStatsCards(int total, int active, int returned, int overdue) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              'Total',
-              total.toString(),
-              Colors.blue,
-              Icons.all_inclusive,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: _buildStatCard(
-              'Active',
-              active.toString(),
-              Colors.orange,
-              Icons.book_online,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: _buildStatCard(
-              'Returned',
-              returned.toString(),
-              Colors.green,
-              Icons.check_circle,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: _buildStatCard(
-              'Overdue',
-              overdue.toString(),
-              AppColors.error,
-              Icons.warning,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, Color color, IconData icon) {
-    final textColor = AppColors.white;
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withAlpha((0.1 * 255).toInt()),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withAlpha((0.3 * 255).toInt())),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: textColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChips(int total, int active, int returned, int overdue) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _buildFilterChip('All', 'all', total),
-            SizedBox(width: 8),
-            _buildFilterChip('Active', 'active', active),
-            SizedBox(width: 8),
-            _buildFilterChip('Returned', 'returned', returned),
-            SizedBox(width: 8),
-            _buildFilterChip('Overdue', 'overdue', overdue),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String label, String value, int count) {
-    final isSelected = _filter == value;
-    return FilterChip(
-      label: Text('$label ($count)'),
-      selected: isSelected,
-      onSelected: (_) => _setFilter(value),
-      backgroundColor: Colors.grey[200],
-      selectedColor: AppColors.background,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      ),
-    );
-  }
-
-  Widget _buildIssueCard(IssueRecords issue, Members? member, IssueProvider issueProvider) {
-    final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+  Widget _buildIssueCard(
+    IssueRecords issue,
+    Members? member,
+    IssueProvider issueProvider,
+  ) {
+    final isOverdue =
+        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -304,7 +196,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                         'ID: ${member?.memberId ?? 'N/A'}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: AppColors.darkGrey,
                         ),
                       ),
                     ],
@@ -345,17 +237,13 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoItem(
-                    'Issue ID',
-                    issue.issueId,
-                    Icons.tag,
-                  ),
+                  child: IssueHistoryWidgets.buildInfoItem(label: 'Issue ID',value: issue.issueId,icon: Icons.tag),
                 ),
                 Expanded(
-                  child: _buildInfoItem(
-                    'Borrowed',
-                    _formatDate(issue.borrowDate),
-                    Icons.calendar_today,
+                  child: IssueHistoryWidgets.buildInfoItem(
+                    label: 'Borrowed',
+                    value: IssueHistoryWidgets.formatDate(issue.borrowDate),
+                    icon: Icons.calendar_today,
                   ),
                 ),
               ],
@@ -364,53 +252,31 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoItem(
-                    'Due Date',
-                    _formatDate(issue.dueDate),
-                    Icons.event,
+                  child: IssueHistoryWidgets.buildInfoItem(
+                    label: 'Due Date',
+                    value: IssueHistoryWidgets.formatDate(issue.dueDate),
+                    icon: Icons.event,
                   ),
                 ),
                 Expanded(
                   child: issue.isReturned
-                      ? _buildInfoItem(
-                    'Returned',
-                    _formatDate(issue.returnDate!),
-                    Icons.check_circle,
-                  )
-                      : _buildInfoItem(
-                    'Days Left',
-                    '${issue.dueDate.difference(DateTime.now()).inDays}',
-                    Icons.access_time,
-                  ),
+                      ? IssueHistoryWidgets.buildInfoItem(
+                          label: 'Returned',
+                          value: IssueHistoryWidgets.formatDate(issue.returnDate!),
+                          icon: Icons.check_circle,
+                        )
+                      : IssueHistoryWidgets.buildInfoItem(
+                          label: 'Days Left',
+                          value: '${issue.dueDate.difference(DateTime.now()).inDays}',
+                          icon: Icons.access_time,
+                        ),
                 ),
               ],
             ),
 
             // Fine Info (if applicable)
             if (fine > 0)
-              Container(
-                margin: EdgeInsets.only(top: 12),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red[200]!),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.warning_amber, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text(
-                      'Fine: ₹${fine.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              IssueHistoryWidgets.buildFineWarning(fine: fine),
 
             // Return Button (if not returned)
             if (!issue.isReturned)
@@ -439,44 +305,19 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     );
   }
 
-  Widget _buildInfoItem(String label, String value, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
-        SizedBox(width: 4),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-              ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  List<IssueRecords> _applyFilter(List<IssueRecords> issues, IssueProvider issueProvider) {
+  List<IssueRecords> _applyFilter(
+    List<IssueRecords> issues,
+    IssueProvider issueProvider,
+  ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
       case 'returned':
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
-        return issues.where((i) =>
-        !i.isReturned && DateTime.now().isAfter(i.dueDate)
-        ).toList();
+        return issues
+            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+            .toList();
       default:
         return issues;
     }
@@ -541,15 +382,8 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }
