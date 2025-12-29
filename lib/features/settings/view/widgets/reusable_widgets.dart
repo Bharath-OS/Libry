@@ -25,7 +25,7 @@ Widget buildSettingTile({
     ),
     subtitle: Text(
       subtitle,
-      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+      style: TextStyle(fontSize: 13, color: AppColors.darkGrey),
     ),
     trailing: trailing,
   );
@@ -89,7 +89,7 @@ Widget buildManagementCard({
             child: Center(
               child: Text(
                 emptyMessage,
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(color: AppColors.darkGrey),
               ),
             ),
           )

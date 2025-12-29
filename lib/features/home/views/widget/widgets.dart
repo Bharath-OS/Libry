@@ -45,7 +45,7 @@ Widget buildStatCard(String label, String value, IconData icon, Color color) {
             ),
           ),
           SizedBox(height: 4),
-          Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+          Text(label, style: TextStyle(fontSize: 14, color: AppColors.darkGrey)),
         ],
       ),
     ),
@@ -80,7 +80,7 @@ Widget buildTodayItem(String label, String count, IconData icon, Color color) {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: AppColors.darkGrey,
               ),
             ),
           ],
@@ -135,7 +135,7 @@ Widget recentIssueCard({required bool isOverdue, required int daysLeft, required
                 member?.name ?? 'Unknown Member',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: AppColors.darkGrey,
                 ),
               ),
             ],

@@ -189,8 +189,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           ),
         ),
       ),
-      //todo book floating action button
-      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items.runtimeType is List<Books> ? "Book" : "Member"}"),
+      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items.runtimeType is List<Members> ? "Book" : "Member"}"),
     );
   }
 
@@ -263,24 +262,24 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               ],
             ),
             Row(
+              // direction: Axis.horizontal,
               children: [
                 // Reset Filters Button
-                if (_hasActiveFilters)
-                  Container(
-                    margin: EdgeInsets.only(right: 10),
-                    child: IconButton(
-                      onPressed: _resetFilters,
-                      icon: Icon(Icons.filter_alt_off, color: Colors.white),
-                      tooltip: 'Reset Filters',
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-
+                // if (_hasActiveFilters)
+                //   Container(
+                //     margin: EdgeInsets.only(right: 10),
+                //     child: IconButton(
+                //       onPressed: _resetFilters,
+                //       icon: Icon(Icons.filter_alt_off, color: Colors.white),
+                //       tooltip: 'Reset Filters',
+                //       style: IconButton.styleFrom(
+                //         backgroundColor: Colors.orange,
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(10),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
                 // Export Button
                 Container(
                   margin: EdgeInsets.only(right: 10),
@@ -296,7 +295,6 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     ),
                   ),
                 ),
-
                 // Filter Button
                 IconButton(
                   onPressed: () => _showFilterDialog(context),

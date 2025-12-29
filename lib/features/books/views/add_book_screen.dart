@@ -221,11 +221,13 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             AppTextField.customTextField(
               controller: inputControllers[0],
               label: "Book title",
+              maxLength: 20,
               validator: (value) => Validator.emptyValidator(value),
             ),
             AppTextField.customTextField(
               controller: inputControllers[1],
               label: "Author name",
+              maxLength: 20,
               validator: (value) => Validator.emptyValidator(value),
             ),
             //Language dropdown
@@ -269,6 +271,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             AppTextField.customTextField(
               controller: inputControllers[4],
               label: "Publisher",
+              maxLength: 20,
               validator: (value) => Validator.emptyValidator(value),
             ),
             AppTextField.customTextField(

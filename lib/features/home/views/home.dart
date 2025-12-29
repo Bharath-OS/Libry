@@ -272,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 8),
                 Text(
                   'No recent issues',
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: AppColors.darkGrey),
                 ),
               ],
             ),

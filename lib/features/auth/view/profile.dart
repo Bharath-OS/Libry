@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../../issues/issue.dart';
+import '../../issues/views/issue.dart';
 import '../data/model/user_model.dart';
 import 'edit_profile.dart';
 
