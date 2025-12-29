@@ -168,7 +168,6 @@ class SettingsScreenState extends State<SettingsView> {
                   context.read<SettingsViewModel>().addFineAmount(
                     double.parse(fineAmount),
                   );
-                  Navigator.pop(context);
                 },
               ),
             ),
@@ -190,7 +189,6 @@ class SettingsScreenState extends State<SettingsView> {
                   context.read<SettingsViewModel>().addIssuePeriod(
                     int.parse(value),
                   );
-                  Navigator.pop(context);
                 },
               ),
             ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../books/views/books_screen.dart';
 import 'home.dart';
-import '../../issues/issue_history_screen.dart';
+import '../../issues/views/issue_history_screen.dart';
 import '../../members/view/members.dart';
 import '../../settings/view/settings.dart';
 
