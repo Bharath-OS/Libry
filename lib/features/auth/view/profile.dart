@@ -190,8 +190,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           ),
           Divider(),
-          actionButton(icon: Icons.file_copy_outlined, iconColor: color,text: "Download",textColor: color, method: (){}),
-          Divider(),
+          // actionButton(icon: Icons.file_copy_outlined, iconColor: color,text: "Download",textColor: color, method: (){}),
+          // Divider(),
           actionButton(
               icon: Icons.exit_to_app,
               iconColor: AppColors.error,
