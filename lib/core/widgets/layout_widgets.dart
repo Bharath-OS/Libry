@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import 'buttons.dart';
 
 class LayoutWidgets {
   static Widget customScaffold({
@@ -42,7 +43,7 @@ class LayoutWidgets {
         ),
       ),
       backgroundColor: Colors.transparent,
-      leading: IconButton(onPressed: ()=>Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new)),
+      leading: IconButton(onPressed: ()=>Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new_rounded,color: AppColors.white,)),
     );
   }
 }
