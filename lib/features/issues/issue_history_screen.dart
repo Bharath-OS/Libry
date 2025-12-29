@@ -70,37 +70,33 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             Expanded(
               child: filteredIssues.isEmpty
                   ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.history, size: 64, color: Colors.grey),
-                          SizedBox(height: 16),
-                          Text(
-                            'No transactions found',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(16),
-                      itemCount: filteredIssues.length,
-                      itemBuilder: (context, index) {
-                        final issue = filteredIssues[index];
-                        final book = context.watch<BookViewModel>().getBookById(
-                          issue.bookId,
-                        );
-                        final member = context
-                            .watch<MembersProvider>()
-                            .getMemberById(issue.memberId);
-                        return _buildIssueCard(
-                          issue,
-                          book,
-                          member,
-                          issueProvider,
-                        );
-                      },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.history, size: 64, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      'No transactions found',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
+                  ],
+                ),
+              )
+                  : ListView.builder(
+                padding: EdgeInsets.all(16),
+                itemCount: filteredIssues.length,
+                itemBuilder: (context, index) {
+                  final issue = filteredIssues[index];
+                  final book = bookProvider.getBookById(issue.bookId);
+                  final member = memberProvider.getMemberById(issue.memberId);
+                  return _buildIssueCard(
+                    issue,
+                    book,
+                    member,
+                    issueProvider,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -159,17 +155,17 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Widget _buildStatCard(
-    String label,
-    String value,
-    Color color,
-    IconData icon,
-  ) {
+      String label,
+      String value,
+      Color color,
+      IconData icon,
+      ) {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withAlpha(0.3)),
+        border: Border.all(color: color.withAlpha((0.3 * 255).toInt())),
       ),
       child: Column(
         children: [
@@ -225,18 +221,21 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Widget _buildIssueCard(
-    IssueRecords issue,
-    Books? book,
-    Members? member,
-    IssueProvider issueProvider,
-  ) {
-    final isOverdue =
-        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+      IssueRecords issue,
+      Books? book,
+      Members? member,
+      IssueProvider issueProvider,
+      ) {
+    final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
-    final bookTitle = book?.title ?? '${issue.bookName} (Book Deleted)';
+
+    // Use stored names if available, otherwise try to get from database
+    // If both fail, show as "Deleted"
+    final bookTitle = book?.title ?? issue.bookName ?? 'Deleted Book';
     final bookAuthor = book?.author ?? 'Unknown Author';
-    final memberName =
-        member?.name ?? '${issue.memberId} (Member Deleted)';
+    final memberName = member?.name ?? issue.memberName ?? 'Deleted Member';
+    final isBookDeleted = book == null;
+    final isMemberDeleted = member == null;
 
     return Card(
       margin: EdgeInsets.only(bottom: 12),
@@ -253,6 +252,37 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Deleted Items Warning (if any)
+            if (isBookDeleted || isMemberDeleted)
+              Container(
+                margin: EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.orange[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning_amber, size: 16, color: Colors.orange),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        isBookDeleted && isMemberDeleted
+                            ? 'Book and Member have been deleted'
+                            : isBookDeleted
+                            ? 'Book has been deleted'
+                            : 'Member has been deleted',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.orange[900],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             // Book and Member Info Header
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,10 +292,15 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: isBookDeleted
+                        ? Colors.grey
+                        : AppColors.background,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.book, color: Colors.white),
+                  child: Icon(
+                    isBookDeleted ? Icons.book_outlined : Icons.book,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(width: 12),
                 // Book and Member Details
@@ -273,27 +308,46 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        bookTitle,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              bookTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                decoration: isBookDeleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                                color: isBookDeleted
+                                    ? Colors.grey
+                                    : Colors.black,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 4),
                       Text(
                         'by $bookAuthor',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.darkGrey,
+                        ),
                       ),
                       SizedBox(height: 8),
                       Row(
                         children: [
                           Icon(
-                            Icons.person_outline,
+                            isMemberDeleted
+                                ? Icons.person_off_outlined
+                                : Icons.person_outline,
                             size: 14,
-                            color: Colors.grey[600],
+                            color: isMemberDeleted
+                                ? Colors.grey
+                                : AppColors.darkGrey,
                           ),
                           SizedBox(width: 4),
                           Expanded(
@@ -302,6 +356,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
+                                decoration: isMemberDeleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                                color: isMemberDeleted
+                                    ? Colors.grey
+                                    : Colors.black,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -344,7 +404,6 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             SizedBox(height: 8),
 
             // Transaction Details
-            // Row 1: Issue ID and Borrow Date
             Row(
               children: [
                 Expanded(
@@ -361,7 +420,6 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             ),
             SizedBox(height: 8),
 
-            // Row 2: Due Date and Status
             Row(
               children: [
                 Expanded(
@@ -374,21 +432,20 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: issue.isReturned
                       ? _buildInfoItem(
-                          'Returned',
-                          _formatDate(issue.returnDate!),
-                          Icons.check_circle,
-                        )
+                    'Returned',
+                    _formatDate(issue.returnDate!),
+                    Icons.check_circle,
+                  )
                       : _buildInfoItem(
-                          'Days Left',
-                          '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
-                          Icons.access_time,
-                        ),
+                    'Days Left',
+                    '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
+                    Icons.access_time,
+                  ),
                 ),
               ],
             ),
             SizedBox(height: 8),
 
-            // Row 3: Book ID and Member ID
             Row(
               children: [
                 Expanded(
@@ -436,7 +493,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '₹${fine.toStringAsFixed(2)}',
+                            'Rs $fine',
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 18,
@@ -455,8 +512,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
               padding: EdgeInsets.only(top: 12),
               child: Row(
                 children: [
-                  // Return Button (if not returned)
-                  if (!issue.isReturned)
+                  // Return Button (only if book exists and not returned)
+                  if (!issue.isReturned && !isBookDeleted)
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () => _returnBook(issue),
@@ -473,14 +530,14 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       ),
                     ),
 
-                  if (!issue.isReturned) SizedBox(width: 8),
+                  if (!issue.isReturned && !isBookDeleted) SizedBox(width: 8),
 
                   // View Details Button
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _viewDetails(issue, book, member),
                       icon: Icon(Icons.remove_red_eye, size: 18),
-                      label: Text('View Details'),
+                      label: Text('Details'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.background,
                         side: BorderSide(color: AppColors.background),
@@ -503,7 +560,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   Widget _buildInfoItem(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
+        Icon(icon, size: 16, color: AppColors.darkGrey),
         SizedBox(width: 4),
         Expanded(
           child: Column(
@@ -511,7 +568,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             children: [
               Text(
                 label,
-                style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 10, color: AppColors.darkGrey),
               ),
               SizedBox(height: 2),
               Text(
@@ -527,9 +584,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   List<IssueRecords> _applyFilter(
-    List<IssueRecords> issues,
-    IssueProvider issueProvider,
-  ) {
+      List<IssueRecords> issues,
+      IssueProvider issueProvider,
+      ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
@@ -548,48 +605,125 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     setState(() => _filter = filter);
   }
 
-  //book return logic
   Future<void> _returnBook(IssueRecords issue) async {
     final issueProvider = context.read<IssueProvider>();
+    final bookProvider = context.read<BookViewModel>();
+    final memberProvider = context.read<MembersProvider>();
+
     final fine = issueProvider.calculateFine(issue);
+
+    // Check if book and member still exist
+    final book = bookProvider.getBookById(issue.bookId);
+    final member = memberProvider.getMemberById(issue.memberId);
+
+    if (book == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot return: Book has been deleted'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (member == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot return: Member has been deleted'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     if (fine > 0) {
       final confirmed = await _showFinePaymentDialog(fine);
       if (!confirmed) return;
-      print("fine is $fine");
-      await _payFine(issue, fine);
+      await _payFine(issue, fine, member);
+    }
+
+    // Process return
+    try {
+      // 1. Mark as returned in Hive
+      await issueProvider.returnBook(issue.issueId);
+
+      // 2. Update book copies
+      final updatedBook = Books(
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        year: book.year,
+        language: book.language,
+        publisher: book.publisher,
+        genre: book.genre,
+        pages: book.pages,
+        totalCopies: book.totalCopies,
+        copiesAvailable: book.copiesAvailable + 1,
+        coverPicture: book.coverPicture,
+      );
+      await bookProvider.updateBook(updatedBook);
+
+      // 3. Update member borrow count
+      final updatedMember = Members(
+        id: member.id,
+        memberId: member.memberId,
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        address: member.address,
+        fine: member.fine,
+        totalBorrow: member.totalBorrow,
+        currentlyBorrow: member.currentlyBorrow - 1,
+        joined: member.joined,
+        expiry: member.expiry,
+      );
+      await memberProvider.updateMember(updatedMember);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Book returned successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error returning book: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   Future<bool> _showFinePaymentDialog(int fine) async {
     return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Fine Payment Required'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Overdue fine: ₹$fine'),
-                SizedBox(height: 16),
-                Text('Please collect the fine before returning the book.'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text('Fine Paid'),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Fine Payment Required'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Overdue fine: Rs $fine'),
+            SizedBox(height: 16),
+            Text('Please collect the fine before returning the book.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
           ),
-        ) ??
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Fine Paid'),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
-  Future<void> _payFine(IssueRecords issue, int fine) async {
+  Future<void> _payFine(IssueRecords issue, int fine, Members member) async {
     final issueProvider = context.read<IssueProvider>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -598,31 +732,35 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     await IssueDBHive.box.put(issue.issueId, updatedIssue);
 
     // 2. Update member's fine total
-    final member = memberProvider.getMemberById(issue.memberId);
-    if (member != null) {
-      final updatedMember = Members(
-        name: member.name,
-        email: member.email,
-        phone: member.phone,
-        address: member.address,
-        totalBorrow: member.totalBorrow,
-        currentlyBorrow: member.currentlyBorrow,
-        fine: member.fine + fine,
-        joined: member.joined,
-        expiry: member.expiry,
-      );
-      await memberProvider.updateMember(updatedMember);
-    }
+    final updatedMember = Members(
+      id: member.id,
+      memberId: member.memberId,
+      name: member.name,
+      email: member.email,
+      phone: member.phone,
+      address: member.address,
+      totalBorrow: member.totalBorrow,
+      currentlyBorrow: member.currentlyBorrow,
+      fine: member.fine + fine,
+      joined: member.joined,
+      expiry: member.expiry,
+    );
+    await memberProvider.updateMember(updatedMember);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Fine of ₹$fine recorded'),
+        content: Text('Fine of Rs $fine recorded'),
         backgroundColor: Colors.green,
       ),
     );
   }
 
   void _viewDetails(IssueRecords issue, Books? book, Members? member) {
+    final bookTitle = book?.title ?? issue.bookName ?? 'Deleted Book';
+    final bookAuthor = book?.author ?? 'Unknown';
+    final memberName = member?.name ?? issue.memberName ?? 'Deleted Member';
+    final memberPhone = member?.phone ?? 'N/A';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -634,24 +772,28 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             children: [
               // Book Details
               _buildDetailSection('Book Information', [
-                _buildDetailRow('Title', book?.title ?? 'Unknown'),
-                _buildDetailRow('Author', book?.author ?? 'Unknown'),
+                _buildDetailRow('Title', bookTitle),
+                _buildDetailRow('Author', bookAuthor),
                 _buildDetailRow(
                   'Book ID',
                   'B${issue.bookId.toString().padLeft(3, '0')}',
                 ),
+                if (book == null)
+                  _buildDetailRow('Status', '⚠️ Book Deleted'),
               ]),
 
               SizedBox(height: 16),
 
               // Member Details
               _buildDetailSection('Member Information', [
-                _buildDetailRow('Name', member?.name ?? 'Unknown'),
+                _buildDetailRow('Name', memberName),
                 _buildDetailRow(
                   'Member ID',
                   'M${issue.memberId.toString().padLeft(3, '0')}',
                 ),
-                _buildDetailRow('Phone', member?.phone ?? 'N/A'),
+                _buildDetailRow('Phone', memberPhone),
+                if (member == null)
+                  _buildDetailRow('Status', '⚠️ Member Deleted'),
               ]),
 
               SizedBox(height: 16),
@@ -670,6 +812,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     'Return Date',
                     _formatDate(issue.returnDate!),
                   ),
+                if (issue.fineAmount > 0)
+                  _buildDetailRow('Fine', 'Rs ${issue.fineAmount}'),
               ]),
             ],
           ),
