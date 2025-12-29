@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'buttons.dart';
+
 class AppDialogs {
   static void showAlert({
     required BuildContext context,
@@ -13,13 +15,13 @@ class AppDialogs {
         title: Text(title),
         content: Text(message),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+          MyButton.outlinedButton(
+            method: () => Navigator.pop(context),
+            text:"Cancel",
           ),
-          TextButton(
-            onPressed: onConfirm,
-            child: const Text("Confirm"),
+          MyButton.primaryButton(
+            method: onConfirm,
+            text: "Confirm",
           ),
         ],
       ),

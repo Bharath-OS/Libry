@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/core/themes/styles.dart';
 
 import '../constants/app_colors.dart';
 import '../utilities/validation.dart';
@@ -12,7 +13,8 @@ class AppTextField {
     TextInputType keyboardType = TextInputType.text,
     bool isObscure = false,
     int maxLines = 1,
-    isReadOnly = false
+    isReadOnly = false,
+    int? maxLength
   }) {
     // Logic to select colors based on theme
     final textColor = isDarkTheme ? AppColors.darkTFText : AppColors.lightTFText;
@@ -22,14 +24,15 @@ class AppTextField {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        style: TextFieldStyle.inputTextStyle,
         controller: controller,
         obscureText: isObscure,
+        maxLength: maxLength,
         keyboardType: keyboardType,
         maxLines: maxLines,
         readOnly: isReadOnly,
         decoration: InputDecoration(
           labelText: label,
-
           labelStyle: TextStyle(
             color: textColor.withAlpha((0.7 * 255).toInt()),
             fontSize: 14,
@@ -69,6 +72,7 @@ class AppTextField {
     required Function(String) onFieldSubmitted
   }) {
     return TextFormField(
+      style: TextFieldStyle.inputTextStyle,
       controller: inputController,
       decoration: InputDecoration(
         hintText: label,
@@ -86,7 +90,6 @@ class AppTextField {
         filled: true,
         fillColor: Colors.white.withAlpha((0.1 * 255).toInt()),
       ),
-      style: TextStyle(color: AppColors.background),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
       validator: (value) => Validator.emptyValidator(value),
