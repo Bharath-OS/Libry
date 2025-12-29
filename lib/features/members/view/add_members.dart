@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:libry/core/widgets/text_field.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/themes/styles.dart';
 import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import '../viewmodel/members_provider.dart'; // You'll need this
-import 'package:provider/provider.dart'; // You'll need this
-import '../data/model/members_model.dart'; // You'll need this
+import '../viewmodel/members_provider.dart'; 
+import 'package:provider/provider.dart'; 
+import '../data/model/members_model.dart'; 
 
 class AddMembersScreen extends StatefulWidget {
   const AddMembersScreen({super.key});
@@ -78,12 +77,13 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
     return Form(
       key: _formKey,
       child: Column(
-        spacing: 20,
+        spacing: 10,
         children: [
           AppTextField.customTextField(
             controller: controllers[0],
             label: 'Full Name',
-            validator: (value)=>Validator.emptyValidator(value)
+            validator: (value)=>Validator.emptyValidator(value),
+            maxLength: 24
           ),
           AppTextField.customTextField(
             controller: controllers[1],
@@ -95,7 +95,8 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
             controller: controllers[2],
             label: 'Phone',
             keyboardType: TextInputType.phone,
-            validator: (phone)=>Validator.phoneValidator(phone)
+            validator: (phone)=>Validator.phoneValidator(phone),
+            maxLength: 10
           ),
           AppTextField.customTextField(
             controller: controllers[3],

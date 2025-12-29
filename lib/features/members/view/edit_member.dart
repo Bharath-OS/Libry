@@ -96,6 +96,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             controller: controllers[0],
             label: "Name",
             validator: (value) => Validator.emptyValidator(value),
+            maxLength: 24
           ),
           AppTextField.customTextField(
             controller: controllers[1],
@@ -108,6 +109,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             label: 'Phone',
             keyboardType: TextInputType.phone,
             validator: (phone) => Validator.phoneValidator(phone),
+            maxLength: 10
           ),
           AppTextField.customTextField(
             controller: controllers[3],
