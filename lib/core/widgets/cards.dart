@@ -131,12 +131,12 @@ class Cards {
                     children: [
                       if (showBookName)
                         Text(
-                          issue.bookName, // Fallback logic implemented here
+                          issue.bookName??"Book is deleted", // Fallback logic implemented here
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       if (showMemberName)
                         Text(
-                          "Member: ${issue.memberName}", // Fallback logic
+                          "Member: ${issue.memberName ?? "Member is deleted"}", // Fallback logic
                           style: TextStyle(color: Colors.grey[600], fontSize: 13),
                         ),
                     ],
@@ -154,7 +154,7 @@ class Cards {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _dateInfo("Issued", issue.issueDate),
+                _dateInfo("Issued", issue.borrowDate),
                 _dateInfo("Due", issue.dueDate),
                 if (isReturned) _dateInfo("Returned", issue.returnDate!),
               ],

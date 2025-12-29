@@ -1,13 +1,17 @@
 import 'dart:core';
+
 import 'package:flutter/material.dart';
+
 import 'package:libry/features/members/data/model/members_model.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
+
 import '../../features/books/data/model/books_model.dart';
 import '../../features/books/viewmodel/book_provider.dart';
 import '../constants/app_colors.dart';
 import '../themes/styles.dart';
 import '../utilities/helpers.dart';
+import '../utilities/helpers/pdf_export_services.dart';
 import 'buttons.dart';
 import 'layout_widgets.dart';
 
@@ -185,7 +189,8 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           ),
         ),
       ),
-      floatingActionButton: MyButton.fab(method: widget.fabMethod),
+      //todo book floating action button
+      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items.runtimeType is List<Books> ? "Book" : "Member"}"),
     );
   }
 
@@ -196,21 +201,33 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: TextField(
-            style: TextFieldStyle.inputTextStyle,
+            style: TextFieldStyle.inputTextStyle.copyWith(color: Colors.black),
             controller: _searchController,
             decoration: InputDecoration(
+              filled: true,
+              fillColor: AppColors.white,
               hintText: widget.searchHint,
-              prefixIcon: Icon(Icons.search, color: AppColors.background),
+              hintStyle: TextStyle(color: Colors.grey[600]),
+              prefixIcon: Icon(Icons.search, color: AppColors.primary),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                icon: Icon(Icons.clear, color: AppColors.background),
+                icon: Icon(Icons.clear, color: AppColors.primary),
                 onPressed: () {
                   _searchController.clear();
                 },
               )
                   : null,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.primary, width: 2.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.primary, width: 2.0),
               ),
             ),
           ),
@@ -253,20 +270,39 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     margin: EdgeInsets.only(right: 10),
                     child: IconButton(
                       onPressed: _resetFilters,
-                      icon: Icon(Icons.filter_alt_off, color: Colors.orange),
+                      icon: Icon(Icons.filter_alt_off, color: Colors.white),
                       tooltip: 'Reset Filters',
                       style: IconButton.styleFrom(
-                        backgroundColor: AppColors.white,
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
+
+                // Export Button
+                Container(
+                  margin: EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () => _exportToPdf(context),
+                    icon: Icon(Icons.download, color: Colors.white),
+                    tooltip: 'Export to PDF',
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
 
                 // Filter Button
                 IconButton(
                   onPressed: () => _showFilterDialog(context),
                   icon: Stack(
                     children: [
-                      Icon(Icons.filter_list, color: AppColors.background),
+                      Icon(Icons.filter_list, color: Colors.white),
                       if (_hasActiveFilters)
                         Positioned(
                           right: 0,
@@ -283,7 +319,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     ],
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.white,
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -377,16 +416,27 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     );
   }
 
-  Widget _buildChip(String label, bool isSelected, VoidCallback onTap, {Color? color}) {
+  Widget _buildChip(String label, bool isSelected, VoidCallback onTap,
+      {Color? color}) {
     return FilterChip(
-      label: Text(label),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.black,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       selected: isSelected,
       onSelected: (_) => onTap(),
-      backgroundColor: AppColors.white.withAlpha((0.3 * 255).toInt()),
-      selectedColor: color ?? AppColors.background,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : AppColors.white,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      backgroundColor: AppColors.white,
+      selectedColor: color ?? AppColors.primary,
+      checkmarkColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isSelected ? Colors.transparent : AppColors.primary,
+          width: 1.5,
+        ),
       ),
     );
   }
@@ -453,6 +503,9 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             SizedBox(height: 8),
             TextButton(
               onPressed: _resetFilters,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
               child: Text('Clear filters'),
             ),
           ],
@@ -465,11 +518,22 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        backgroundColor: AppColors.white,
         title: Row(
           children: [
-            Icon(Icons.filter_list, color: AppColors.background),
-            SizedBox(width: 8),
-            Text('Filter Options'),
+            Icon(Icons.filter_list, color: AppColors.primary),
+            SizedBox(width: 12),
+            Text(
+              'Filter Options',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ],
         ),
         content: SingleChildScrollView(
@@ -485,56 +549,58 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     Navigator.pop(context);
                     _applyFilters();
                   }),
-                  _buildDialogRadio('Available Only', _availabilityFilter == 'available', () {
-                    setState(() => _availabilityFilter = 'available');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
-                  _buildDialogRadio('Unavailable Only', _availabilityFilter == 'unavailable', () {
-                    setState(() => _availabilityFilter = 'unavailable');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
+                  _buildDialogRadio('Available Only',
+                      _availabilityFilter == 'available', () {
+                        setState(() => _availabilityFilter = 'available');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
+                  _buildDialogRadio('Unavailable Only',
+                      _availabilityFilter == 'unavailable', () {
+                        setState(() => _availabilityFilter = 'unavailable');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
                 ]),
-
                 SizedBox(height: 16),
-                Divider(),
+                Divider(color: Colors.grey[300]),
                 SizedBox(height: 16),
-
                 _buildDialogSection('Genre', [
                   _buildGenreDropdown(),
                 ]),
-
                 SizedBox(height: 16),
-                Divider(),
+                Divider(color: Colors.grey[300]),
                 SizedBox(height: 16),
-
                 _buildDialogSection('Language', [
                   _buildLanguageDropdown(),
                 ]),
               ] else if (_filteredItems is List<Members>) ...[
                 // Member Filters
                 _buildDialogSection('Membership Status', [
-                  _buildDialogRadio('All Members', _membershipFilter == 'all', () {
-                    setState(() => _membershipFilter = 'all');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
-                  _buildDialogRadio('Active Only', _membershipFilter == 'active', () {
-                    setState(() => _membershipFilter = 'active');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
-                  _buildDialogRadio('Expiring Soon (30 days)', _membershipFilter == 'expiring_soon', () {
-                    setState(() => _membershipFilter = 'expiring_soon');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
-                  _buildDialogRadio('Expired', _membershipFilter == 'expired', () {
-                    setState(() => _membershipFilter = 'expired');
-                    Navigator.pop(context);
-                    _applyFilters();
-                  }),
+                  _buildDialogRadio('All Members', _membershipFilter == 'all',
+                          () {
+                        setState(() => _membershipFilter = 'all');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
+                  _buildDialogRadio('Active Only',
+                      _membershipFilter == 'active', () {
+                        setState(() => _membershipFilter = 'active');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
+                  _buildDialogRadio('Expiring Soon (30 days)',
+                      _membershipFilter == 'expiring_soon', () {
+                        setState(() => _membershipFilter = 'expiring_soon');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
+                  _buildDialogRadio('Expired', _membershipFilter == 'expired',
+                          () {
+                        setState(() => _membershipFilter = 'expired');
+                        Navigator.pop(context);
+                        _applyFilters();
+                      }),
                 ]),
               ],
             ],
@@ -546,11 +612,28 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               _resetFilters();
               Navigator.pop(context);
             },
-            child: Text('Reset All'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.orange,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: Text(
+              'Reset All',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            ),
+            child: Text(
+              'Close',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            ),
           ),
         ],
       ),
@@ -566,74 +649,119 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: AppColors.background,
+            color: Colors.black87,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 12),
         ...children,
       ],
     );
   }
 
   Widget _buildDialogRadio(String label, bool isSelected, VoidCallback onTap) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(label),
-      leading: Radio(
-        value: true,
-        groupValue: isSelected,
-        onChanged: (_) => onTap(),
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+          color: isSelected ? AppColors.primary : Colors.grey[300]!,
+          width: isSelected ? 2.0 : 1.0,
+        ),
       ),
-      onTap: onTap,
+      color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.primary : Colors.black87,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        leading: Radio(
+          value: true,
+          groupValue: isSelected,
+          onChanged: (_) => onTap(),
+          activeColor: AppColors.primary,
+        ),
+        onTap: onTap,
+      ),
     );
   }
 
   Widget _buildGenreDropdown() {
-    final bookProvider = context.watch<BookViewModel>();
     final allBooks = widget.items as List<Books>;
-    final genres = ['All', ...allBooks.map((b) => b.genre).toSet().toList()..sort()];
+    final genres = [
+      'All',
+      ...allBooks.map((b) => b.genre).toSet().toList()..sort()
+    ];
 
-    return DropdownButtonFormField<String>(
-      value: _selectedGenre ?? 'All',
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[400]!),
       ),
-      items: genres.map((genre) {
-        return DropdownMenuItem(
-          value: genre,
-          child: Text(genre),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() => _selectedGenre = value);
-        Navigator.pop(context);
-        _applyFilters();
-      },
+      child: DropdownButtonFormField<String>(
+        value: _selectedGenre ?? 'All',
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        dropdownColor: AppColors.white,
+        style: TextStyle(color: Colors.black),
+        items: genres.map((genre) {
+          return DropdownMenuItem(
+            value: genre,
+            child: Text(
+              genre,
+              style: TextStyle(color: Colors.black87),
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() => _selectedGenre = value);
+          Navigator.pop(context);
+          _applyFilters();
+        },
+      ),
     );
   }
 
   Widget _buildLanguageDropdown() {
     final allBooks = widget.items as List<Books>;
-    final languages = ['All', ...allBooks.map((b) => b.language).toSet().toList()..sort()];
+    final languages = [
+      'All',
+      ...allBooks.map((b) => b.language).toSet().toList()..sort()
+    ];
 
-    return DropdownButtonFormField<String>(
-      value: _selectedLanguage ?? 'All',
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[400]!),
       ),
-      items: languages.map((language) {
-        return DropdownMenuItem(
-          value: language,
-          child: Text(language),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() => _selectedLanguage = value);
-        Navigator.pop(context);
-        _applyFilters();
-      },
+      child: DropdownButtonFormField<String>(
+        value: _selectedLanguage ?? 'All',
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        dropdownColor: AppColors.white,
+        style: TextStyle(color: Colors.black),
+        items: languages.map((language) {
+          return DropdownMenuItem(
+            value: language,
+            child: Text(
+              language,
+              style: TextStyle(color: Colors.black87),
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() => _selectedLanguage = value);
+          Navigator.pop(context);
+          _applyFilters();
+        },
+      ),
     );
   }
 
@@ -641,18 +769,33 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Clear All ${widget.title}'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          'Clear All ${widget.title}',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         content: Text(
           'Are you sure you want to delete all ${widget.title.toLowerCase()}? This action cannot be undone.',
+          style: TextStyle(color: Colors.black87),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[700],
+            ),
             child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             child: Text('Delete All'),
           ),
         ],
@@ -667,6 +810,73 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         await context.read<MembersProvider>().clearAllMembers();
         showSnackBar(text: "All Members cleared", context: context);
       }
+    }
+  }
+
+  Future<void> _exportToPdf(BuildContext context) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(color: AppColors.primary),
+                  SizedBox(height: 16),
+                  Text(
+                    'Generating PDF...',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Export based on type
+      if (_filteredItems.isEmpty) {
+        Navigator.pop(context);
+        showSnackBar(
+          text: "No data to export",
+          context: context,
+        );
+        return;
+      }
+
+      if (_filteredItems is List<Books>) {
+        await PdfExportService.exportBooksToPdf(_filteredItems);
+      } else if (_filteredItems is List<Members>) {
+        await PdfExportService.exportMembersToPdf(_filteredItems);
+      }
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      showSnackBar(
+        text: "PDF exported successfully!",
+        context: context,
+      );
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
+      showSnackBar(
+        text: "Error exporting PDF: ${e.toString()}",
+        context: context,
+      );
     }
   }
 }
