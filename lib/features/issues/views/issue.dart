@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:libry/core/utilities/helpers/date_formater.dart';
+import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/themes/styles.dart';
@@ -30,7 +31,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   Members? _selectedMember;
   Books? _selectedBook;
-  DateTime _dueDate = DateTime.now().add(Duration(days: 14));
+  late DateTime _dueDate;
 
   bool _isMemberVerified = false;
   bool _isBookSelected = false;
@@ -48,6 +49,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   void _loadInitialData() {
     final memberProvider = context.read<MembersProvider>();
     final bookProvider = context.read<BookViewModel>();
+    _dueDate = DateTime.now().add(Duration(days: context.read<SettingsViewModel>().issuePeriod));
 
     _filteredMembers = memberProvider.members;
     _filteredBooks = bookProvider.books
