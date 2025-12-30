@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PdfExportService {
   static pw.Font? _regularFont;
@@ -17,6 +19,7 @@ class PdfExportService {
       _boldFont = await PdfGoogleFonts.robotoBold();
     }
   }
+
   /// Export books to PDF
   static Future<void> exportBooksToPdf(List<dynamic> books) async {
     // Initialize fonts first
@@ -56,10 +59,7 @@ class PdfExportService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.landscape,
         margin: pw.EdgeInsets.all(32),
-        theme: pw.ThemeData.withFont(
-          base: _regularFont!,
-          bold: _boldFont!,
-        ),
+        theme: pw.ThemeData.withFont(base: _regularFont!, bold: _boldFont!),
         build: (context) => [
           // Title
           pw.Header(
@@ -109,7 +109,7 @@ class PdfExportService {
           pw.SizedBox(height: 20),
 
           // Table
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             headers: headers,
             data: data,
             border: pw.TableBorder.all(color: PdfColors.grey400),
@@ -118,9 +118,7 @@ class PdfExportService {
               fontSize: 9,
               font: _boldFont,
             ),
-            headerDecoration: pw.BoxDecoration(
-              color: PdfColors.grey300,
-            ),
+            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
             cellStyle: pw.TextStyle(fontSize: 8, font: _regularFont),
             cellHeight: 30,
             cellAlignments: {
@@ -181,7 +179,7 @@ class PdfExportService {
         _truncateText(member.address, 15),
         member.totalBorrow.toString(),
         member.currentlyBorrow.toString(),
-        'Rs ${member.fine.toStringAsFixed(0)}',  // Changed to show no decimals for currency
+        'Rs ${member.fine.toStringAsFixed(0)}', // Changed to show no decimals for currency
         _formatDate(member.joined),
         _formatDate(member.expiry),
       ];
@@ -192,10 +190,7 @@ class PdfExportService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.landscape,
         margin: pw.EdgeInsets.all(32),
-        theme: pw.ThemeData.withFont(
-          base: _regularFont!,
-          bold: _boldFont!,
-        ),
+        theme: pw.ThemeData.withFont(base: _regularFont!, bold: _boldFont!),
         build: (context) => [
           // Title
           pw.Header(
@@ -233,11 +228,17 @@ class PdfExportService {
                 _buildSummaryItem('Total Members', members.length.toString()),
                 _buildSummaryItem(
                   'Active',
-                  members.where((m) => m.expiry.isAfter(DateTime.now())).length.toString(),
+                  members
+                      .where((m) => m.expiry.isAfter(DateTime.now()))
+                      .length
+                      .toString(),
                 ),
                 _buildSummaryItem(
                   'Expired',
-                  members.where((m) => m.expiry.isBefore(DateTime.now())).length.toString(),
+                  members
+                      .where((m) => m.expiry.isBefore(DateTime.now()))
+                      .length
+                      .toString(),
                 ),
                 _buildSummaryItem(
                   'With Fines',
@@ -249,7 +250,7 @@ class PdfExportService {
           pw.SizedBox(height: 20),
 
           // Table
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             headers: headers,
             data: data,
             border: pw.TableBorder.all(color: PdfColors.grey400),
@@ -258,9 +259,7 @@ class PdfExportService {
               fontSize: 8,
               font: _boldFont,
             ),
-            headerDecoration: pw.BoxDecoration(
-              color: PdfColors.grey300,
-            ),
+            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
             cellStyle: pw.TextStyle(fontSize: 7, font: _regularFont),
             cellHeight: 35,
             cellAlignments: {
@@ -305,10 +304,7 @@ class PdfExportService {
           ),
         ),
         pw.SizedBox(height: 4),
-        pw.Text(
-          label,
-          style: pw.TextStyle(fontSize: 10, font: _regularFont),
-        ),
+        pw.Text(label, style: pw.TextStyle(fontSize: 10, font: _regularFont)),
       ],
     );
   }
@@ -320,7 +316,9 @@ class PdfExportService {
 
       // Save to temporary directory first
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/${filename}_${_formatFilename(DateTime.now())}.pdf');
+      final file = File(
+        '${dir.path}/${filename}_${_formatFilename(DateTime.now())}.pdf',
+      );
       await file.writeAsBytes(bytes);
 
       // Share the PDF
@@ -329,8 +327,23 @@ class PdfExportService {
         filename: '${filename}_${_formatFilename(DateTime.now())}.pdf',
       );
     } catch (e) {
-      print('Error saving PDF: $e');
+      debugPrint('Error saving PDF: $e');
       rethrow;
+    }
+  }
+
+  static Future<bool> _savePdfToDevice({
+    required String filename,
+    required pw.Document pdf,
+  }) async {
+    final root = await getExternalStorageDirectory();
+    final file = File('${root!.path}/$filename');
+    try {
+      await file.writeAsBytes(await pdf.save());
+      return true;
+    } catch (e) {
+      debugPrint('Exception e: $e');
+      return false;
     }
   }
 
@@ -353,5 +366,139 @@ class PdfExportService {
   /// Format filename with timestamp
   static String _formatFilename(DateTime date) {
     return DateFormat('yyyyMMdd_HHmmss').format(date);
+  }
+
+  static Future<void> exportIssuesPdf(List<dynamic> issues) async {
+    await _initializeFonts();
+
+    final pdf = pw.Document();
+
+    final headers = [
+      'ID',
+      'Name of Book',
+      'Name of Member',
+      'Issue Date',
+      'Due Date',
+      'Returned Date',
+    ];
+
+    final data = issues.map((issue) {
+      return [
+        (issue.issueId ?? '').toString(),
+        _truncateText(issue.bookName, 20),
+        _truncateText(issue.memberName, 20),
+        issue.issueDate.toString(),
+        issue.dueDate.toString(),
+        issue.returnDate.toString(),
+      ];
+    }).toList();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.portrait,
+        margin: pw.EdgeInsets.all(32),
+        theme: pw.ThemeData.withFont(base: _regularFont!, bold: _boldFont!),
+        build: (context) => [
+          pw.Header(
+            level: 0,
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  'Issue Records',
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                    font: _boldFont,
+                  ),
+                ),
+                pw.Text(
+                  'Generated: ${_formatDateTime(DateTime.now())}',
+                  style: pw.TextStyle(fontSize: 10, font: _regularFont),
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 20),
+
+          pw.Container(
+            padding: pw.EdgeInsets.all(10),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.grey300,
+              borderRadius: pw.BorderRadius.circular(5),
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              children: [
+                _buildSummaryItem(
+                  'Total Issues made',
+                  issues.length.toString(),
+                ),
+                _buildSummaryItem(
+                  'Active',
+                  Provider.of<IssueProvider>(
+                    context as BuildContext,
+                  ).activeCount.toString(),
+                ),
+                _buildSummaryItem(
+                  'Returned',
+                  Provider.of<IssueProvider>(
+                    context as BuildContext,
+                  ).returnedCount.toString(),
+                ),
+                _buildSummaryItem(
+                  'Due Today',
+                  Provider.of<IssueProvider>(
+                    context as BuildContext,
+                  ).issuedTodayCount.toString(),
+                ),
+                _buildSummaryItem(
+                  'Over Due',
+                  Provider.of<IssueProvider>(
+                    context as BuildContext,
+                  ).overDueCount.toString(),
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 20),
+
+          pw.TableHelper.fromTextArray(
+            headers: headers,
+            data: data,
+            border: pw.TableBorder.all(color: PdfColors.grey400),
+            headerStyle: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 9,
+              font: _boldFont,
+            ),
+            headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
+            cellStyle: pw.TextStyle(fontSize: 8, font: _regularFont),
+            cellHeight: 30,
+            cellAlignments: {
+              0: pw.Alignment.centerLeft,
+              1: pw.Alignment.centerLeft,
+              2: pw.Alignment.centerLeft,
+              3: pw.Alignment.center,
+              4: pw.Alignment.center,
+              5: pw.Alignment.center,
+            },
+          ),
+        ],
+        footer: (context) => pw.Container(
+          alignment: pw.Alignment.centerRight,
+          margin: pw.EdgeInsets.only(top: 10),
+          child: pw.Text(
+            'Page ${context.pageNumber} of ${context.pagesCount}',
+            style: pw.TextStyle(fontSize: 10, font: _regularFont),
+          ),
+        ),
+      ),
+    );
+
+    await _savePdfToDevice(
+      pdf: pdf,
+      filename: 'issue_records${DateTime.now().millisecondsSinceEpoch}',
+    );
   }
 }
