@@ -24,7 +24,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -152,7 +152,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
   Widget _buildIssueCard(
     IssueRecords issue,
     MemberModel? member,
-    IssueProvider issueProvider,
+    IssueViewModel issueProvider,
   ) {
     final isOverdue =
         !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
@@ -307,7 +307,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
 
   List<IssueRecords> _applyFilter(
     List<IssueRecords> issues,
-    IssueProvider issueProvider,
+    IssueViewModel issueProvider,
   ) {
     switch (_filter) {
       case 'active':
@@ -329,7 +329,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
 
   Future<void> _returnBook(IssueRecords issue) async {
     try {
-      final issueProvider = context.read<IssueProvider>();
+      final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 

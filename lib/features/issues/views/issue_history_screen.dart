@@ -29,7 +29,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -121,7 +121,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     IssueRecords issue,
     BookModel? book,
     MemberModel? member,
-    IssueProvider issueProvider,
+    IssueViewModel issueProvider,
   ) {
     final isOverdue =
         !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
@@ -506,7 +506,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
   List<IssueRecords> _applyFilter(
     List<IssueRecords> issues,
-    IssueProvider issueProvider,
+    IssueViewModel issueProvider,
   ) {
     switch (_filter) {
       case 'active':
@@ -527,7 +527,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Future<void> _returnBook(IssueRecords issue) async {
-    final issueProvider = context.read<IssueProvider>();
+    final issueProvider = context.read<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -707,7 +707,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Future<void> _payFine(IssueRecords issue, int fine, MemberModel member) async {
-    final issueProvider = context.read<IssueProvider>();
+    final issueProvider = context.read<IssueViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
     // 1. Update issue with fine amount

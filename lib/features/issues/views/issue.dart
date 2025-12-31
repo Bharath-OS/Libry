@@ -667,7 +667,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      final issueProvider = context.read<IssueProvider>();
+      final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 

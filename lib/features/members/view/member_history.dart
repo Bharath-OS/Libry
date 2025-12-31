@@ -25,7 +25,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -157,7 +157,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   Widget _buildIssueCard(
       IssueRecords issue,
       BookModel? book,
-      IssueProvider issueProvider,
+      IssueViewModel issueProvider,
       ) {
     final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
     final fine = issueProvider.calculateFine(issue);
@@ -302,7 +302,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
 
   List<IssueRecords> _applyFilter(
       List<IssueRecords> issues,
-      IssueProvider issueProvider,
+      IssueViewModel issueProvider,
       ) {
     switch (_filter) {
       case 'active':
@@ -324,7 +324,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
 
   Future<void> _returnBook(IssueRecords issue, BookModel? book) async {
     try {
-      final issueProvider = context.read<IssueProvider>();
+      final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
       final memberProvider = context.read<MembersProvider>();
 

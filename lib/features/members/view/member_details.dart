@@ -27,7 +27,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final memberDetail = context.watch<MembersProvider>().getMemberById(widget.memberId);
-    final issue = context.watch<IssueProvider>().getMemberFine(widget.memberId);
+    final issue = context.watch<IssueViewModel>().getMemberFine(widget.memberId);
 
     if (memberDetail == null) {
       return LayoutWidgets.customScaffold(

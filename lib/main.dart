@@ -35,7 +35,7 @@ void main() async {
           ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
           ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
           ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
-          ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
+          ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()..init()),
           ChangeNotifierProvider<MembersProvider>(
             create: (context) => MembersProvider(),
           ),

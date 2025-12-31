@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickStats() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.watch<BookViewModel>();
     final memberProvider = context.watch<MembersProvider>();
 
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTodayOverview() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
 
     return dashboardContainer([
       Text(
@@ -230,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildRecentActivity() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersProvider>();
 

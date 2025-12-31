@@ -436,25 +436,25 @@ class PdfExportService {
                 ),
                 _buildSummaryItem(
                   'Active',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).activeCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Returned',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).returnedCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Due Today',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).issuedTodayCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Over Due',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).overDueCount.toString(),
                 ),

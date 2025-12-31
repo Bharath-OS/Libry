@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import '../data/service/issue_records_db.dart';
 import '../data/model/issue_records_model.dart';
 
-class IssueProvider with ChangeNotifier {
+class IssueViewModel with ChangeNotifier {
   List<IssueRecords> _allIssues = [];
   List<IssueRecords> _filteredIssues = [];
   int fineAmount = 5;
