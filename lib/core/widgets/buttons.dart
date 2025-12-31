@@ -95,12 +95,12 @@ class MyButton {
   }
 
   // 5. Delete Button (Fixed Logic)
-  static Widget deleteButton({required VoidCallback method, bool isTextButton = false}) {
+  static Widget deleteButton({required VoidCallback method, bool isTextButton = false,bool isDisabled = false}) {
     if (isTextButton) {
       return ElevatedButton(
-        onPressed: method,
+        onPressed: isDisabled ? null : method,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.dangerButton,
+          backgroundColor: !isDisabled ? AppColors.dangerButton : AppColors.lightGrey,
           foregroundColor: AppColors.dangerButtonText,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           elevation: 0,
