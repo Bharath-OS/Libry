@@ -24,7 +24,7 @@ class MembersScreen extends StatelessWidget {
       tileBuilder: (member) => Cards.memberCard(
         memberDetails: member,
         onDelete: () =>
-            context.read<MembersViewModel>().removeMember(member.id!),
+            deleteMember(context: context, memberDetails: member,inDetailsScreen: false)
       ),
       onTap: (member) => Navigator.push(
         context,

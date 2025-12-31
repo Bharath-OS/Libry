@@ -1,5 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:libry/features/members/data/model/members_model.dart';
+import 'package:libry/features/members/viewmodel/members_provider.dart';
+import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -59,6 +62,48 @@ void deleteBook({
                 : null; // Go back to books list
             AppDialogs.showSnackBar(
               message: "${bookDetails.title} deleted successfully",
+              context: context,
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+void deleteMember({
+  required BuildContext context,
+  required MemberModel memberDetails,
+  inDetailsScreen = true,
+}) {
+  final borrowCount = 5 - memberDetails.currentlyBorrow;
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Delete Member"),
+      content: borrowCount == 0
+          ? const Text("Are you sure you want to delete this member?")
+          : const Text(
+          "You cannot delete this member while they still have borrowed books. Please return all books before deleting the member."
+      ),
+      actions: [
+        MyButton.outlinedButton(
+            method: () => Navigator.pop(context),
+            text: "Cancel",
+            color: AppColors.lightGrey
+        ),
+        MyButton.deleteButton(
+          isTextButton: true,
+          isDisabled: borrowCount != 0,
+          method: () {
+            // 🔥 Use the actual book ID, not index 0
+            context.read<MembersViewModel>().removeMember(memberDetails.id!);
+            Navigator.pop(context); // Close dialog
+            inDetailsScreen
+                ? Navigator.pop(context)
+                : null; // Go back to books list
+            AppDialogs.showSnackBar(
+              message: "${memberDetails.name} deleted successfully",
               context: context,
             );
           },

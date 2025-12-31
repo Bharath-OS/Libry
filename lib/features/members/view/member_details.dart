@@ -420,7 +420,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: () => _confirmDelete(member),
+              onPressed: () => deleteMember(context: context, memberDetails: member,inDetailsScreen: true),
               icon: Icon(Icons.delete),
               label: Text('Delete Member'),
               style: OutlinedButton.styleFrom(
@@ -432,31 +432,6 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDelete(MemberModel member) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete Member'),
-        content: Text('Are you sure you want to delete "${member.name}"? This action cannot be undone.'),
-        actions: [
-          MyButton.outlinedButton(
-            method: () => Navigator.pop(context),
-            text:'Cancel',
-            color: AppColors.lightGrey
-          ),
-          MyButton.deleteButton(
-            method: () {
-              Navigator.pop(context);
-              context.read<MembersViewModel>().removeMember(member.id!);
-              Navigator.pop(context); // Go back after delete
-            },
-            isTextButton: true
           ),
         ],
       ),
