@@ -28,7 +28,7 @@ PageTransition transition({required Widget child}) {
 
 void deleteBook({
   required BuildContext context,
-  required Books bookDetails,
+  required BookModel bookDetails,
   inDetailsScreen = true,
 }) {
   final borrowCount = bookDetails.totalCopies - bookDetails.copiesAvailable;

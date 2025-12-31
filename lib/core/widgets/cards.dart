@@ -9,7 +9,7 @@ import '../utilities/helpers.dart';
 import 'buttons.dart';
 
 class Cards {
-  static Widget bookCard({required Books bookDetails, required VoidCallback onDelete}) {
+  static Widget bookCard({required BookModel bookDetails, required VoidCallback onDelete}) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -50,7 +50,7 @@ class Cards {
     );
   }
 
-  static Widget memberCard({required Members memberDetails, required VoidCallback onDelete}) {
+  static Widget memberCard({required MemberModel memberDetails, required VoidCallback onDelete}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(15),

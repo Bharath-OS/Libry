@@ -39,7 +39,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
       final membersProvider = Provider.of<MembersProvider>(context, listen: false);
 
       // Create a new member
-      final newMember = Members(
+      final newMember = MemberModel(
         name: controllers[0].text,
         email: controllers[1].text,
         phone: controllers[2].text,

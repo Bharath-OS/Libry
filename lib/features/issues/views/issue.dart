@@ -29,16 +29,16 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   final _memberFieldController = TextEditingController();
   final _bookFieldController = TextEditingController();
 
-  Members? _selectedMember;
-  Books? _selectedBook;
+  MemberModel? _selectedMember;
+  BookModel? _selectedBook;
   late DateTime _dueDate;
 
   bool _isMemberVerified = false;
   bool _isBookSelected = false;
   bool _isProcessing = false;
 
-  List<Members> _filteredMembers = [];
-  List<Books> _filteredBooks = [];
+  List<MemberModel> _filteredMembers = [];
+  List<BookModel> _filteredBooks = [];
 
   @override
   void initState() {
@@ -561,7 +561,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     }
   }
 
-  void _selectMember(Members member) {
+  void _selectMember(MemberModel member) {
     setState(() {
       _selectedMember = member;
       _isMemberVerified = true;
@@ -582,7 +582,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     }
   }
 
-  void _selectBook(Books book) {
+  void _selectBook(BookModel book) {
     setState(() {
       _selectedBook = book;
       _isBookSelected = true;
@@ -681,7 +681,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       );
 
       // 2. Update book in SQLite
-      final updatedBook = Books(
+      final updatedBook = BookModel(
         id: _selectedBook!.id,
         title: _selectedBook!.title,
         author: _selectedBook!.author,
@@ -697,7 +697,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       await bookProvider.updateBook(updatedBook);
 
       // 3. Update member in SQLite
-      final updatedMember = Members(
+      final updatedMember = MemberModel(
         id: _selectedMember!.id,
         memberId: _selectedMember!.memberId,
         name: _selectedMember!.name,

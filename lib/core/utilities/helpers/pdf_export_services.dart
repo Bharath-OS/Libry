@@ -68,7 +68,7 @@ class PdfExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'Books Export Report',
+                  'BookModel Export Report',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
@@ -94,7 +94,7 @@ class PdfExportService {
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                _buildSummaryItem('Total Books', books.length.toString()),
+                _buildSummaryItem('Total BookModel', books.length.toString()),
                 _buildSummaryItem(
                   'Available',
                   books.where((b) => b.copiesAvailable > 0).length.toString(),
@@ -199,7 +199,7 @@ class PdfExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'Members Export Report',
+                  'MemberModel Export Report',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
@@ -225,7 +225,7 @@ class PdfExportService {
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                _buildSummaryItem('Total Members', members.length.toString()),
+                _buildSummaryItem('Total MemberModel', members.length.toString()),
                 _buildSummaryItem(
                   'Active',
                   members

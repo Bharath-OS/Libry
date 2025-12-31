@@ -55,7 +55,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     );
   }
 
-  Widget _buildHeaderSection(Books book) {
+  Widget _buildHeaderSection(BookModel book) {
     final isAvailable = book.copiesAvailable > 0;
     const Color titleTextColor = Colors.black;
     final Color authorTextColor = AppColors.darkGrey;
@@ -149,7 +149,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     );
   }
 
-  Widget _buildInformationSection(Books book) {
+  Widget _buildInformationSection(BookModel book) {
     return Container(
       margin: EdgeInsets.all(20),
       padding: EdgeInsets.all(20),
@@ -283,7 +283,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     );
   }
 
-  Widget _buildActionButtons(Books book) {
+  Widget _buildActionButtons(BookModel book) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(

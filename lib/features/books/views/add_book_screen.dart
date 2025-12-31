@@ -105,7 +105,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
       final totalCopies = int.parse(controllers[7].text);
 
-      final book = Books(
+      final book = BookModel(
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
         language: _selectedLanguage!,

@@ -106,7 +106,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     );
   }
 
-  Widget _buildMemberHeader(Members member, int activeIssues) {
+  Widget _buildMemberHeader(MemberModel member, int activeIssues) {
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
@@ -156,7 +156,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
 
   Widget _buildIssueCard(
       IssueRecords issue,
-      Books? book,
+      BookModel? book,
       IssueProvider issueProvider,
       ) {
     final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
@@ -322,7 +322,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     setState(() => _filter = filter);
   }
 
-  Future<void> _returnBook(IssueRecords issue, Books? book) async {
+  Future<void> _returnBook(IssueRecords issue, BookModel? book) async {
     try {
       final issueProvider = context.read<IssueProvider>();
       final bookProvider = context.read<BookViewModel>();
@@ -333,7 +333,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
 
       // 2. Update book in SQLite
       if (book != null) {
-        final updatedBook = Books(
+        final updatedBook = BookModel(
           id: book.id,
           title: book.title,
           author: book.author,
@@ -352,7 +352,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
       // 3. Update member in SQLite
       final member = memberProvider.getMemberById(issue.memberId);
       if (member != null) {
-        final updatedMember = Members(
+        final updatedMember = MemberModel(
           id: member.id,
           memberId: member.memberId,
           name: member.name,

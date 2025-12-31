@@ -52,12 +52,12 @@ class _MainScreenState extends State<MainScreen> {
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/books-icon.svg", index: 1),
             selectedColor: AppColors.primaryButton,
-            title: const Text('Books'),
+            title: const Text('BookModel'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/members-icon.svg", index: 2),
             selectedColor: AppColors.primaryButton,
-            title: const Text('Members'),
+            title: const Text('MemberModel'),
           ),
           BottomBarItem(
             icon: svgIcon(path: "assets/icons/transactions-icon.svg", index: 3),

@@ -196,7 +196,7 @@ class SettingsScreenState extends State<SettingsView> {
           Divider(height: 1),
           buildSettingTile(
             icon: Icons.book_online,
-            title: 'Max Books Per Member',
+            title: 'Max BookModel Per Member',
             subtitle: '5 books at a time',
             trailing: Icon(Icons.info_outline, color: iconColor),
           ),

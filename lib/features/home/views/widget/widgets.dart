@@ -90,7 +90,7 @@ Widget buildTodayItem(String label, String count, IconData icon, Color color) {
   );
 }
 //recent issue cards
-Widget recentIssueCard({required bool isOverdue, required int daysLeft, required Books? book, required Members? member}){
+Widget recentIssueCard({required bool isOverdue, required int daysLeft, required BookModel? book, required MemberModel? member}){
   return Padding(
     padding: EdgeInsets.only(bottom: 12),
     child: Row(

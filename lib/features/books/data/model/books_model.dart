@@ -1,4 +1,4 @@
-class Books {
+class BookModel {
   int? id;
   String title;
   String author;
@@ -10,7 +10,7 @@ class Books {
   int totalCopies;
   int copiesAvailable;
   String coverPicture;
-  Books({
+  BookModel({
     this.id,
     required this.title,
     required this.author,

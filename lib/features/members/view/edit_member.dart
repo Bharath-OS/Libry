@@ -10,7 +10,7 @@ import '../viewmodel/members_provider.dart';
 import '../data/model/members_model.dart';
 
 class EditMembersScreen extends StatefulWidget {
-  final Members member;
+  final MemberModel member;
   const EditMembersScreen({super.key, required this.member});
 
   @override
@@ -47,7 +47,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
       );
 
       // Create a new member
-      final updatedMember = Members(
+      final updatedMember = MemberModel(
         id: widget.member.id,
         memberId: widget.member.memberId,
         name: controllers[0].text.trim(),

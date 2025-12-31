@@ -62,7 +62,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildHeaderSection(Members member) {
+  Widget _buildHeaderSection(MemberModel member) {
     final isActive = DateTime.now().isBefore(member.expiry);
     final daysUntilExpiry = member.expiry.difference(DateTime.now()).inDays;
 
@@ -167,7 +167,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildInformationSection(Members member) {
+  Widget _buildInformationSection(MemberModel member) {
     return Container(
       margin: EdgeInsets.all(20),
       padding: EdgeInsets.all(20),
@@ -226,7 +226,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildStatisticsSection(Members member, int issue) {
+  Widget _buildStatisticsSection(MemberModel member, int issue) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(20),
@@ -368,7 +368,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildActionButtons(Members member) {
+  Widget _buildActionButtons(MemberModel member) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
@@ -438,7 +438,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  void _confirmDelete(Members member) {
+  void _confirmDelete(MemberModel member) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

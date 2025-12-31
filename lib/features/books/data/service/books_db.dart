@@ -30,7 +30,7 @@ class BooksDB {
   }
 
 
-  static Future<void> addBook(Books book) async {
+  static Future<void> addBook(BookModel book) async {
     final db = await _initDB();
     await db.insert(_tableName, {
       BookKeys.title: book.title,
@@ -51,13 +51,13 @@ class BooksDB {
     await db.delete(_tableName, where: 'id = ?', whereArgs: [bookId]);
   }
 
-  static Future<List<Books>> getBooks() async {
+  static Future<List<BookModel>> getBooks() async {
     final db = await _initDB();
     final data = await db.query(_tableName);
 
-    List<Books> books = data
+    List<BookModel> books = data
         .map(
-          (book) => Books(
+          (book) => BookModel(
             id: book['id'] as int,
             title: book[BookKeys.title] as String,
             author: book[BookKeys.author] as String,
@@ -75,7 +75,7 @@ class BooksDB {
     return books;
   }
 
-  static Future<void> updateBook(Books book) async {
+  static Future<void> updateBook(BookModel book) async {
     final db = await _initDB();
     await db.update(
       _tableName,

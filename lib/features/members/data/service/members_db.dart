@@ -28,7 +28,7 @@ class MembersDB {
     ''');
   }
 
-  static Future<void> addMember(Members member,int count) async {
+  static Future<void> addMember(MemberModel member,int count) async {
     final db = await _initDB();
     await db.insert(_tableName, {
       MembersKey.memberId: _generateMemberId(count),
@@ -53,13 +53,13 @@ class MembersDB {
     await db.delete(_tableName, where: 'id = ?', whereArgs: [memberId]);
   }
 
-  static Future<List<Members>> getMembers() async {
+  static Future<List<MemberModel>> getMembers() async {
     final db = await _initDB();
     final data = await db.query(_tableName);
 
-    List<Members> members = data
+    List<MemberModel> members = data
         .map(
-          (member) => Members(
+          (member) => MemberModel(
             id: member['id'] as int,
             name: member[MembersKey.name] as String,
             memberId: member[MembersKey.memberId] as String,
@@ -77,7 +77,7 @@ class MembersDB {
     return members;
   }
 
-  static Future<void> updateMember(Members member)async{
+  static Future<void> updateMember(MemberModel member)async{
     final db = await _initDB();
     await db.update(_tableName, {
       MembersKey.memberId: member.memberId,

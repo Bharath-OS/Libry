@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildStatCard(
             icon: Icons.people_rounded,
             stat: activeMembersCount,
-            label: "Active Members",
+            label: "Active MemberModel",
             color: color,
           ),
           verticalDivider(),

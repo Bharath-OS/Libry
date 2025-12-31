@@ -1,4 +1,4 @@
-class Members {
+class MemberModel {
   int? id;
   String name;
   String? memberId;
@@ -11,7 +11,7 @@ class Members {
   DateTime joined;
   DateTime expiry;
 
-  Members({
+  MemberModel({
     this.id,
     this.memberId,
     required this.name,

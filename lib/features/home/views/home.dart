@@ -140,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             buildStatCard(
-              'Total Books',
+              'Total BookModel',
               bookProvider.totalBooks.toString(),
               Icons.book,
               Colors.blue,
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             buildStatCard(
-              'Members',
+              'MemberModel',
               memberProvider.totalCount.toString(),
               Icons.people,
               Colors.orange,

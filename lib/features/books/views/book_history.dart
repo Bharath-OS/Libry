@@ -103,7 +103,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     );
   }
 
-  Widget _buildBookHeader(Books book) {
+  Widget _buildBookHeader(BookModel book) {
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
@@ -151,7 +151,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
 
   Widget _buildIssueCard(
     IssueRecords issue,
-    Members? member,
+    MemberModel? member,
     IssueProvider issueProvider,
   ) {
     final isOverdue =
@@ -339,7 +339,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
       // 2. Update book in SQLite
       final book = bookProvider.getBookById(issue.bookId);
       if (book != null) {
-        final updatedBook = Books(
+        final updatedBook = BookModel(
           id: book.id,
           title: book.title,
           author: book.author,
@@ -358,7 +358,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
       // 3. Update member in SQLite
       final member = memberProvider.getMemberById(issue.memberId);
       if (member != null) {
-        final updatedMember = Members(
+        final updatedMember = MemberModel(
           id: member.id,
           memberId: member.memberId,
           name: member.name,

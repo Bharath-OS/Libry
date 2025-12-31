@@ -14,7 +14,7 @@ import '../viewmodel/book_provider.dart';
 
 
 class EditBookScreenView extends StatefulWidget {
-  final Books book;
+  final BookModel book;
   const EditBookScreenView({super.key, required this.book});
 
   @override
@@ -25,7 +25,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
-  late Books _book;
+  late BookModel _book;
   String? _temporaryImage;
   bool _isPickingImage = false;
   String? _selectedGenre;
@@ -137,7 +137,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         }
       }
 
-      final updatedBook = Books(
+      final updatedBook = BookModel(
         id: _book.id,
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),

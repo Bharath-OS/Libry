@@ -7,11 +7,11 @@ class MembersProvider extends ChangeNotifier {
     fetchMembers();
   }
 
-  List<Members> _members = [];
-  List<Members> _filteredMembers = [];
+  List<MemberModel> _members = [];
+  List<MemberModel> _filteredMembers = [];
   // String searchText = '';
 
-  List<Members> get members => _filteredMembers;
+  List<MemberModel> get members => _filteredMembers;
   int get count => _filteredMembers.length;
   int get totalCount => _members.length;
   int get activeMembers => _members
@@ -34,7 +34,7 @@ class MembersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Members>? checkMatch(String searchText) {
+  List<MemberModel>? checkMatch(String searchText) {
     final matchedMembers = _members
         .where((member) => member.name.toLowerCase().contains(searchText))
         .toList();
@@ -47,7 +47,7 @@ class MembersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addMember(Members member) async {
+  Future<void> addMember(MemberModel member) async {
     await MembersDB.addMember(member, count + 1);
     await fetchMembers();
   }
@@ -58,13 +58,13 @@ class MembersProvider extends ChangeNotifier {
     await fetchMembers();
   }
 
-  Future<void> updateMember(Members member) async {
+  Future<void> updateMember(MemberModel member) async {
     await MembersDB.updateMember(member);
     await fetchMembers();
   }
 
   // Helper method to get member by ID
-  Members? getMemberById(int id) {
+  MemberModel? getMemberById(int id) {
     try {
       return _members.firstWhere((member) => member.id == id);
     } catch (e) {

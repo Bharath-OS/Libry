@@ -119,8 +119,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
   Widget _buildIssueCard(
     IssueRecords issue,
-    Books? book,
-    Members? member,
+    BookModel? book,
+    MemberModel? member,
     IssueProvider issueProvider,
   ) {
     final isOverdue =
@@ -577,7 +577,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       await issueProvider.returnBook(issue.issueId);
 
       // 2. Update book copies
-      final updatedBook = Books(
+      final updatedBook = BookModel(
         id: book.id,
         title: book.title,
         author: book.author,
@@ -593,7 +593,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       await bookProvider.updateBook(updatedBook);
 
       // 3. Update member borrow count
-      final updatedMember = Members(
+      final updatedMember = MemberModel(
         id: member.id,
         memberId: member.memberId,
         name: member.name,
@@ -706,7 +706,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         false;
   }
 
-  Future<void> _payFine(IssueRecords issue, int fine, Members member) async {
+  Future<void> _payFine(IssueRecords issue, int fine, MemberModel member) async {
     final issueProvider = context.read<IssueProvider>();
     final memberProvider = context.read<MembersProvider>();
 
@@ -715,7 +715,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     await IssueDBHive.box.put(issue.issueId, updatedIssue);
 
     // 2. Update member's fine total
-    final updatedMember = Members(
+    final updatedMember = MemberModel(
       id: member.id,
       memberId: member.memberId,
       name: member.name,
@@ -740,7 +740,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     );
   }
 
-  void _viewDetails(IssueRecords issue, Books? book, Members? member) {
+  void _viewDetails(IssueRecords issue, BookModel? book, MemberModel? member) {
     final bookTitle = book?.title ?? issue.bookName ?? 'Deleted Book';
     final bookAuthor = book?.author ?? 'Unknown';
     final memberName = member?.name ?? issue.memberName ?? 'Deleted Member';
