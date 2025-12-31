@@ -66,7 +66,7 @@ class ImageService {
 
       return permanentPath;
     } catch (e) {
-      print('Error making image permanent: $e');
+      debugPrint('Error making image permanent: $e');
       return null;
     }
   }
@@ -86,7 +86,7 @@ class ImageService {
         await file.delete();
       }
     } catch (e) {
-      print('Error deleting image: $e');
+      debugPrint('Error deleting image: $e');
     }
   }
 
@@ -99,7 +99,7 @@ class ImageService {
           await file.delete();
         }
       } catch (e) {
-        print('Error deleting temp image: $e');
+        debugPrint('Error deleting temp image: $e');
       }
       _temporaryImagePath = null;
     }

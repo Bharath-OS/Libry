@@ -37,12 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> userVerification() async {
-    print("At userverification");
+    debugPrint("At userverification");
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       _isVisible = true;
     });
-    print("before Navigator");
+    debugPrint("before Navigator");
     late Widget childWidget;
     late final bool isLogged;
     late final bool isRegistered;
@@ -50,12 +50,12 @@ class _SplashScreenState extends State<SplashScreen> {
     {
       isLogged = UserModelService.isLogged;
       isRegistered = UserModelService.isRegistered;
-      print("isLogged: $isLogged");
-      print("isRegistered: $isRegistered");
+      debugPrint("isLogged: $isLogged");
+      debugPrint("isRegistered: $isRegistered");
     }
     catch(e)
     {
-      print("Exception: $e");
+      debugPrint("Exception: $e");
     }
 
 

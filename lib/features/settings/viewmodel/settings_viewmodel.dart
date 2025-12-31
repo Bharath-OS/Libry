@@ -63,10 +63,10 @@ class SettingsViewModel with ChangeNotifier {
   String deleteGenre(String genre) {
     if (SettingsService.instance.deleteGenre(genre)) {
       _syncData();
-      print("$genre successfully deleted.");
+      debugPrint("$genre successfully deleted.");
       return "$genre successfully deleted.";
     }
-    print("Failed to delete $genre");
+    debugPrint("Failed to delete $genre");
     return "Failed to delete $genre";
   }
 

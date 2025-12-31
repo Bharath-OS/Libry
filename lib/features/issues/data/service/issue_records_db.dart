@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
 import '../model/issue_records_model.dart';
 
 class IssueDBHive {
@@ -22,7 +22,7 @@ class IssueDBHive {
         _nextId = (ids.reduce((a, b) => a > b ? a : b)) + 1;
       }
     } catch (e) {
-      print('Error opening issue box: $e');
+      debugPrint('Error opening issue box: $e');
       rethrow;
     }
   }
