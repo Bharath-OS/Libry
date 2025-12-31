@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:libry/features/issues/data/service/issue_records_db.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
@@ -51,10 +52,15 @@ class LibryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: CustomTheme.myTheme,
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      builder: (context,child) {
+        return MaterialApp(
+          theme: CustomTheme.myTheme,
+          debugShowCheckedModeBanner: false,
+          home: const SplashScreen(),
+        );
+      }
     );
   }
 }
