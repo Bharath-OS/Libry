@@ -375,13 +375,13 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               controller: inputControllers[0],
               label: "Book title",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: inputControllers[1],
               label: "Author name",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             //Language dropdown
             Padding(
@@ -425,7 +425,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               controller: inputControllers[4],
               label: "Publisher",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: inputControllers[5],
