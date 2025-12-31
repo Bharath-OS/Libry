@@ -33,7 +33,7 @@ class MyButton {
         backgroundColor: AppColors.primaryButton,
         foregroundColor: Colors.white,
         minimumSize: Size(width ?? 0, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 0,
       ),
       child: Text(text, style: TextStyle(fontFamily: "Livvic", fontSize: fontSize, fontWeight: FontWeight.bold)),
@@ -53,7 +53,7 @@ class MyButton {
         side: BorderSide(color: themeColor, width: 1.5),
         foregroundColor: themeColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       ),
@@ -72,14 +72,16 @@ class MyButton {
     required VoidCallback method,
     required String text,
     double fontSize = 15,
+    double? width
   }) {
     return ElevatedButton(
       onPressed: method,
       style: ElevatedButton.styleFrom(
+        minimumSize: Size(width ?? 0, 48),
         backgroundColor: AppColors.secondaryButton,
         foregroundColor: AppColors.secondaryButtonText,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
         ),
         elevation: 0,
       ),
