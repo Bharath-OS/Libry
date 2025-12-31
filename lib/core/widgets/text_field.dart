@@ -14,7 +14,8 @@ class AppTextField {
     bool isObscure = false,
     int maxLines = 1,
     isReadOnly = false,
-    int? maxLength
+    int? maxLength,
+    Widget? suffixIcon
   }) {
     // Logic to select colors based on theme
     final textColor = isDarkTheme ? AppColors.darkTFText : AppColors.lightTFText;
@@ -32,6 +33,7 @@ class AppTextField {
         maxLines: maxLines,
         readOnly: isReadOnly,
         decoration: InputDecoration(
+          suffixIcon: suffixIcon,
           labelText: label,
           labelStyle: TextStyle(
             color: textColor.withAlpha((0.7 * 255).toInt()),
