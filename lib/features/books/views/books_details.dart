@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:libry/core/widgets/dialogs.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
+import '../../../core/widgets/buttons.dart';
 import '../data/model/books_model.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import 'book_history.dart';
@@ -336,7 +336,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: () => _confirmDelete(book),
+              onPressed: () => deleteBook(context: context, bookDetails: book,inDetailsScreen: true),
               icon: Icon(Icons.delete),
               label: Text('Delete Book'),
               style: OutlinedButton.styleFrom(
@@ -376,33 +376,6 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
           Icon(Icons.book, size: 60, color: AppColors.darkGrey),
           SizedBox(height: 8),
           Text('No Cover', style: TextStyle(color: AppColors.darkGrey)),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDelete(Books book) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete Book'),
-        content: Text(
-          'Are you sure you want to delete "${book.title}"? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              deleteBook(context: context, bookDetails: book);
-              Navigator.pop(context); // Go back after delete
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Delete'),
-          ),
         ],
       ),
     );
