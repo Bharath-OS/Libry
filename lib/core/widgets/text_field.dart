@@ -40,6 +40,8 @@ class AppTextField {
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           labelText: label,
+          // counterText: '',
+          counterStyle: textStyle,
           labelStyle: textStyle,
           // Border when the field is NOT selected
           enabledBorder: OutlineInputBorder(

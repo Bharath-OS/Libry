@@ -392,6 +392,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   labelStyle: textStyle.copyWith(fontSize: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: AppColors.background)
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -423,7 +424,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             ),
             AppTextField.customTextField(
               controller: inputControllers[4],
-              label: "Publisher",
+              label: "Publisher Name",
               maxLength: 20,
               validator: (value) => Validator.nameValidator(value),
             ),
@@ -518,7 +519,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
           readOnly: true,
           decoration: InputDecoration(
             hintText: "Tap to select cover image",
-            hintStyle: textStyle.copyWith(color: Colors.grey),
+            hintStyle: textStyle.copyWith(color: AppColors.background),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
@@ -541,7 +542,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   ),
                 IconButton(
                   onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library),
+                  icon: Icon(Icons.photo_library,color: AppColors.background,),
                   tooltip: 'Pick from gallery',
                 ),
               ],
