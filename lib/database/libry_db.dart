@@ -1,8 +1,8 @@
-import 'package:libry/database/books_db.dart';
+import 'package:libry/features/books/data/service/books_db.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/books_model.dart';
-import 'members_db.dart';
+import '../features/books/data/model/books_model.dart';
+import '../features/members/data/service/members_db.dart';
 
 class DatabaseServices {
   static Database? _db;
