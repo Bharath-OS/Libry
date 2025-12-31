@@ -9,23 +9,52 @@ class Validator {
     return null;
   }
 
+  static String? fullNameValidator(String? name) {
+    if (emptyValidator(name) != null) {
+      return emptyValidator(name);
+    } else {
+      if (name!.length <= 2) {
+        return 'Name should have more than 2 characters.';
+      } else if (_hasNumbers(name)) {
+        return "Name can't contain numbers";
+      } else if (_hasSpecialCharacters(name)) {
+        return 'Name can\'t contain special characters';
+      } else {
+        return null;
+      }
+    }
+  }
+
+  static bool _hasNumbers(String input) {
+    // Matches any digit 0-9
+    final numberRegex = RegExp(r'\d');
+    return numberRegex.hasMatch(input);
+  }
+
+  static bool _hasSpecialCharacters(String name) {
+    // special character patter checks if there is any characters other than a-z and A-z
+    final specialCharPattern = RegExp(r"[^a-zA-Z'. -]");
+    return specialCharPattern.hasMatch(name);
+  }
+
   static String? passwordValidator(String? password) {
-    if (password == null || password.isEmpty || password == " ") {
+    if (password == null || password.trim().isEmpty) {
       return 'Password cannot be empty';
     }
-    // final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
-    // if(!passwordRegex.hasMatch(password)){
-    //   return "Invalid password";
-    // }
-    else if (password.length <= 6) {
-      return "Password must be at least 6 characters";
+
+    final passwordRegex = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,}\$");
+
+    if (!passwordRegex.hasMatch(password)) {
+      return "Password must be at least 8 characters, \ninclude upper & lower case letters, \nand a number";
     }
+
     return null;
   }
 
+
   static String? emailValidator(String? email) {
     final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+      r'^[a-zA-Z0-9](\.?[a-zA-Z0-9_-])*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$',
       caseSensitive: false,
     );
     if (email == null || email.isEmpty || email == " ") {
@@ -55,18 +84,18 @@ class Validator {
     return null;
   }
 
-  static String? yearValidator(String? value){
+  static String? yearValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Year is required';
     }
 
     final year = int.tryParse(value);
-    if(year == null){
+    if (year == null) {
       return "Enter a valid year";
     }
 
     final currentYear = DateTime.now().year;
-    if(year < 1500 || year > currentYear){
+    if (year < 1500 || year > currentYear) {
       // return 'Enter a valid year between 1500 and ${currentYear}';
       return 'Enter a valid year';
     }
@@ -74,7 +103,10 @@ class Validator {
   }
 
   //Validates numbers
-  static String? numberValidator({required String? value, bool isDouble = false}) {
+  static String? numberValidator({
+    required String? value,
+    bool isDouble = false,
+  }) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
     }
@@ -88,7 +120,7 @@ class Validator {
     return null;
   }
 
-  static String? copiesValidator(String? value, String totalBooks){
+  static String? copiesValidator(String? value, String totalBooks) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
     }
@@ -100,8 +132,8 @@ class Validator {
     if (copiesAvailable <= 0) {
       return 'Must be greater than 0';
     }
-    if(totalBooksCount != null){
-      if(totalBooksCount < copiesAvailable){
+    if (totalBooksCount != null) {
+      if (totalBooksCount < copiesAvailable) {
         return 'available should be less than total copies';
       }
     }
@@ -118,14 +150,15 @@ class Validator {
     return null;
   }
 
-  static String? languageValidator(String? language, List<String> existingLanguages){
-    if(language == null || language.isEmpty){
+  static String? languageValidator(
+    String? language,
+    List<String> existingLanguages,
+  ) {
+    if (language == null || language.isEmpty) {
       return 'Language is required';
-    }
-    else if(existingLanguages.contains(language.trim())){
+    } else if (existingLanguages.contains(language.trim())) {
       return 'Language already exists';
-    }
-    else{
+    } else {
       return null;
     }
   }
