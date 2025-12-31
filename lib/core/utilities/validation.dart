@@ -9,7 +9,7 @@ class Validator {
     return null;
   }
 
-  static String? fullNameValidator(String? name) {
+  static String? nameValidator(String? name) {
     if (emptyValidator(name) != null) {
       return emptyValidator(name);
     } else {

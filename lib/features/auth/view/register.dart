@@ -68,7 +68,7 @@ class _RegisterViewState extends State<RegisterView> {
             label: "Full name",
             controller: userNameController,
             validator: (value) {
-              return Validator.fullNameValidator(value);
+              return Validator.nameValidator(value);
             },
           ),
           AppTextField.customTextField(
