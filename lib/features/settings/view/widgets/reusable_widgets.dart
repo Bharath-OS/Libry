@@ -198,6 +198,7 @@ void showSettingsEditDialog({
       content: Form(
         key: formKey,
         child: TextFormField(
+          cursorColor: AppColors.background,
           controller: controller,
           keyboardType: keyboardType,
           autofocus: true,

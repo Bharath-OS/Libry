@@ -25,6 +25,7 @@ class AppTextField {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        cursorColor: AppColors.background,
         style: TextFieldStyle.inputTextStyle,
         controller: controller,
         obscureText: isObscure,
@@ -74,6 +75,7 @@ class AppTextField {
     required Function(String) onFieldSubmitted
   }) {
     return TextFormField(
+      cursorColor: AppColors.background,
       style: TextFieldStyle.inputTextStyle,
       controller: inputController,
       decoration: InputDecoration(

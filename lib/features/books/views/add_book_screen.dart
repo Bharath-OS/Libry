@@ -512,6 +512,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
         // Image Picker Field
         TextFormField(
+          cursorColor: AppColors.background,
           style: textStyle,
           controller: _imageController,
           readOnly: true,

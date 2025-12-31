@@ -385,6 +385,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
 
         // Image Picker Field
         TextFormField(
+          cursorColor: AppColors.background,
           style: textStyle,
           controller: _imageController,
           readOnly: true,

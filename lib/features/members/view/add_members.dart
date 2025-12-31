@@ -125,7 +125,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
                     foregroundColor: AppColors.white,
                   ),
                   onPressed: _submitForm,
-                  child: Text('Add Member'),
+                  child: Text('Add'),
                 ),
               ),
             ],
