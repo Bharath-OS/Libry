@@ -55,6 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 
+  bool _isVisible = false;
   Widget _form() {
     return Form(
       key: _formKey,
@@ -67,7 +68,7 @@ class _RegisterViewState extends State<RegisterView> {
             label: "Full name",
             controller: userNameController,
             validator: (value) {
-              return Validator.emptyValidator(value);
+              return Validator.fullNameValidator(value);
             },
           ),
           AppTextField.customTextField(
@@ -79,11 +80,20 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           AppTextField.customTextField(
             label: "Password",
-            isObscure: true,
+            isObscure: _isVisible,
             controller: passwordController,
             validator: (value) {
               return Validator.passwordValidator(value);
             },
+            suffixIcon: IconButton(
+              onPressed: () => setState(() => _isVisible = !_isVisible),
+              icon: Icon(
+                !_isVisible
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: AppColors.background,
+              ),
+            ),
           ),
           Selector<AuthViewModel, bool>(
             selector: (_, auth) => auth.isLoading,
