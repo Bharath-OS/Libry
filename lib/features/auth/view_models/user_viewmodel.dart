@@ -5,13 +5,10 @@ import 'package:libry/features/auth/data/services/userdata.dart';
 import '../../home/views/main_screen.dart';
 
 class AuthViewModel with ChangeNotifier {
-  late UserModel _user;
+  // late UserModel _user;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  AuthViewModel({required UserModel user}) {
-    _user = user;
-  }
 
   String? registerUser({
     required UserModel user,

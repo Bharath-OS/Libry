@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:libry/features/issues/data/service/issue_records_db.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
@@ -31,6 +32,7 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
+          ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
           ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
           ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
           ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
