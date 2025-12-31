@@ -26,7 +26,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final iconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
-    final memberDetail = context.watch<MembersProvider>().getMemberById(widget.memberId);
+    final memberDetail = context.watch<MembersViewModel>().getMemberById(widget.memberId);
     final issue = context.watch<IssueViewModel>().getMemberFine(widget.memberId);
 
     if (memberDetail == null) {
@@ -453,7 +453,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
           MyButton.deleteButton(
             method: () {
               Navigator.pop(context);
-              context.read<MembersProvider>().removeMember(member.id!);
+              context.read<MembersViewModel>().removeMember(member.id!);
               Navigator.pop(context); // Go back after delete
             },
             isTextButton: true

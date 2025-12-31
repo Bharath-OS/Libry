@@ -36,7 +36,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final membersProvider = Provider.of<MembersProvider>(context, listen: false);
+      final membersProvider = Provider.of<MembersViewModel>(context, listen: false);
 
       // Create a new member
       final newMember = MemberModel(

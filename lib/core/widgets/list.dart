@@ -805,7 +805,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         await context.read<BookViewModel>().clearAllBooks();
         showSnackBar(text: "All BookModel cleared", context: context);
       } else if (widget.items is List<MemberModel>) {
-        await context.read<MembersProvider>().clearAllMembers();
+        await context.read<MembersViewModel>().clearAllMembers();
         showSnackBar(text: "All MemberModel cleared", context: context);
       }
     }

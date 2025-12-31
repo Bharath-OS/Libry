@@ -31,7 +31,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   Widget build(BuildContext context) {
     final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
 
     // Get all issues and apply filter
     final allIssues = issueProvider.allIssues;
@@ -529,7 +529,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   Future<void> _returnBook(IssueRecords issue) async {
     final issueProvider = context.read<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
 
     final fine = issueProvider.calculateFine(issue);
 
@@ -708,7 +708,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
   Future<void> _payFine(IssueRecords issue, int fine, MemberModel member) async {
     final issueProvider = context.read<IssueViewModel>();
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
 
     // 1. Update issue with fine amount
     final updatedIssue = issue.copyWith(fineAmount: fine);

@@ -47,7 +47,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _loadInitialData() {
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
     final bookProvider = context.read<BookViewModel>();
     _dueDate = DateTime.now().add(Duration(days: context.read<SettingsViewModel>().issuePeriod));
 
@@ -493,7 +493,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _filterMembers(String query) {
-    final members = context.read<MembersProvider>().members;
+    final members = context.read<MembersViewModel>().members;
 
     if (query.isEmpty) {
       setState(() => _filteredMembers = members);
@@ -598,7 +598,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _selectedMember = null;
       _isMemberVerified = false;
       _memberFieldController.clear();
-      _filteredMembers = context.read<MembersProvider>().members;
+      _filteredMembers = context.read<MembersViewModel>().members;
     });
   }
 
@@ -669,7 +669,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     try {
       final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
-      final memberProvider = context.read<MembersProvider>();
+      final memberProvider = context.read<MembersViewModel>();
 
       // 1. Create issue record in Hive
       final issueId = await issueProvider.borrowBook(
@@ -802,7 +802,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _dueDate = DateTime.now().add(Duration(days: 14));
       _memberFieldController.clear();
       _bookFieldController.clear();
-      _filteredMembers = context.read<MembersProvider>().members;
+      _filteredMembers = context.read<MembersViewModel>().members;
       _filteredBooks = context
           .read<BookViewModel>()
           .books

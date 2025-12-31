@@ -26,7 +26,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
   Widget build(BuildContext context) {
     final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
 
     final book = bookProvider.getBookById(widget.bookId);
     if (book == null) {
@@ -331,7 +331,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     try {
       final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
-      final memberProvider = context.read<MembersProvider>();
+      final memberProvider = context.read<MembersViewModel>();
 
       // 1. Mark as returned in Hive
       await issueProvider.returnBook(issue.issueId);

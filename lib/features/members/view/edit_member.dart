@@ -41,7 +41,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final membersProvider = Provider.of<MembersProvider>(
+      final membersProvider = Provider.of<MembersViewModel>(
         context,
         listen: false,
       );

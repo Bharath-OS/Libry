@@ -14,18 +14,18 @@ class MembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int totalMembers = context.watch<MembersProvider>().totalCount;
-    int availableCount = context.watch<MembersProvider>().activeMembers;
+    int totalMembers = context.watch<MembersViewModel>().totalCount;
+    int availableCount = context.watch<MembersViewModel>().activeMembers;
     return ListScreen<MemberModel>(
       title: "MemberModel",
       totalCount: totalMembers,
       availableCount: availableCount,
       searchHint: "Search MemberModel...",
-      items: context.watch<MembersProvider>().members,
+      items: context.watch<MembersViewModel>().members,
       tileBuilder: (member) => Cards.memberCard(
         memberDetails: member,
         onDelete: () =>
-            context.read<MembersProvider>().removeMember(member.id!),
+            context.read<MembersViewModel>().removeMember(member.id!),
       ),
       onTap: (member) => Navigator.push(
         context,
