@@ -21,7 +21,11 @@ class AppTextField {
     final textColor = isDarkTheme ? AppColors.darkTFText : AppColors.lightTFText;
     final borderColor = isDarkTheme ? AppColors.darkTFBorder : AppColors.lightTFBorder;
     final focusColor = isDarkTheme ? AppColors.darkTFFocus : AppColors.lightTFFocus;
-
+    final textStyle = TextStyle(
+      color: textColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
@@ -36,10 +40,7 @@ class AppTextField {
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           labelText: label,
-          labelStyle: TextStyle(
-            color: textColor.withAlpha((0.7 * 255).toInt()),
-            fontSize: 14,
-          ),
+          labelStyle: textStyle,
           // Border when the field is NOT selected
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
