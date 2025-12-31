@@ -221,13 +221,13 @@ class IssueHistoryWidgets {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.history, size: 64, color: AppColors.darkGrey),
+          Icon(Icons.history, size: 64, color: AppColors.white),
           SizedBox(height: 16),
           Text(
             message,
             style: TextStyle(
               fontSize: 18,
-              color: AppColors.darkGrey,
+              color: AppColors.white,
               fontWeight: FontWeight.w500,
             ),
           ),

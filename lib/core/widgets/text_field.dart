@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:libry/core/themes/styles.dart';
-
 import '../constants/app_colors.dart';
 import '../utilities/validation.dart';
 
@@ -83,6 +82,7 @@ class AppTextField {
       controller: inputController,
       decoration: InputDecoration(
         hintText: label,
+        hintStyle: TextStyle(color: AppColors.background),
         prefixIcon: Icon(prefixIcon, color: AppColors.background),
         suffixIcon: flagVariable
             ? Icon(Icons.check, color: AppColors.success)

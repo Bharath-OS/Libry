@@ -3,6 +3,7 @@ import 'package:libry/core/widgets/text_field.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../viewmodel/members_provider.dart'; 
@@ -108,24 +109,16 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondaryButton,
-                    foregroundColor: AppColors.white,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel'),
+                child: MyButton.secondaryButton(
+                  method: () => Navigator.pop(context),
+                  text: 'Cancel',
                 ),
               ),
               SizedBox(width: 10),
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryButton,
-                    foregroundColor: AppColors.white,
-                  ),
-                  onPressed: _submitForm,
-                  child: Text('Add'),
+                child: MyButton.primaryButton(
+                  method: _submitForm,
+                  text: 'Save',
                 ),
               ),
             ],

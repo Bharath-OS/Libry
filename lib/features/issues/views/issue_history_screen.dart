@@ -84,6 +84,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       onClearFilter: () => setState(() => _filter = 'all'),
                     )
                   : Container(
+                      decoration: BoxDecoration(color: AppColors.background),
                       child: ListView.builder(
                         padding: EdgeInsets.all(16),
                         itemCount: filteredIssues.length,
@@ -341,7 +342,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             Row(
               children: [
                 Expanded(
-                  child: IssueHistoryWidgets.buildInfoItem(label: 'Issue ID',value: issue.issueId, icon:Icons.tag),
+                  child: IssueHistoryWidgets.buildInfoItem(
+                    label: 'Issue ID',
+                    value: issue.issueId,
+                    icon: Icons.tag,
+                  ),
                 ),
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
@@ -372,7 +377,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                         )
                       : IssueHistoryWidgets.buildInfoItem(
                           label: 'Days Left',
-                          value: '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
+                          value:
+                              '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
                           icon: Icons.access_time,
                         ),
                 ),
@@ -706,7 +712,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         false;
   }
 
-  Future<void> _payFine(IssueRecords issue, int fine, MemberModel member) async {
+  Future<void> _payFine(
+    IssueRecords issue,
+    int fine,
+    MemberModel member,
+  ) async {
     final issueProvider = context.read<IssueViewModel>();
     final memberProvider = context.read<MembersViewModel>();
 
