@@ -37,7 +37,7 @@ void main() async {
           ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
           ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()..init()),
           ChangeNotifierProvider<MembersViewModel>(
-            create: (context) => MembersViewModel(),
+            create: (_) => MembersViewModel(),
           ),
         ],
         child: LibryApp(),
