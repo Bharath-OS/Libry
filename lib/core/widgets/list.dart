@@ -494,7 +494,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           Text(
             _hasActiveFilters
                 ? "No results found"
-                : "No ${widget.title.toLowerCase()} found!",
+                : "No ${widget.items is List<BookModel> ? "book":"member"} found!",
             style: BodyTextStyles.bodySmallStyle(Colors.black),
           ),
           if (_hasActiveFilters) ...[
