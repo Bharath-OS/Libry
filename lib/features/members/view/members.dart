@@ -1,7 +1,6 @@
 import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:libry/features/members/view/add_members.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/list.dart';
@@ -17,7 +16,7 @@ class MembersScreen extends StatelessWidget {
     int totalMembers = context.watch<MembersViewModel>().totalCount;
     int availableCount = context.watch<MembersViewModel>().activeMembers;
     return ListScreen<MemberModel>(
-      title: "MemberModel",
+      title: "All Members",
       totalCount: totalMembers,
       availableCount: availableCount,
       searchHint: "Search MemberModel...",
