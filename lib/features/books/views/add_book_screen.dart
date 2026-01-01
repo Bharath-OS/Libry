@@ -481,23 +481,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             const SizedBox(height: 30),
 
             // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: MyButton.secondaryButton(
-                    method: _cancel,
-                    text: "Cancel",
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: MyButton.primaryButton(
-                    method: _submitForm,
-                    text: "Save",
-                  ),
-                ),
-              ],
-            ),
+            FormWidgets.formActionButtons(context: context, saveMethod: _submitForm)
           ],
         ),
       ),

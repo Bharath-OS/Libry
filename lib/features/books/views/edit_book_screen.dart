@@ -343,33 +343,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             const SizedBox(height: 30),
 
             // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondaryButton,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _cancel,
-                    child: Text("Cancel"),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryButton,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _saveBook,
-                    child: Text("Save Changes"),
-                  ),
-                ),
-              ],
-            ),
+            FormWidgets.formActionButtons(context: context, saveMethod: _saveBook)
           ],
         ),
       ),

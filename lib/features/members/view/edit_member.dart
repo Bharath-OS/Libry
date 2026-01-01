@@ -3,6 +3,7 @@ import 'package:provider/provider.dart'; // You'll need this
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
@@ -95,8 +96,8 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
           AppTextField.customTextField(
             controller: controllers[0],
             label: "Name",
-            validator: (value) => Validator.emptyValidator(value),
-            maxLength: 24
+            validator: (name) => Validator.nameValidator(name),
+            maxLength: 24,
           ),
           AppTextField.customTextField(
             controller: controllers[1],
@@ -109,39 +110,18 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             label: 'Phone',
             keyboardType: TextInputType.phone,
             validator: (phone) => Validator.phoneValidator(phone),
-            maxLength: 10
+            maxLength: 10,
           ),
           AppTextField.customTextField(
             controller: controllers[3],
             label: 'Address',
             maxLines: 3,
-            validator: (value) => Validator.emptyValidator(value),
+            validator: (address) => Validator.emptyValidator(address),
           ),
           SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondaryButton,
-                    foregroundColor: AppColors.white,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel'),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryButton,
-                    foregroundColor: AppColors.white,
-                  ),
-                  onPressed: _submitForm,
-                  child: Text('Edit Member'),
-                ),
-              ),
-            ],
+          FormWidgets.formActionButtons(
+            context: context,
+            saveMethod: _submitForm,
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'buttons.dart';
 import 'glassmorphism.dart';
 
 class FormWidgets {
@@ -34,4 +35,25 @@ class FormWidgets {
       ),
     );
   }
+
+  static Widget formActionButtons({
+    required BuildContext context,
+    required VoidCallback saveMethod,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: MyButton.secondaryButton(
+            method: () => Navigator.pop(context),
+            text: 'Cancel',
+          ),
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          child: MyButton.primaryButton(method: saveMethod, text: 'Save'),
+        ),
+      ],
+    );
+  }
+
 }
