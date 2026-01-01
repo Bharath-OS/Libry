@@ -13,17 +13,26 @@ class BookListScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ListScreen<BookModel>(
       title: "BookModel",
       totalCount: context.watch<BookViewModel>().totalBooks,
       availableCount: context.watch<BookViewModel>().availableBooks,
       searchHint: "Search BookModel...",
       items: context.watch<BookViewModel>().books,
-      tileBuilder: (book) => Cards.bookCard(bookDetails: book, onDelete: ()=>deleteBook(context: context,bookDetails: book,inDetailsScreen: false)),
+      tileBuilder: (book) => Cards.bookCard(
+        bookId: book.id!,
+        context: context,
+        onDelete: () => deleteBook(
+          context: context,
+          bookDetails: book,
+          inDetailsScreen: false,
+        ),
+      ),
       onTap: (book) => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context)=>BookInfoScreenView(bookId: book.id!))
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookInfoScreenView(bookId: book.id!),
+        ),
       ),
       fabMethod: () {
         Navigator.push(context, transition(child: AddBookScreenView()));

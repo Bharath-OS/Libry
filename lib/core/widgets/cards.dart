@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:libry/features/books/viewmodel/book_provider.dart';
+import 'package:libry/features/members/viewmodel/members_provider.dart';
+import 'package:provider/provider.dart';
 import '../../features/issues/data/model/issue_records_model.dart';
 import '../../features/members/data/model/members_model.dart';
 import '../../features/books/data/model/books_model.dart';
@@ -7,8 +10,9 @@ import '../constants/app_colors.dart';
 import 'buttons.dart';
 
 class Cards {
-  static Widget bookCard({required BookModel bookDetails, required VoidCallback onDelete}) {
-    final bool isAvailable = bookDetails.copiesAvailable > 0;
+  static Widget bookCard({required int bookId, required VoidCallback onDelete, required BuildContext context}) {
+    final bookDetails = context.watch<BookViewModel>().getBookById(bookId);
+    final bool isAvailable = bookDetails!.copiesAvailable > 0;
     final Color statusColor = isAvailable ? Colors.green : Colors.red;
     final String statusText = isAvailable ? 'Available' : 'Unavailable';
 
@@ -157,7 +161,7 @@ class Cards {
             const SizedBox(width: 12),
 
             // Delete Button
-            Container(
+            SizedBox(
               width: 40,
               height: 40,
               child: MyButton.deleteButton(method: onDelete),
@@ -168,7 +172,8 @@ class Cards {
     );
   }
 
-  static Widget memberCard({required MemberModel memberDetails, required VoidCallback onDelete}) {
+  static Widget memberCard({required int memberId, required VoidCallback onDelete, required BuildContext context}) {
+    final memberDetails = context.watch<MembersViewModel>().getMemberById(memberId)!;
     final bool isActive = memberDetails.expiry.isAfter(DateTime.now());
     final Color statusColor = isActive ? Colors.green : Colors.red;
 

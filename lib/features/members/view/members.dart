@@ -22,7 +22,8 @@ class MembersScreen extends StatelessWidget {
       searchHint: "Search MemberModel...",
       items: context.watch<MembersViewModel>().members,
       tileBuilder: (member) => Cards.memberCard(
-        memberDetails: member,
+        memberId: member.id!,
+        context: context,
         onDelete: () =>
             deleteMember(context: context, memberDetails: member,inDetailsScreen: false)
       ),
