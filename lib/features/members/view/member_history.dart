@@ -50,7 +50,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     final activeIssues = allMemberIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allMemberIssues.where((i) => i.isReturned).length;
     final overdueIssues = allMemberIssues
-        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+        .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate)))
         .length;
 
     return LayoutWidgets.customScaffold(
@@ -86,19 +86,19 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
             Expanded(
               child: filteredIssues.isEmpty
                   ? IssueHistoryWidgets.buildEmptyState(
-                message: 'Borrow a book to see the history',
-                showClearFilter: _filter != 'all',
-                onClearFilter: () => setState(() => _filter = 'all'),
-              )
+                      message: 'Borrow a book to see the history',
+                      showClearFilter: _filter != 'all',
+                      onClearFilter: () => setState(() => _filter = 'all'),
+                    )
                   : ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: filteredIssues.length,
-                itemBuilder: (context, index) {
-                  final issue = filteredIssues[index];
-                  final book = bookProvider.getBookById(issue.bookId);
-                  return _buildIssueCard(issue, book, issueProvider);
-                },
-              ),
+                      padding: EdgeInsets.all(16),
+                      itemCount: filteredIssues.length,
+                      itemBuilder: (context, index) {
+                        final issue = filteredIssues[index];
+                        final book = bookProvider.getBookById(issue.bookId);
+                        return _buildIssueCard(issue, book, issueProvider);
+                      },
+                    ),
             ),
           ],
         ),
@@ -155,11 +155,15 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   }
 
   Widget _buildIssueCard(
-      IssueRecords issue,
-      BookModel? book,
-      IssueViewModel issueProvider,
-      ) {
-    final isOverdue = !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+    IssueRecords issue,
+    BookModel? book,
+    IssueViewModel issueProvider,
+  ) {
+    final isOverdue =
+        !issue.isReturned &&
+        DateUtils.dateOnly(
+          DateTime.now(),
+        ).isAfter(DateUtils.dateOnly(issue.dueDate));
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -187,7 +191,8 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                     color: AppColors.background.withAlpha((0.1 * 255).toInt()),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: book?.coverPicture == null || book!.coverPicture.isEmpty
+                  child:
+                      book?.coverPicture == null || book!.coverPicture.isEmpty
                       ? Icon(Icons.book, color: AppColors.primary)
                       : Image.file(File(book.coverPicture), fit: BoxFit.cover),
                 ),
@@ -207,7 +212,10 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                       ),
                       Text(
                         'by ${book?.author ?? 'Unknown'}',
-                        style: TextStyle(fontSize: 12, color: AppColors.darkGrey),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.darkGrey,
+                        ),
                       ),
                     ],
                   ),
@@ -256,22 +264,24 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Expanded(
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
-                    label: 'Returned',
-                    value: IssueHistoryWidgets.formatDate(issue.returnDate!),
-                    icon: Icons.check_circle,
-                  )
+                          label: 'Returned',
+                          value: IssueHistoryWidgets.formatDate(
+                            issue.returnDate!,
+                          ),
+                          icon: Icons.check_circle,
+                        )
                       : IssueHistoryWidgets.buildInfoItem(
-                    label: 'Days Left',
-                    value: '${issue.dueDate.difference(DateTime.now()).inDays}',
-                    icon: Icons.access_time,
-                  ),
+                          label: 'Days Left',
+                          value:
+                              '${issue.dueDate.difference(DateTime.now()).inDays}',
+                          icon: Icons.access_time,
+                        ),
                 ),
               ],
             ),
 
             // Fine Info - Using Reusable Widget
-            if (fine > 0)
-              IssueHistoryWidgets.buildFineWarning(fine: fine),
+            if (fine > 0) IssueHistoryWidgets.buildFineWarning(fine: fine),
 
             // Return Button (if not returned)
             if (!issue.isReturned)
@@ -301,9 +311,9 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
   }
 
   List<IssueRecords> _applyFilter(
-      List<IssueRecords> issues,
-      IssueViewModel issueProvider,
-      ) {
+    List<IssueRecords> issues,
+    IssueViewModel issueProvider,
+  ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
@@ -311,7 +321,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+            .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate)))
             .toList();
       default:
         return issues;

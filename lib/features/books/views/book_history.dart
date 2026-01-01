@@ -48,9 +48,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     final totalIssues = allBookIssues.length;
     final activeIssues = allBookIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allBookIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allBookIssues
-        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
-        .length;
+    final overdueIssues = allBookIssues.where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate))).length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
@@ -81,7 +79,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             Expanded(
               child: filteredIssues.isEmpty
                   ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'Borrow a book to see the history',
+                      message: 'No Books',
                       showClearFilter: _filter != 'all',
                       onClearFilter: () => setState(() => _filter = 'all'),
                     )
@@ -110,13 +108,6 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black12,
-        //     blurRadius: 4,
-        //     offset: Offset(0, 2),
-        //   ),
-        // ],
       ),
       child: Row(
         children: [
@@ -155,7 +146,10 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     IssueViewModel issueProvider,
   ) {
     final isOverdue =
-        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+        !issue.isReturned &&
+        DateUtils.dateOnly(
+          DateTime.now(),
+        ).isAfter(DateUtils.dateOnly(issue.dueDate));
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -237,7 +231,11 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             Row(
               children: [
                 Expanded(
-                  child: IssueHistoryWidgets.buildInfoItem(label: 'Issue ID',value: issue.issueId,icon: Icons.tag),
+                  child: IssueHistoryWidgets.buildInfoItem(
+                    label: 'Issue ID',
+                    value: issue.issueId,
+                    icon: Icons.tag,
+                  ),
                 ),
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
@@ -262,12 +260,15 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: IssueHistoryWidgets.formatDate(issue.returnDate!),
+                          value: IssueHistoryWidgets.formatDate(
+                            issue.returnDate!,
+                          ),
                           icon: Icons.check_circle,
                         )
                       : IssueHistoryWidgets.buildInfoItem(
                           label: 'Days Left',
-                          value: '${issue.dueDate.difference(DateTime.now()).inDays}',
+                          value:
+                              '${issue.dueDate.difference(DateTime.now()).inDays}',
                           icon: Icons.access_time,
                         ),
                 ),
@@ -275,8 +276,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             ),
 
             // Fine Info (if applicable)
-            if (fine > 0)
-              IssueHistoryWidgets.buildFineWarning(fine: fine),
+            if (fine > 0) IssueHistoryWidgets.buildFineWarning(fine: fine),
 
             // Return Button (if not returned)
             if (!issue.isReturned)
@@ -316,7 +316,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+            .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate)))
             .toList();
       default:
         return issues;

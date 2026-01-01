@@ -124,8 +124,8 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     MemberModel? member,
     IssueViewModel issueProvider,
   ) {
-    final isOverdue =
-        !issue.isReturned && DateTime.now().isAfter(issue.dueDate);
+    final isOverdue = !issue.isReturned &&
+        DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(issue.dueDate));
     final fine = issueProvider.calculateFine(issue);
 
     // Use stored names if available, otherwise try to get from database
@@ -521,8 +521,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
-            .toList();
+            .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate))).toList();
       default:
         return issues;
     }
