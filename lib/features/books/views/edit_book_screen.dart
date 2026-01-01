@@ -204,12 +204,12 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             AppTextField.customTextField(
               controller: controllers[0],
               label: "Book title",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: controllers[1],
               label: "Author name",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             //Language dropdown
             Padding(
@@ -251,7 +251,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             AppTextField.customTextField(
               controller: controllers[4],
               label: "Publisher",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: controllers[5],
