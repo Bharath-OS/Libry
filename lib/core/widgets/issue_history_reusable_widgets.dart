@@ -238,7 +238,7 @@ class IssueHistoryWidgets {
               child: Text(
                 'Clear Filter',
                 style: TextStyle(
-                  color: AppColors.primary,
+                  color: AppColors.warning,
                   fontWeight: FontWeight.w500,
                 ),
               ),
