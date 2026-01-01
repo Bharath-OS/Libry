@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:libry/features/members/data/service/members_db.dart';
 import 'package:libry/features/members/data/model/members_model.dart';
 
+import '../../../core/utilities/helpers/date_formater.dart';
+
 class MembersViewModel extends ChangeNotifier {
   MembersViewModel() {
     fetchMembers();
@@ -12,7 +14,7 @@ class MembersViewModel extends ChangeNotifier {
   // String searchText = '';
 
   List<MemberModel> get members => _filteredMembers;
-  int get count => _filteredMembers.length;
+  int get count => _members.length;
   int get totalCount => _members.length;
   int get activeMembers => _members
       .where(
@@ -39,6 +41,29 @@ class MembersViewModel extends ChangeNotifier {
         .where((member) => member.name.toLowerCase().contains(searchText))
         .toList();
     return matchedMembers.isNotEmpty ? matchedMembers : null;
+  }
+
+  Future<String> renewMembership(int memberId) async {
+    try {
+      final member = getMemberById(memberId);
+      if (member == null) {
+        return 'Member with ID $memberId not found';
+      }
+
+      final baseDate = member.expiry.isAfter(DateTime.now())
+          ? member.expiry
+          : DateTime.now();
+
+      final newExpiryDate = baseDate.add(Duration(days: 365));
+
+      // Create updated member
+      final updatedMember = member.copyWith(expiry: newExpiryDate);
+
+      await updateMember(updatedMember);
+      return'Membership extended until ${dateFormat(date: newExpiryDate,format: 'MMM dd yyyy')}';
+    } catch (e) {
+      return 'Exception renewing membership: $e';
+    }
   }
 
   Future<void> fetchMembers() async {

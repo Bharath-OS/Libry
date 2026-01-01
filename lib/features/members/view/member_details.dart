@@ -8,7 +8,6 @@ import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../data/model/members_model.dart';
 
-
 class MemberDetailsScreen extends StatefulWidget {
   final int memberId;
 
@@ -21,6 +20,57 @@ class MemberDetailsScreen extends StatefulWidget {
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final String dateFormatString = 'MMM dd yyyy';
   final iconColor = AppColors.primary;
+
+  // Show renewal dialog
+  void _showRenewalDialog(MemberModel member) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Renew Membership'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Member: ${member.name}'),
+            SizedBox(height: 8),
+            Text('Current Expiry: ${dateFormat(date: member.expiry, format: dateFormatString)}'),
+            // SizedBox(height: 16),
+            // Text('Select renewal period:', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          MyButton.outlinedButton(
+            method: () => Navigator.pop(context),
+            text: 'Cancel',
+            color: AppColors.lightGrey
+          ),
+          MyButton.primaryButton(
+            method: () {
+              _renewMembership(12);
+              Navigator.pop(context);
+            },
+            text: 'Renew',
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Renew membership
+  Future<void> _renewMembership(int month) async {
+    final provider = context.read<MembersViewModel>();
+    final message = await provider.renewMembership(widget.memberId);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final memberDetail = context.watch<MembersViewModel>().getMemberById(
@@ -58,11 +108,44 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               // Statistics
               _buildStatisticsSection(memberDetail, issue),
 
+              // Renewal Button
+              _buildRenewalButton(memberDetail),
+
               // Action Buttons
-              MyButton.buildDetailsActionButtons(context,memberDetail),
+              MyButton.buildDetailsActionButtons(context, memberDetail),
 
               SizedBox(height: 20),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // New renewal button widget
+  Widget _buildRenewalButton(MemberModel member) {
+    final isExpired = DateTime.now().isAfter(member.expiry);
+    final daysUntilExpiry = member.expiry.difference(DateTime.now()).inDays;
+    final shouldShowRenewal = isExpired || daysUntilExpiry <= 30;
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () => _showRenewalDialog(member),
+        icon: Icon(Icons.refresh, color: Colors.white),
+        label: Text(
+          shouldShowRenewal
+              ? (isExpired ? 'Renew Expired Membership' : 'Renew Membership')
+              : 'Renew Membership',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: shouldShowRenewal ? Colors.orange : AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
@@ -157,8 +240,8 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                 Text(
                   isActive
                       ? daysUntilExpiry > 30
-                            ? 'Active Membership'
-                            : 'Expiring in $daysUntilExpiry days'
+                      ? 'Active Membership'
+                      : 'Expiring in $daysUntilExpiry days'
                       : 'Membership Expired',
                   style: TextStyle(
                     color: Colors.white,
@@ -280,7 +363,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Fines',
-                  '₹${issue.toStringAsFixed(2)}',
+                  '₹${issue.toDouble().toStringAsFixed(2)}',
                   Icons.account_balance_wallet,
                   member.fine > 0 ? Colors.red : Colors.green,
                 ),
@@ -334,11 +417,11 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   }
 
   Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+      String label,
+      String value,
+      IconData icon,
+      Color color,
+      ) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
