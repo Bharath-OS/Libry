@@ -3,7 +3,7 @@ import '../../features/auth/data/services/userdata.dart';
 
 class Validator {
   static String? emptyValidator(String? value) {
-    if (value == null || value.isEmpty || value == " ") {
+    if (value == null || value.trim().isEmpty) {
       return "This field can't be empty";
     }
     return null;
@@ -42,7 +42,9 @@ class Validator {
       return 'Password cannot be empty';
     }
 
-    final passwordRegex = RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,}\$");
+    final passwordRegex = RegExp(
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,}\$",
+    );
 
     if (!passwordRegex.hasMatch(password)) {
       return "Password must be at least 8 characters, \ninclude upper & lower case letters, \nand a number";
@@ -50,7 +52,6 @@ class Validator {
 
     return null;
   }
-
 
   static String? emailValidator(String? email) {
     final emailRegex = RegExp(
@@ -66,11 +67,15 @@ class Validator {
   }
 
   static String? registerEmailValidator(String? email) {
+    final formatError = emailValidator(email);
+    if (formatError != null) {
+      return formatError;
+    }
     UserModel? user = UserModelService.getData();
     if (user?.email == email) {
       return "The email already existing.\nTry Logging instead";
     }
-    return emailValidator(email);
+    return null;
   }
 
   static String? phoneValidator(String? phone) {
@@ -144,7 +149,9 @@ class Validator {
     if (value == null || value.isEmpty) {
       return 'Genre is required';
     }
-    if (existingGenres.contains(value.trim())) {
+    if (existingGenres.any(
+      (genre) => genre.toLowerCase() == value.trim().toLowerCase(),
+    )) {
       return 'Genre already exists';
     }
     return null;
@@ -156,7 +163,9 @@ class Validator {
   ) {
     if (language == null || language.isEmpty) {
       return 'Language is required';
-    } else if (existingLanguages.contains(language.trim())) {
+    } else if (existingLanguages.any(
+      (lang) => lang.toLowerCase() == language.trim().toLowerCase(),
+    )) {
       return 'Language already exists';
     } else {
       return null;
