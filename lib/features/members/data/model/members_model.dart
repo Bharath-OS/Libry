@@ -24,6 +24,34 @@ class MemberModel {
     required this.joined,
     required this.expiry,
   });
+
+  MemberModel copyWith({
+    int? id,
+    String? name,
+    String? memberId,
+    String? email,
+    String? phone,
+    String? address,
+    int? totalBorrow,
+    int? currentlyBorrow,
+    double? fine,
+    DateTime? joined,
+    DateTime? expiry,
+  }) {
+    return MemberModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      memberId: memberId ?? this.memberId,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      address: address ?? this.address,
+      totalBorrow: totalBorrow ?? this.totalBorrow,
+      currentlyBorrow: currentlyBorrow ?? this.currentlyBorrow,
+      fine: fine ?? this.fine,
+      joined: joined ?? this.joined,
+      expiry: expiry ?? this.expiry,
+    );
+  }
 }
 
 class MembersKey{
