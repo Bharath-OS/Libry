@@ -262,24 +262,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               ],
             ),
             Row(
-              // direction: Axis.horizontal,
               children: [
-                // Reset Filters Button
-                // if (_hasActiveFilters)
-                //   Container(
-                //     margin: EdgeInsets.only(right: 10),
-                //     child: IconButton(
-                //       onPressed: _resetFilters,
-                //       icon: Icon(Icons.filter_alt_off, color: Colors.white),
-                //       tooltip: 'Reset Filters',
-                //       style: IconButton.styleFrom(
-                //         backgroundColor: Colors.orange,
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
                 // Export Button
                 Container(
                   margin: EdgeInsets.only(right: 10),
@@ -451,7 +434,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           color: AppColors.background,
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 10),
           child: Builder(
             builder: (context) {
               if (_filteredItems.isEmpty) {
@@ -666,7 +649,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           width: isSelected ? 2.0 : 1.0,
         ),
       ),
-      color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
+      color: isSelected ? AppColors.primary.withAlpha((0.1*255).toInt()) : Colors.white,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         title: Text(

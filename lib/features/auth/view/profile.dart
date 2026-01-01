@@ -126,26 +126,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildStatCard(
             icon: Icons.book_rounded,
             stat: issuedTodayCount,
-            label: "Issued Today",
+            label: "Issued \nToday",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.people_rounded,
             stat: activeMembersCount,
-            label: "Active MemberModel",
+            label: "Active \nMembers",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.currency_rupee_rounded,
             stat: fineOwes,
-            label: "Fine Owes",
+            label: "Fine \nOwes",
             color: color,
           ),
         ],
@@ -190,8 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           ),
           Divider(),
-          // actionButton(icon: Icons.file_copy_outlined, iconColor: color,text: "Download",textColor: color, method: (){}),
-          // Divider(),
           actionButton(
               icon: Icons.exit_to_app,
               iconColor: AppColors.error,
