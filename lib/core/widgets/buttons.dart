@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../features/books/data/model/books_model.dart';
+import '../../features/books/views/book_history.dart';
+import '../../features/books/views/edit_book_screen.dart';
+import '../../features/members/data/model/members_model.dart';
+import '../../features/members/view/edit_member.dart';
+import '../../features/members/view/member_history.dart';
 import '../constants/app_colors.dart';
+import '../utilities/helpers.dart';
 
 class MyButton {
   // 1. FAB (Floating Action Button)
@@ -130,6 +137,114 @@ class MyButton {
         foregroundColor: AppColors.primaryButtonText,
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      ),
+    );
+  }
+
+  static Widget buildDetailsActionButtons<T>(BuildContext context,T item) {
+    String editLabel = '';
+    String deleteLabel = '';
+    String historyLabel = 'View Borrow History';
+    if (item is MemberModel) {
+      editLabel = 'Edit Member';
+      deleteLabel = 'Delete Member';
+    } else if (item is BookModel) {
+      editLabel = 'Edit Book';
+      deleteLabel = 'Delete Book';
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (item is MemberModel) {
+                  Navigator.push(
+                    context,
+                    transition(child: MemberHistoryScreen(memberId: item.id!)),
+                  );
+                } else if (item is BookModel) {
+                  Navigator.push(
+                    context,
+                    transition(child: BookHistoryScreenView(bookId: item.id!)),
+                  );
+                }
+              },
+              icon: Icon(Icons.history),
+              label: Text(historyLabel),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondaryButton,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (item is MemberModel) {
+                  Navigator.push(
+                    context,
+                    transition(child: EditMembersScreen(member: item)),
+                  );
+                } else if (item is BookModel) {
+                  Navigator.push(
+                    context,
+                    transition(child: EditBookScreenView(book: item)),
+                  );
+                }
+              },
+              icon: Icon(Icons.edit),
+              label: Text(editLabel),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryButton,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                if (item is MemberModel) {
+                  deleteMember(
+                    context: context,
+                    memberDetails: item,
+                    inDetailsScreen: true,
+                  );
+                } else if (item is BookModel) {
+                  deleteBook(
+                    context: context,
+                    bookDetails: item,
+                    inDetailsScreen: true,
+                  );
+                }
+              },
+              icon: Icon(Icons.delete),
+              label: Text(deleteLabel),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.red,
+                side: BorderSide(color: Colors.red),
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

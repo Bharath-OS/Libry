@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/buttons.dart';
 import '../data/model/books_model.dart';
 import '../../../core/widgets/layout_widgets.dart';
-import 'book_history.dart';
-import 'edit_book_screen.dart';
+
 
 class BookInfoScreenView extends StatefulWidget {
   final int bookId;
@@ -45,7 +43,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             children: [
               _buildInformationSection(bookDetails),
 
-              _buildActionButtons(bookDetails),
+              MyButton.buildDetailsActionButtons(context,bookDetails),
 
               SizedBox(height: 20),
             ],
@@ -277,77 +275,6 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             label,
             style: TextStyle(fontSize: 11, color: Colors.grey[700]),
             textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButtons(BookModel book) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      BookHistoryScreenView(bookId: widget.bookId),
-                ),
-              ),
-              icon: Icon(Icons.history),
-              label: Text('View Borrow History'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryButton,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  transition(child: EditBookScreenView(book: book)),
-                );
-              },
-              icon: Icon(Icons.edit),
-              label: Text('Edit Book'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => deleteBook(context: context, bookDetails: book,inDetailsScreen: true),
-              icon: Icon(Icons.delete),
-              label: Text('Delete Book'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: BorderSide(color: Colors.red),
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
           ),
         ],
       ),

@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/constants/app_colors.dart';
-import '../../../core/utilities/helpers.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
 import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../data/model/members_model.dart';
-import 'edit_member.dart';
-import 'member_history.dart';
+
 
 class MemberDetailsScreen extends StatefulWidget {
   final int memberId;
@@ -26,34 +23,44 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final iconColor = AppColors.primary;
   @override
   Widget build(BuildContext context) {
-    final memberDetail = context.watch<MembersViewModel>().getMemberById(widget.memberId);
-    final issue = context.watch<IssueViewModel>().getMemberFine(widget.memberId);
+    final memberDetail = context.watch<MembersViewModel>().getMemberById(
+      widget.memberId,
+    );
+    final issue = context.watch<IssueViewModel>().getMemberFine(
+      widget.memberId,
+    );
 
     if (memberDetail == null) {
       return LayoutWidgets.customScaffold(
-        appBar: LayoutWidgets.appBar(barTitle: "Member Details", context: context),
+        appBar: LayoutWidgets.appBar(
+          barTitle: "Member Details",
+          context: context,
+        ),
         body: Center(child: Text('Member not found')),
       );
     }
 
     return LayoutWidgets.customScaffold(
-      appBar: LayoutWidgets.appBar(barTitle: "Member Details", context: context),
+      appBar: LayoutWidgets.appBar(
+        barTitle: "Member Details",
+        context: context,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
               // Member Header Section
               _buildHeaderSection(memberDetail),
-        
+
               // Member Information
               _buildInformationSection(memberDetail),
-        
+
               // Statistics
               _buildStatisticsSection(memberDetail, issue),
-        
+
               // Action Buttons
-              _buildActionButtons(memberDetail),
-        
+              MyButton.buildDetailsActionButtons(context,memberDetail),
+
               SizedBox(height: 20),
             ],
           ),
@@ -150,8 +157,8 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                 Text(
                   isActive
                       ? daysUntilExpiry > 30
-                      ? 'Active Membership'
-                      : 'Expiring in $daysUntilExpiry days'
+                            ? 'Active Membership'
+                            : 'Expiring in $daysUntilExpiry days'
                       : 'Membership Expired',
                   style: TextStyle(
                     color: Colors.white,
@@ -175,11 +182,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -234,11 +237,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -334,7 +333,12 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -357,81 +361,8 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
           SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[700],
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey[700]),
             textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButtons(MemberModel member) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MemberHistoryScreen(memberId: widget.memberId),
-                ),
-              ),
-              icon: Icon(Icons.history),
-              label: Text('View Borrow History'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryButton,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  transition(child: EditMembersScreen(member: member)),
-                );
-              },
-              icon: Icon(Icons.edit),
-              label: Text('Edit Member'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => deleteMember(context: context, memberDetails: member,inDetailsScreen: true),
-              icon: Icon(Icons.delete),
-              label: Text('Delete Member'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: BorderSide(color: Colors.red),
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
           ),
         ],
       ),
