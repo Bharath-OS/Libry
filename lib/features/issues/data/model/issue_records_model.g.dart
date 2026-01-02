@@ -26,14 +26,16 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
       dueDate: fields[4] as DateTime,
       returnDate: fields[5] as DateTime?,
       isReturned: fields[6] as bool,
-      fineAmount: fields[7] as int,
+      fineAmount: fields[7] as double,
+      lastFineUpdateDate: fields[10] as DateTime?,
+      isFinePaid: fields[11] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, IssueRecords obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.issueId)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
       ..writeByte(8)
       ..write(obj.bookName)
       ..writeByte(9)
-      ..write(obj.memberName);
+      ..write(obj.memberName)
+      ..writeByte(10)
+      ..write(obj.lastFineUpdateDate)
+      ..writeByte(11)
+      ..write(obj.isFinePaid);
   }
 
   @override
