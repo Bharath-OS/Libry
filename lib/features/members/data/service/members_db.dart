@@ -95,6 +95,15 @@ class MembersDB {
     );
   }
 
+  static Future<void> incrementMemberFine(int memberId, double fineAmount) async {
+    final db = await _initDB();
+    // We use whereArgs [fineAmount, memberId] to safely pass values into the ? placeholders
+    await db.rawUpdate(
+      "UPDATE $_tableName SET ${MembersKey.fine} = ${MembersKey.fine} + ? WHERE id = ?",
+      [fineAmount, memberId],
+    );
+  }
+
   static Future<void> clearAllMembers() async{
     final db = await _initDB();
     await db.delete(_tableName);
