@@ -558,7 +558,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               ] else if (_filteredItems is List<MemberModel>) ...[
                 // Member Filters
                 _buildDialogSection('Membership Status', [
-                  _buildDialogRadio('All MemberModel', _membershipFilter == 'all',
+                  _buildDialogRadio('All Member', _membershipFilter == 'all',
                           () {
                         setState(() => _membershipFilter = 'all');
                         Navigator.pop(context);
@@ -786,10 +786,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     if (confirmed == true) {
       if (widget.items is List<BookModel>) {
         await context.read<BookViewModel>().clearAllBooks();
-        showSnackBar(text: "All BookModel cleared", context: context);
+        showSnackBar(text: "All Book cleared", context: context);
       } else if (widget.items is List<MemberModel>) {
         await context.read<MembersViewModel>().clearAllMembers();
-        showSnackBar(text: "All MemberModel cleared", context: context);
+        showSnackBar(text: "All Member cleared", context: context);
       }
     }
   }

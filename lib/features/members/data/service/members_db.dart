@@ -28,9 +28,9 @@ class MembersDB {
     ''');
   }
 
-  static Future<void> addMember(MemberModel member,int count) async {
+  static Future<int?> addMember(MemberModel member,int count) async {
     final db = await _initDB();
-    await db.insert(_tableName, {
+    final id = await db.insert(_tableName, {
       MembersKey.memberId: _generateMemberId(count),
       MembersKey.name: member.name,
       MembersKey.email: member.email,
@@ -42,6 +42,7 @@ class MembersDB {
       MembersKey.joined: member.joined.toIso8601String(),
       MembersKey.expiry: member.expiry.toIso8601String(),
     });
+    return id;
   }
 
   static String _generateMemberId(int sequentialId) {

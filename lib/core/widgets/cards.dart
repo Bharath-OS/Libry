@@ -173,7 +173,7 @@ class Cards {
   }
 
   static Widget memberCard({required int memberId, required VoidCallback onDelete, required BuildContext context}) {
-    final memberDetails = context.watch<MembersViewModel>().getMemberById(memberId)!;
+    final memberDetails = context.watch<MembersViewModel>().getMemberById(memberId) ?? MemberModel(name: "Guest", email: 'guest@gmail.com', phone: '9999999999', address: 'null', totalBorrow: 0, currentlyBorrow: 0, joined: DateTime.now(), expiry: DateTime.now());
     final bool isActive = memberDetails.expiry.isAfter(DateTime.now());
     final Color statusColor = isActive ? Colors.green : Colors.red;
 

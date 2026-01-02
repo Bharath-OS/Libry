@@ -15,12 +15,14 @@ class MembersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     int totalMembers = context.watch<MembersViewModel>().totalCount;
     int availableCount = context.watch<MembersViewModel>().activeMembers;
+    final membersWithId = context.watch<MembersViewModel>().members.where((m) => m.id != null).toList();
+
     return ListScreen<MemberModel>(
       title: "All Members",
       totalCount: totalMembers,
       availableCount: availableCount,
       searchHint: "Search MemberModel...",
-      items: context.watch<MembersViewModel>().members,
+      items: membersWithId,
       tileBuilder: (member) => Cards.memberCard(
         memberId: member.id!,
         context: context,

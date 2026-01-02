@@ -13,7 +13,7 @@ class MembersViewModel extends ChangeNotifier {
   List<MemberModel> _filteredMembers = [];
   // String searchText = '';
 
-  List<MemberModel> get members => _filteredMembers;
+  List<MemberModel> get members => _filteredMembers.reversed.toList();
   int get count => _members.length;
   int get totalCount => _members.length;
   int get activeMembers => _members
@@ -68,12 +68,24 @@ class MembersViewModel extends ChangeNotifier {
 
   Future<void> fetchMembers() async {
     final members = await MembersDB.getMembers();
-    _filteredMembers = members;
+    // Keep an authoritative backing list and a filtered view
+    _members
+      ..clear()
+      ..addAll(members);
+    _filteredMembers = List.from(members);
     notifyListeners();
   }
 
   Future<void> addMember(MemberModel member) async {
-    await MembersDB.addMember(member, count + 1);
+    // Capture inserted id (if DB returns it) and then refresh local cache
+    try {
+      final insertedId = await MembersDB.addMember(member, count + 1);
+      // Optionally set the id on the passed object while we refresh
+      if (insertedId != null) member.id = insertedId;
+    } catch (e) {
+      // ignore and continue - fetch will resync state
+    }
+
     await fetchMembers();
   }
 
