@@ -33,7 +33,7 @@ class Cards {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withAlpha((0.1 * 255).toInt()),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
@@ -50,14 +50,14 @@ class Cards {
                     width: 80,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withAlpha((0.1 * 255).toInt()),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
                       child: Icon(
                         Icons.book_outlined,
                         size: 36,
-                        color: AppColors.primary.withOpacity(0.7),
+                        color: AppColors.primary.withAlpha((0.7 * 255).toInt()),
                       ),
                     ),
                   ),
@@ -104,9 +104,9 @@ class Cards {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
+                          color: statusColor.withAlpha((0.1 * 255).toInt()),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: statusColor.withOpacity(0.3)),
+                          border: Border.all(color: statusColor.withAlpha((0.3 * 255).toInt())),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -194,9 +194,9 @@ class Cards {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withAlpha((0.1 * 255).toInt()),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withAlpha((0.3 * 255).toInt()),
                   width: 2,
                 ),
               ),
@@ -246,9 +246,9 @@ class Cards {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
+                          color: statusColor.withAlpha((0.1 * 255).toInt()),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: statusColor.withOpacity(0.3)),
+                          border: Border.all(color: statusColor.withAlpha((0.3 * 255).toInt())),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -301,7 +301,7 @@ class Cards {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha((0.1 * 255).toInt()),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),
@@ -324,7 +324,7 @@ class Cards {
           Text(
             parameter,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withAlpha((0.9 * 255).toInt()),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -372,7 +372,7 @@ class Cards {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isOverdue ? Colors.red.withOpacity(0.3) : Colors.grey.shade200,
+          color: isOverdue ? Colors.red.withAlpha((0.3 * 255).toInt()) : Colors.grey.shade200,
           width: isOverdue ? 2 : 1,
         ),
       ),
@@ -391,7 +391,7 @@ class Cards {
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: statusColor.withAlpha((0.1 * 255).toInt()),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(statusIcon, size: 18, color: statusColor),
@@ -413,7 +413,7 @@ class Cards {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withAlpha((0.1 * 255).toInt()),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(

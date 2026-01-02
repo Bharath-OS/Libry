@@ -82,7 +82,7 @@ class IssueHistoryWidgets {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withAlpha((0.1 * 255).toInt()),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 20),
@@ -297,7 +297,7 @@ class IssueHistoryWidgets {
 
   /// Fine Warning Container
   static Widget buildFineWarning({
-    required int fine,
+    required double fine,
   }) {
     return Container(
       margin: EdgeInsets.only(top: 16),
@@ -411,7 +411,7 @@ class IssueHistoryWidgets {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withOpacity(0.3),
+            color: statusColor.withAlpha((0.3 * 255).toInt()),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),

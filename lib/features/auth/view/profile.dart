@@ -118,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildKeyStats(Color color) {
     final activeMembersCount = context.watch<IssueViewModel>().activeCount;
     final issuedTodayCount = context.watch<IssueViewModel>().issuedTodayCount;
-    final fineOwes = context.watch<IssueViewModel>().fineOwed;
+    final fineOwes = context.watch<IssueViewModel>().totalPendingFines;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
@@ -208,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildStatCard({
     required IconData icon,
-    required int stat,
+    required num stat,
     required String label,
     Color color = Colors.black,
   }) {

@@ -28,7 +28,7 @@ void main() async {
 
   await IssueDBHive.initIssueBox();
   await SettingsService.instance.init();
-  
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
     runApp(
       MultiProvider(
@@ -36,7 +36,7 @@ void main() async {
           ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
           ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
           ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
-          ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()..init()),
+          ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()),
           ChangeNotifierProvider<MembersViewModel>(
             create: (_) => MembersViewModel(),
           ),
