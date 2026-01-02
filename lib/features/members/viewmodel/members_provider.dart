@@ -9,7 +9,7 @@ class MembersViewModel extends ChangeNotifier {
     fetchMembers();
   }
 
-  List<MemberModel> _members = [];
+  final List<MemberModel> _members = []; // existing backing store
   List<MemberModel> _filteredMembers = [];
   // String searchText = '';
 
@@ -67,8 +67,8 @@ class MembersViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchMembers() async {
-    _members = await MembersDB.getMembers();
-    _filteredMembers = _members;
+    final members = await MembersDB.getMembers();
+    _filteredMembers = members;
     notifyListeners();
   }
 
@@ -100,5 +100,24 @@ class MembersViewModel extends ChangeNotifier {
   Future<void> clearAllMembers() async {
     await MembersDB.clearAllMembers();
     await fetchMembers();
+  }
+
+  // Adjust member fine by amount (positive to add owed fine, negative when paying)
+  Future<void> adjustMemberFine(String memberId, double amount) async {
+    final index = _members.indexWhere((m) => m.memberId == memberId);
+    if (index == -1) return;
+    _members[index].adjustFine(amount);
+    // persist to DB if you have a DB layer; keep simple:
+    notifyListeners();
+    // Optionally call your DB update here
+  }
+
+  // Helper to set exact fine (used if needed)
+  Future<void> setMemberFine(String memberId, double newAmount) async {
+    final index = _members.indexWhere((m) => m.memberId == memberId);
+    if (index == -1) return;
+    _members[index].fineBalance = newAmount;
+    notifyListeners();
+    // persist to DB if you have a DB layer
   }
 }

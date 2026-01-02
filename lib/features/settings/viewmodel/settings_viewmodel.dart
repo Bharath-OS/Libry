@@ -6,6 +6,7 @@ class SettingsViewModel with ChangeNotifier {
   int _issuePeriod = SettingsService.instance.issuePeriod;
   List<String> _genres = SettingsService.instance.getGenres();
   List<String> _languages = SettingsService.instance.getLanguages();
+  double finePerDay = 1.0; // default value; expose load/save logic as needed
 
   void _syncData() {
     _fineAmount = SettingsService.instance.fineAmount;

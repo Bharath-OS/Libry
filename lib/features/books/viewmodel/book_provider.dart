@@ -74,4 +74,12 @@ class BookViewModel extends ChangeNotifier {
     await fetchBooks();
     notifyListeners();
   }
+
+  Future<void> adjustBookCopies(String bookId, int delta) async {
+    final index = _books.indexWhere((b) => b.id == bookId);
+    if (index == -1) return;
+    _books[index].adjustCopies(delta);
+    notifyListeners();
+    // persist change if DB layer exists
+  }
 }
