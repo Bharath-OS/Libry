@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 class SettingsService {
   static const String _fineKey = 'fine_per_day';
   static const String _daysKey = 'default_issue_days';
+  static const String _maxBorrow = 'max_book_borrow_per_member';
   late final Box _appSettingsBox;
   late final Box<String> _genreBox;
   late final Box<String> _languageBox;
@@ -96,6 +97,16 @@ class SettingsService {
       _appSettingsBox.put(_daysKey, period);
       return true;
     } catch (_) {
+      return false;
+    }
+  }
+
+  int get borrowLimit => _appSettingsBox.get(_maxBorrow, defaultValue: 5);
+  bool setBorrowLimit(int count){
+    try{
+      _appSettingsBox.put(_maxBorrow, count);
+      return true;
+    }catch(_){
       return false;
     }
   }
