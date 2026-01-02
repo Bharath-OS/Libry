@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Member: ${member.name}'),
-            SizedBox(height: 8),
+            8.verticalSpace,
             Text('Current Expiry: ${dateFormat(date: member.expiry, format: dateFormatString)}'),
             // SizedBox(height: 16),
             // Text('Select renewal period:', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -312,7 +313,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
     );
   }
 
-  Widget _buildStatisticsSection(MemberModel member, int issue) {
+  Widget _buildStatisticsSection(MemberModel member, double fineAmount) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(20),
@@ -363,7 +364,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Fines',
-                  '₹${issue.toDouble().toStringAsFixed(2)}',
+                  '₹${fineAmount.toStringAsFixed(2)}',
                   Icons.account_balance_wallet,
                   member.fine > 0 ? Colors.red : Colors.green,
                 ),

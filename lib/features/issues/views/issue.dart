@@ -562,15 +562,6 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _selectMember(MemberModel member) {
-    setState(() {
-      _selectedMember = member;
-      _isMemberVerified = true;
-      _memberFieldController.text = "${member.name} (${member.memberId})";
-      _memberFieldController.selection = TextSelection.collapsed(
-        offset: _memberFieldController.text.length,
-      );
-    });
-
     // Check if member can borrow more books
     if (member.currentlyBorrow >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -579,6 +570,17 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           backgroundColor: Colors.orange,
         ),
       );
+    }
+    //todo solve here. when the member is ineligible for borrowing then we shouldn't allow that member to borrow book.
+    else{
+      setState(() {
+        _selectedMember = member;
+        _isMemberVerified = true;
+        _memberFieldController.text = "${member.name} (${member.memberId})";
+        _memberFieldController.selection = TextSelection.collapsed(
+          offset: _memberFieldController.text.length,
+        );
+      });
     }
   }
 
