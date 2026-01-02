@@ -74,12 +74,14 @@ class AppTextField {
     required bool flagVariable,
     required VoidCallback onPressed,
     required Function(String) onChanged,
-    required Function(String) onFieldSubmitted
+    required Function(String) onFieldSubmitted,
+    bool isDisabled = false
   }) {
     return TextFormField(
       cursorColor: AppColors.background,
       style: TextFieldStyle.inputTextStyle,
       controller: inputController,
+      readOnly: isDisabled,
       decoration: InputDecoration(
         hintText: label,
         hintStyle: TextStyle(color: AppColors.background),

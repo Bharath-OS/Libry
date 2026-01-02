@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
+import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
@@ -21,6 +22,7 @@ class MemberDetailsScreen extends StatefulWidget {
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final String dateFormatString = 'MMM dd yyyy';
   final iconColor = AppColors.primary;
+  final borrowLimit = SettingsService.instance.borrowLimit;
 
   // Show renewal dialog
   void _showRenewalDialog(MemberModel member) {
@@ -35,8 +37,6 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
             Text('Member: ${member.name}'),
             8.verticalSpace,
             Text('Current Expiry: ${dateFormat(date: member.expiry, format: dateFormatString)}'),
-            // SizedBox(height: 16),
-            // Text('Select renewal period:', style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
@@ -351,7 +351,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Currently',
-                  '${member.currentlyBorrow}/5',
+                  '${member.currentlyBorrow}/$borrowLimit',
                   Icons.book_online,
                   member.currentlyBorrow >= 5 ? Colors.red : Colors.orange,
                 ),
@@ -373,7 +373,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Slots Left',
-                  '${5 - member.currentlyBorrow}',
+                  '${borrowLimit - member.currentlyBorrow}',
                   Icons.space_dashboard,
                   Colors.purple,
                 ),
