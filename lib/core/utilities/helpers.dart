@@ -96,16 +96,19 @@ void deleteMember({
           isTextButton: true,
           isDisabled: borrowCount != 0,
           method: () {
-            // 🔥 Use the actual book ID, not index 0
+            // Safely handle missing ID
+            if (memberDetails.id == null) {
+              Navigator.pop(context);
+              showSnackBar(text: "Cannot delete member: missing ID", context: context);
+              return;
+            }
+
             context.read<MembersViewModel>().removeMember(memberDetails.id!);
             Navigator.pop(context); // Close dialog
             inDetailsScreen
                 ? Navigator.pop(context)
                 : null; // Go back to books list
-            AppDialogs.showSnackBar(
-              message: "${memberDetails.name} deleted successfully",
-              context: context,
-            );
+            showSnackBar(text: "${memberDetails.name} deleted successfully", context: context);
           },
         ),
       ],
