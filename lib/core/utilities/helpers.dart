@@ -1,8 +1,7 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:libry/features/members/data/model/members_model.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
-import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
+import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +11,7 @@ import '../constants/app_colors.dart';
 import '../widgets/buttons.dart';
 import '../widgets/dialogs.dart';
 
-spacing({required double height}) {
+Widget spacing({required double height}) {
   return SizedBox(height: height);
 }
 
@@ -76,7 +75,8 @@ void deleteMember({
   required MemberModel memberDetails,
   inDetailsScreen = true,
 }) {
-  final borrowCount = 5 - memberDetails.currentlyBorrow;
+  final borrowLimit = SettingsService.instance.borrowLimit;
+  final borrowCount = borrowLimit - memberDetails.currentlyBorrow;
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -114,4 +114,11 @@ void deleteMember({
       ],
     ),
   );
+}
+
+bool calculateOverDue({required DateTime dueDate, required bool isReturned}){
+  final today = DateUtils.dateOnly(DateTime.now());
+  final dueDateOnly = DateUtils.dateOnly(dueDate);
+  return !isReturned &&
+      today.isAfter(dueDateOnly);
 }
