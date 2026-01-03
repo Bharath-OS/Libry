@@ -198,14 +198,14 @@ class SettingsScreenState extends State<SettingsView> {
           Divider(height: 1),
           buildSettingTile(
             icon: Icons.book_online,
-            title: 'Max BookModel Per Member',
+            title: 'Max Books Per Member',
             subtitle: '$maxBorrowLimit books at a time',
             trailing: IconButton(
               icon: Icon(Icons.edit, color: iconColor),
               onPressed: () => showSettingsEditDialog(
                 context: context,
-                title: 'Set Default Issue Period',
-                label: 'Number of days',
+                title: 'Set borrow limit',
+                label: 'Borrow limit',
                 initialValue: maxBorrowLimit.toString(),
                 validator: (days) => Validator.numberValidator(value: days),
                 onSave: (value) {

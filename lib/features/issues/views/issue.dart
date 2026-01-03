@@ -596,7 +596,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _selectBook(BookModel book) {
-    if (book.copiesAvailable == book.totalCopies) {
+    if (book.copiesAvailable == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("This book is not available to borrow"),

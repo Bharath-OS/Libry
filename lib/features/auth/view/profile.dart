@@ -4,6 +4,7 @@ import 'package:libry/features/books/views/add_book_screen.dart';
 import 'package:libry/core/themes/styles.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:libry/features/auth/view/login.dart';
+import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
@@ -116,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildKeyStats(Color color) {
-    final activeMembersCount = context.watch<IssueViewModel>().activeCount;
+    final activeMembersCount = context.watch<MembersViewModel>().activeMembers;
     final issuedTodayCount = context.watch<IssueViewModel>().issuedTodayCount;
     final fineOwes = context.watch<IssueViewModel>().totalPendingFines;
     return Container(
