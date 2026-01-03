@@ -37,14 +37,14 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersViewModel>();
 
-    final allIssues = issueProvider.allIssues;
+    final allIssues = issueProvider.allIssues.reversed.toList();
     final filteredIssues = _applyFilter(allIssues, issueProvider);
 
     final totalIssues = allIssues.length;
     final activeIssues = allIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allIssues.where((i) => i.isReturned).length;
     final overdueIssues = allIssues
-        .where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate))
+        .where((i) => calculateOverDue(dueDate: i.dueDate, isReturned: i.isReturned))
         .length;
 
     return LayoutWidgets.customScaffold(
@@ -78,33 +78,33 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
             Expanded(
               child: filteredIssues.isEmpty
                   ? IssueHistoryWidgets.buildEmptyState(
-                message: 'No transactions found',
-                showClearFilter: _filter != 'all',
-                onClearFilter: () => setState(() => _filter = 'all'),
-              )
-                  : Container(
-                decoration: BoxDecoration(color: AppColors.background),
-                child: ListView.builder(
-                  padding: EdgeInsets.all(16),
-                  itemCount: filteredIssues.length,
-                  itemBuilder: (context, index) {
-                    final issue = filteredIssues[index];
-                    final book = bookProvider.getBookById(issue.bookId);
-                    final member = memberProvider.getMemberById(
-                      issue.memberId,
-                    );
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 16),
-                      child: _buildIssueCard(
-                        issue,
-                        book,
-                        member,
-                        issueProvider,
+                      message: 'No transactions found',
+                      showClearFilter: _filter != 'all',
+                      onClearFilter: () => setState(() => _filter = 'all'),
+                    )
+                  : SizedBox(
+                      // decoration: BoxDecoration(color: AppColors.background),
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(16),
+                        itemCount: filteredIssues.length,
+                        itemBuilder: (context, index) {
+                          final issue = filteredIssues[index];
+                          final book = bookProvider.getBookById(issue.bookId);
+                          final member = memberProvider.getMemberById(
+                            issue.memberId,
+                          );
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 16),
+                            child: _buildIssueCard(
+                              issue,
+                              book,
+                              member,
+                              issueProvider,
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
             ),
           ],
         ),
@@ -118,13 +118,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Widget _buildIssueCard(
-      IssueRecords issue,
-      BookModel? book,
-      MemberModel? member,
-      IssueViewModel issueProvider,
-      ) {
-    final isOverdue = !issue.isReturned &&
-        DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(issue.dueDate));
+    IssueRecords issue,
+    BookModel? book,
+    MemberModel? member,
+    IssueViewModel issueProvider,
+  ) {
+    final isOverdue = calculateOverDue(dueDate: issue.dueDate, isReturned: issue.isReturned);
 
     // Claude changed: Use calculateFine from provider for accurate calculation
     final fine = issueProvider.calculateFine(issue);
@@ -258,7 +257,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: statusColor.withAlpha((0.3 * 255).toInt()),
+                                  color: statusColor.withAlpha(
+                                    (0.3 * 255).toInt(),
+                                  ),
                                   blurRadius: 4,
                                   offset: Offset(0, 2),
                                 ),
@@ -364,16 +365,16 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
-                    label: 'Returned',
-                    value: _formatDate(issue.returnDate!),
-                    icon: Icons.check_circle,
-                  )
+                          label: 'Returned',
+                          value: _formatDate(issue.returnDate!),
+                          icon: Icons.check_circle,
+                        )
                       : IssueHistoryWidgets.buildInfoItem(
-                    label: 'Days Left',
-                    value:
-                    '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
-                    icon: Icons.access_time,
-                  ),
+                          label: 'Days Left',
+                          value:
+                              '${max(0, issue.dueDate.difference(DateTime.now()).inDays)}',
+                          icon: Icons.access_time,
+                        ),
                 ),
               ],
             ),
@@ -404,10 +405,14 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 margin: EdgeInsets.only(top: 16),
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green[50] : Colors.red[50],
+                  color: issue.isFinePaid != null && issue.isFinePaid!
+                      ? Colors.green[50]
+                      : Colors.red[50],
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green[300]! : Colors.red[300]!,
+                    color: issue.isFinePaid != null && issue.isFinePaid!
+                        ? Colors.green[300]!
+                        : Colors.red[300]!,
                   ),
                 ),
                 child: Row(
@@ -415,12 +420,18 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     Container(
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green[100] : Colors.red[100],
+                        color: issue.isFinePaid != null && issue.isFinePaid!
+                            ? Colors.green[100]
+                            : Colors.red[100],
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        issue.isFinePaid != null && issue.isFinePaid! ? Icons.check_circle : Icons.money_off,
-                        color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green[700] : Colors.red[700],
+                        issue.isFinePaid != null && issue.isFinePaid!
+                            ? Icons.check_circle
+                            : Icons.money_off,
+                        color: issue.isFinePaid != null && issue.isFinePaid!
+                            ? Colors.green[700]
+                            : Colors.red[700],
                         size: 18,
                       ),
                     ),
@@ -430,9 +441,14 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            issue.isFinePaid != null && issue.isFinePaid! ? 'Fine Paid' : 'Overdue Fine',
+                            issue.isFinePaid != null && issue.isFinePaid!
+                                ? 'Fine Paid'
+                                : 'Overdue Fine',
                             style: TextStyle(
-                              color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green[700] : Colors.red[700],
+                              color:
+                                  issue.isFinePaid != null && issue.isFinePaid!
+                                  ? Colors.green[700]
+                                  : Colors.red[700],
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -441,7 +457,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                           Text(
                             'Rs $fine',
                             style: TextStyle(
-                              color: issue.isFinePaid != null && issue.isFinePaid! ? Colors.green : Colors.red,
+                              color:
+                                  issue.isFinePaid != null && issue.isFinePaid!
+                                  ? Colors.green
+                                  : Colors.red,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -460,7 +479,37 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   if (!issue.isReturned && !isBookDeleted)
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () => _returnBook(issue),
+                        onPressed: () async {
+                          bool isSuccess = await IssueHistoryWidgets.returnBook(
+                            issue: issue,
+                            context: context,
+                          );
+                          if (mounted && isSuccess) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Book returned successfully'),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            );
+                          } else {
+                            if(mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error returning book'),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
                         icon: Icon(Icons.assignment_return, size: 18),
                         label: Text('Return Book'),
                         style: ElevatedButton.styleFrom(
@@ -503,9 +552,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   List<IssueRecords> _applyFilter(
-      List<IssueRecords> issues,
-      IssueViewModel issueProvider,
-      ) {
+    List<IssueRecords> issues,
+    IssueViewModel issueProvider,
+  ) {
     switch (_filter) {
       case 'active':
         return issues.where((i) => !i.isReturned).toList();
@@ -513,7 +562,14 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate))).toList();
+            .where(
+              (i) =>
+                  !i.isReturned &&
+                  DateUtils.dateOnly(
+                    DateTime.now(),
+                  ).isAfter(DateUtils.dateOnly(i.dueDate)),
+            )
+            .toList();
       default:
         return issues;
     }
@@ -521,174 +577,6 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
 
   void _setFilter(String filter) {
     setState(() => _filter = filter);
-  }
-
-  // Claude changed: Completely rewritten return logic with proper fine handling
-  Future<void> _returnBook(IssueRecords issue) async {
-    final issueProvider = context.read<IssueViewModel>();
-    final bookProvider = context.read<BookViewModel>();
-    final memberProvider = context.read<MembersViewModel>();
-
-    // Calculate current fine
-    final fine = issueProvider.calculateFine(issue);
-
-    final book = bookProvider.getBookById(issue.bookId);
-    final member = memberProvider.getMemberById(issue.memberId);
-
-    if (book == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Cannot return: Book has been deleted'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return;
-    }
-
-    if (member == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Cannot return: Member has been deleted'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return;
-    }
-
-    // Claude changed: If there's a fine, must pay it before returning
-    if (fine > 0) {
-      final confirmed = await _showFinePaymentDialog(fine);
-      if (!confirmed) return;
-
-      // Mark fine as paid in the issue and reduce member's fine balance
-      await issueProvider.markFinePaid(issue.issueId, fine);
-    }
-
-    // Process return
-    try {
-      // 1. Mark as returned in Hive
-      await issueProvider.returnBook(issue.issueId);
-
-      // 2. Update book copies
-      final updatedBook = book.copyWith(
-        copiesAvailable: book.copiesAvailable + 1,
-      );
-      await bookProvider.updateBook(updatedBook);
-
-      // 3. Update member borrow count
-      final updatedMember = member.copyWith(
-        currentlyBorrow: member.currentlyBorrow - 1,
-      );
-      await memberProvider.updateMember(updatedMember);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Book returned successfully'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error returning book: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  Future<bool> _showFinePaymentDialog(double fine) async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.red[100],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.money_off, color: Colors.red),
-            ),
-            SizedBox(width: 12),
-            Text(
-              'Fine Payment Required',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.red[700],
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Overdue fine',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Rs $fine',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Please collect the fine before returning the book.',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text('Fine Paid'),
-          ),
-        ],
-      ),
-    ) ??
-        false;
   }
 
   void _viewDetails(IssueRecords issue, BookModel? book, MemberModel? member) {
@@ -804,8 +692,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       _buildDetailRowWithIcon(
                         'Fine Amount',
                         'Rs ${issue.fineAmount} ${issue.isFinePaid != null && issue.isFinePaid! ? "(Paid)" : "(Unpaid)"}',
-                        issue.isFinePaid != null && issue.isFinePaid! ? Icons.check_circle : Icons.money_off,
-                        issue.isFinePaid != null && issue.isFinePaid! ? Colors.green : Colors.red,
+                        issue.isFinePaid != null && issue.isFinePaid!
+                            ? Icons.check_circle
+                            : Icons.money_off,
+                        issue.isFinePaid != null && issue.isFinePaid!
+                            ? Colors.green
+                            : Colors.red,
                       ),
                   ],
                 ),
@@ -839,11 +731,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
   }
 
   Widget _buildDetailSection(
-      String title,
-      IconData icon,
-      Color iconColor,
-      List<Widget> children,
-      ) {
+    String title,
+    IconData icon,
+    Color iconColor,
+    List<Widget> children,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

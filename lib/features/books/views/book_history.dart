@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libry/core/utilities/helpers.dart';
 import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -79,7 +80,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
             Expanded(
               child: filteredIssues.isEmpty
                   ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'No Books',
+                      message: 'No transactions found',
                       showClearFilter: _filter != 'all',
                       onClearFilter: () => setState(() => _filter = 'all'),
                     )
@@ -145,11 +146,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     MemberModel? member,
     IssueViewModel issueProvider,
   ) {
-    final isOverdue =
-        !issue.isReturned &&
-        DateUtils.dateOnly(
-          DateTime.now(),
-        ).isAfter(DateUtils.dateOnly(issue.dueDate));
+    final isOverdue = calculateOverDue(dueDate: issue.dueDate, isReturned: issue.isReturned);
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -285,7 +282,37 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () => _returnBook(issue),
+                    onPressed: () async {
+                      bool isSuccess = await IssueHistoryWidgets.returnBook(
+                        issue: issue,
+                        context: context,
+                      );
+                      if (mounted && isSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Book returned successfully'),
+                            backgroundColor: Colors.green,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      } else {
+                        if(mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error returning book'),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
                     icon: Icon(Icons.assignment_return),
                     label: Text('Return Book'),
                     style: ElevatedButton.styleFrom(
@@ -325,65 +352,5 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
 
   void _setFilter(String filter) {
     setState(() => _filter = filter);
-  }
-
-  Future<void> _returnBook(IssueRecords issue) async {
-    try {
-      final issueProvider = context.read<IssueViewModel>();
-      final bookProvider = context.read<BookViewModel>();
-      final memberProvider = context.read<MembersViewModel>();
-
-      // 1. Mark as returned in Hive
-      await issueProvider.returnBook(issue.issueId);
-
-      // 2. Update book in SQLite
-      final book = bookProvider.getBookById(issue.bookId);
-      if (book != null) {
-        final updatedBook = BookModel(
-          id: book.id,
-          title: book.title,
-          author: book.author,
-          year: book.year,
-          language: book.language,
-          publisher: book.publisher,
-          genre: book.genre,
-          pages: book.pages,
-          totalCopies: book.totalCopies,
-          copiesAvailable: book.copiesAvailable + 1,
-          coverPicture: book.coverPicture,
-        );
-        await bookProvider.updateBook(updatedBook);
-      }
-
-      // 3. Update member in SQLite
-      final member = memberProvider.getMemberById(issue.memberId);
-      if (member != null) {
-        final updatedMember = MemberModel(
-          id: member.id,
-          memberId: member.memberId,
-          name: member.name,
-          email: member.email,
-          phone: member.phone,
-          address: member.address,
-          fine: member.fine,
-          totalBorrow: member.totalBorrow,
-          currentlyBorrow: member.currentlyBorrow - 1,
-          joined: member.joined,
-          expiry: member.expiry,
-        );
-        await memberProvider.updateMember(updatedMember);
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Book returned successfully'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
-    }
   }
 }
