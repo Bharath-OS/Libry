@@ -353,7 +353,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                   'Currently',
                   '${member.currentlyBorrow}/$borrowLimit',
                   Icons.book_online,
-                  member.currentlyBorrow >= 5 ? Colors.red : Colors.orange,
+                  member.currentlyBorrow >= borrowLimit ? Colors.red : Colors.orange,
                 ),
               ),
             ],
