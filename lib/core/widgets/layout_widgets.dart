@@ -18,20 +18,24 @@ class LayoutWidgets {
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
       body: Stack(
+        alignment: Alignment.center,
         children: [
           SizedBox.expand(
-            child: Image.asset(
-              backgroundImage,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(backgroundImage, fit: BoxFit.cover),
           ),
-          body,
+          Container(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Center(child: body),
+          ),
         ],
       ),
     );
   }
 
-  static AppBar appBar({required String barTitle,required BuildContext context}) {
+  static AppBar appBar({
+    required String barTitle,
+    required BuildContext context,
+  }) {
     return AppBar(
       title: Text(
         barTitle,
@@ -43,7 +47,10 @@ class LayoutWidgets {
         ),
       ),
       backgroundColor: Colors.transparent,
-      leading: IconButton(onPressed: ()=>Navigator.pop(context), icon: Icon(Icons.arrow_back_ios_new_rounded,color: AppColors.white,)),
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white),
+      ),
     );
   }
 }

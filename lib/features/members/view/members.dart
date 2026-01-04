@@ -21,7 +21,7 @@ class MembersScreen extends StatelessWidget {
       title: "All Members",
       totalCount: totalMembers,
       availableCount: availableCount,
-      searchHint: "Search MemberModel...",
+      searchHint: "Search Member...",
       items: membersWithId,
       tileBuilder: (member) => Cards.memberCard(
         memberId: member.id!,

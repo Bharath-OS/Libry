@@ -14,10 +14,10 @@ class BookListScreenView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListScreen<BookModel>(
-      title: "BookModel",
+      title: "All Books",
       totalCount: context.watch<BookViewModel>().totalBooks,
       availableCount: context.watch<BookViewModel>().availableBooks,
-      searchHint: "Search BookModel...",
+      searchHint: "Search Book...",
       items: context.watch<BookViewModel>().books,
       tileBuilder: (book) => Cards.bookCard(
         bookId: book.id!,
