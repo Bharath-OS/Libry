@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:libry/features/issues/data/service/issue_records_db.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
@@ -26,16 +28,17 @@ void main() async {
 
   await IssueDBHive.initIssueBox();
   await SettingsService.instance.init();
-  
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
     runApp(
       MultiProvider(
         providers: [
+          ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
           ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
           ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
-          ChangeNotifierProvider<IssueProvider>(create: (_) => IssueProvider()..init()),
-          ChangeNotifierProvider<MembersProvider>(
-            create: (context) => MembersProvider(),
+          ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()),
+          ChangeNotifierProvider<MembersViewModel>(
+            create: (_) => MembersViewModel(),
           ),
         ],
         child: LibryApp(),
@@ -49,10 +52,17 @@ class LibryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: CustomTheme.myTheme,
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(412, 915),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context,child) {
+        return MaterialApp(
+          theme: CustomTheme.myTheme,
+          debugShowCheckedModeBanner: false,
+          home: const SplashScreen(),
+        );
+      }
     );
   }
 }

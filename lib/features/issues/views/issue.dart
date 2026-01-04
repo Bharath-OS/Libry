@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/core/utilities/helpers/date_formater.dart';
+import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -29,16 +31,17 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   final _memberFieldController = TextEditingController();
   final _bookFieldController = TextEditingController();
 
-  Members? _selectedMember;
-  Books? _selectedBook;
+  MemberModel? _selectedMember;
+  BookModel? _selectedBook;
   late DateTime _dueDate;
+  final borrowLimit = SettingsService.instance.borrowLimit;
 
   bool _isMemberVerified = false;
   bool _isBookSelected = false;
   bool _isProcessing = false;
 
-  List<Members> _filteredMembers = [];
-  List<Books> _filteredBooks = [];
+  List<MemberModel> _filteredMembers = [];
+  List<BookModel> _filteredBooks = [];
 
   @override
   void initState() {
@@ -47,9 +50,11 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _loadInitialData() {
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
     final bookProvider = context.read<BookViewModel>();
-    _dueDate = DateTime.now().add(Duration(days: context.read<SettingsViewModel>().issuePeriod));
+    _dueDate = DateTime.now().add(
+      Duration(days: context.read<SettingsViewModel>().issuePeriod),
+    );
 
     _filteredMembers = memberProvider.members;
     _filteredBooks = bookProvider.books
@@ -88,7 +93,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         "Search and select member and book",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.background.withAlpha((0.8 * 255).toInt()),
+                          color: AppColors.background.withAlpha(
+                            (0.8 * 255).toInt(),
+                          ),
                           fontSize: 14,
                         ),
                       ),
@@ -140,6 +147,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         ),
         const SizedBox(height: 8),
         AppTextField.customIssueTextField(
+          isDisabled: _isMemberVerified,
           inputController: _memberFieldController,
           label: "Search by name or member ID",
           prefixIcon: Icons.person_search,
@@ -178,9 +186,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                   ),
                   subtitle: Text("ID: ${member.memberId}"),
                   trailing: Text(
-                    "Borrowed: ${member.currentlyBorrow}/5",
+                    "Borrowed: ${member.currentlyBorrow}/$borrowLimit",
                     style: TextStyle(
-                      color: member.currentlyBorrow >= 5
+                      color: member.currentlyBorrow >= borrowLimit
                           ? Colors.red
                           : Colors.green,
                       fontWeight: FontWeight.w500,
@@ -200,7 +208,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             decoration: BoxDecoration(
               color: AppColors.success.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.success.withAlpha((0.1 * 255).toInt())),
+              border: Border.all(
+                color: AppColors.success.withAlpha((0.1 * 255).toInt()),
+              ),
             ),
             child: Row(
               children: [
@@ -221,9 +231,11 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         ),
                       ),
                       Text(
-                        "ID: ${_selectedMember!.memberId} • Borrowed: ${_selectedMember!.currentlyBorrow}/5",
+                        "ID: ${_selectedMember!.memberId} • Borrowed: ${_selectedMember!.currentlyBorrow}/$borrowLimit",
                         style: TextStyle(
-                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
+                          color: AppColors.background.withAlpha(
+                            (0.7 * 255).toInt(),
+                          ),
                           fontSize: 12,
                         ),
                       ),
@@ -256,6 +268,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         ),
         const SizedBox(height: 8),
         AppTextField.customIssueTextField(
+          isDisabled: _isBookSelected,
           inputController: _bookFieldController,
           label: "Search by title or author",
           prefixIcon: Icons.book,
@@ -323,7 +336,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        "Available: ${book.copiesAvailable}/${book.totalCopies}",
+                        book.copiesAvailable > 0 ? "copies avilable ${book.copiesAvailable}/${book.totalCopies}" : "Book is unavailable to borrow",
                         style: TextStyle(
                           fontSize: 11,
                           color: book.copiesAvailable > 0
@@ -333,16 +346,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       ),
                     ],
                   ),
-                  trailing: book.copiesAvailable > 0
-                      ? Icon(Icons.arrow_forward_ios, size: 16)
-                      : Chip(
-                          label: Text("Out of Stock"),
-                          backgroundColor: Colors.red[50],
-                          labelStyle: TextStyle(
-                            fontSize: 10,
-                            color: Colors.red,
-                          ),
-                        ),
+                  trailing: book.copiesAvailable > 0 ? Icon(Icons.arrow_forward_ios, size: 16.sp) : null,
                   onTap: book.copiesAvailable > 0
                       ? () => _selectBook(book)
                       : null,
@@ -359,7 +363,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             decoration: BoxDecoration(
               color: AppColors.success.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.success.withAlpha((0.1 * 255).toInt())),
+              border: Border.all(
+                color: AppColors.success.withAlpha((0.1 * 255).toInt()),
+              ),
             ),
             child: Row(
               children: [
@@ -397,7 +403,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "by ${_selectedBook!.author}",
                         style: TextStyle(
-                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
+                          color: AppColors.background.withAlpha(
+                            (0.7 * 255).toInt(),
+                          ),
                           fontSize: 12,
                         ),
                       ),
@@ -446,7 +454,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.background.withAlpha((0.1 * 255).toInt())),
+              border: Border.all(
+                color: AppColors.background.withAlpha((0.1 * 255).toInt()),
+              ),
             ),
             child: Row(
               children: [
@@ -459,7 +469,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       Text(
                         "Due Date",
                         style: TextStyle(
-                          color: AppColors.background.withAlpha((0.7 * 255).toInt()),
+                          color: AppColors.background.withAlpha(
+                            (0.7 * 255).toInt(),
+                          ),
                           fontSize: 12,
                         ),
                       ),
@@ -493,7 +505,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
   }
 
   void _filterMembers(String query) {
-    final members = context.read<MembersProvider>().members;
+    final members = context.read<MembersViewModel>().members;
 
     if (query.isEmpty) {
       setState(() => _filteredMembers = members);
@@ -513,18 +525,15 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
 
   void _filterBooks(String query) {
     final books = context.read<BookViewModel>().books;
-    final availableBooks = books
-        .where((book) => book.copiesAvailable > 0)
-        .toList();
 
     if (query.isEmpty) {
-      setState(() => _filteredBooks = availableBooks);
+      setState(() => _filteredBooks = books);
       return;
     }
 
     final lowercaseQuery = query.toLowerCase();
     setState(() {
-      _filteredBooks = availableBooks.where((book) {
+      _filteredBooks = books.where((book) {
         return book.title.toLowerCase().contains(lowercaseQuery) ||
             book.author.toLowerCase().contains(lowercaseQuery) ||
             book.genre.toLowerCase().contains(lowercaseQuery) ||
@@ -561,36 +570,49 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     }
   }
 
-  void _selectMember(Members member) {
-    setState(() {
-      _selectedMember = member;
-      _isMemberVerified = true;
-      _memberFieldController.text = "${member.name} (${member.memberId})";
-      _memberFieldController.selection = TextSelection.collapsed(
-        offset: _memberFieldController.text.length,
-      );
-    });
-
+  void _selectMember(MemberModel member) {
     // Check if member can borrow more books
-    if (member.currentlyBorrow >= 5) {
+    if (member.currentlyBorrow >= borrowLimit) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("This member has reached the borrow limit (5 books)"),
+          content: Text(
+            "This member has reached the borrow limit ($borrowLimit books)",
+          ),
           backgroundColor: Colors.orange,
         ),
       );
     }
+    //todo solve here. when the member is ineligible for borrowing then we shouldn't allow that member to borrow book.
+    else {
+      setState(() {
+        _selectedMember = member;
+        _isMemberVerified = true;
+        _memberFieldController.text = "${member.name} (${member.memberId})";
+        _memberFieldController.selection = TextSelection.collapsed(
+          offset: _memberFieldController.text.length,
+        );
+      });
+    }
   }
 
-  void _selectBook(Books book) {
-    setState(() {
-      _selectedBook = book;
-      _isBookSelected = true;
-      _bookFieldController.text = "${book.title} by ${book.author}";
-      _bookFieldController.selection = TextSelection.collapsed(
-        offset: _bookFieldController.text.length,
+  void _selectBook(BookModel book) {
+    if (book.copiesAvailable == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("This book is not available to borrow"),
+          backgroundColor: Colors.orange,
+        ),
       );
-    });
+    } else {
+      setState(() {
+        _selectedBook = book;
+        _isBookSelected = true;
+        _bookFieldController.text = "${book.title} by ${book.author}";
+        _bookFieldController.selection = TextSelection.collapsed(
+          offset: _bookFieldController.text.length,
+        );
+      });
+    }
   }
 
   void _clearMemberSelection() {
@@ -598,7 +620,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _selectedMember = null;
       _isMemberVerified = false;
       _memberFieldController.clear();
-      _filteredMembers = context.read<MembersProvider>().members;
+      _filteredMembers = context.read<MembersViewModel>().members;
     });
   }
 
@@ -620,13 +642,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       context: context,
       initialDate: _dueDate,
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.background,
-              onPrimary: Colors.white,
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AppColors.primary,
             ),
           ),
           child: child!,
@@ -644,10 +665,10 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     if (_selectedMember == null || _selectedBook == null) return;
 
     // Validation checks
-    if (_selectedMember!.currentlyBorrow >= 5) {
+    if (_selectedMember!.currentlyBorrow >= borrowLimit) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Member has reached borrow limit (5 books)"),
+          content: Text("Member has reached borrow limit ($borrowLimit books)"),
           backgroundColor: Colors.red,
         ),
       );
@@ -667,9 +688,9 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      final issueProvider = context.read<IssueProvider>();
+      final issueProvider = context.read<IssueViewModel>();
       final bookProvider = context.read<BookViewModel>();
-      final memberProvider = context.read<MembersProvider>();
+      final memberProvider = context.read<MembersViewModel>();
 
       // 1. Create issue record in Hive
       final issueId = await issueProvider.borrowBook(
@@ -681,7 +702,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       );
 
       // 2. Update book in SQLite
-      final updatedBook = Books(
+      final updatedBook = BookModel(
         id: _selectedBook!.id,
         title: _selectedBook!.title,
         author: _selectedBook!.author,
@@ -697,7 +718,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       await bookProvider.updateBook(updatedBook);
 
       // 3. Update member in SQLite
-      final updatedMember = Members(
+      final updatedMember = MemberModel(
         id: _selectedMember!.id,
         memberId: _selectedMember!.memberId,
         name: _selectedMember!.name,
@@ -710,6 +731,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         joined: _selectedMember!.joined,
         expiry: _selectedMember!.expiry,
       );
+
       await memberProvider.updateMember(updatedMember);
 
       // Show success dialog
@@ -739,7 +761,13 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
           children: [
             Icon(Icons.check_circle, color: AppColors.success, size: 60),
             const SizedBox(width: 8),
-            Text("Success!", style: TextStyle(color: AppColors.darkGrey,fontWeight: FontWeight.bold)),
+            Text(
+              "Success!",
+              style: TextStyle(
+                color: AppColors.darkGrey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -802,7 +830,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
       _dueDate = DateTime.now().add(Duration(days: 14));
       _memberFieldController.clear();
       _bookFieldController.clear();
-      _filteredMembers = context.read<MembersProvider>().members;
+      _filteredMembers = context.read<MembersViewModel>().members;
       _filteredBooks = context
           .read<BookViewModel>()
           .books

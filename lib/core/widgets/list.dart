@@ -69,15 +69,15 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     // Apply search filter
     if (_searchController.text.isNotEmpty) {
       final query = _searchController.text.toLowerCase();
-      if (filtered is List<Books>) {
-        filtered = (filtered as List<Books>)
+      if (filtered is List<BookModel>) {
+        filtered = (filtered as List<BookModel>)
             .where((book) =>
         book.title.toLowerCase().contains(query) ||
             book.author.toLowerCase().contains(query) ||
             book.publisher.toLowerCase().contains(query))
             .toList() as List<T>;
-      } else if (filtered is List<Members>) {
-        filtered = (filtered as List<Members>)
+      } else if (filtered is List<MemberModel>) {
+        filtered = (filtered as List<MemberModel>)
             .where((member) =>
         member.name.toLowerCase().contains(query) ||
             member.email.toLowerCase().contains(query) ||
@@ -88,48 +88,48 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     }
 
     // Apply book-specific filters
-    if (filtered is List<Books>) {
+    if (filtered is List<BookModel>) {
       // Genre filter
       if (_selectedGenre != null && _selectedGenre != 'All') {
-        filtered = (filtered as List<Books>)
+        filtered = (filtered as List<BookModel>)
             .where((book) => book.genre == _selectedGenre)
             .toList() as List<T>;
       }
 
       // Language filter
       if (_selectedLanguage != null && _selectedLanguage != 'All') {
-        filtered = (filtered as List<Books>)
+        filtered = (filtered as List<BookModel>)
             .where((book) => book.language == _selectedLanguage)
             .toList() as List<T>;
       }
 
       // Availability filter
       if (_availabilityFilter == 'available') {
-        filtered = (filtered as List<Books>)
+        filtered = (filtered as List<BookModel>)
             .where((book) => book.copiesAvailable > 0)
             .toList() as List<T>;
       } else if (_availabilityFilter == 'unavailable') {
-        filtered = (filtered as List<Books>)
+        filtered = (filtered as List<BookModel>)
             .where((book) => book.copiesAvailable == 0)
             .toList() as List<T>;
       }
     }
 
     // Apply member-specific filters
-    if (filtered is List<Members>) {
+    if (filtered is List<MemberModel>) {
       final now = DateTime.now();
 
       if (_membershipFilter == 'active') {
-        filtered = (filtered as List<Members>)
+        filtered = (filtered as List<MemberModel>)
             .where((member) => member.expiry.isAfter(now))
             .toList() as List<T>;
       } else if (_membershipFilter == 'expired') {
-        filtered = (filtered as List<Members>)
+        filtered = (filtered as List<MemberModel>)
             .where((member) => member.expiry.isBefore(now))
             .toList() as List<T>;
       } else if (_membershipFilter == 'expiring_soon') {
         final thirtyDaysFromNow = now.add(Duration(days: 30));
-        filtered = (filtered as List<Members>)
+        filtered = (filtered as List<MemberModel>)
             .where((member) =>
         member.expiry.isAfter(now) &&
             member.expiry.isBefore(thirtyDaysFromNow))
@@ -189,7 +189,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           ),
         ),
       ),
-      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items.runtimeType is List<Members> ? "Book" : "Member"}"),
+      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items is List<BookModel> ? "Book" : "Member"}"),
     );
   }
 
@@ -233,7 +233,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         ),
 
         // Filter Chips Row
-        if (_filteredItems is List<Books> || _filteredItems is List<Members>)
+        if (_filteredItems is List<BookModel> || _filteredItems is List<MemberModel>)
           _buildFilterChips(),
 
         const SizedBox(height: 12),
@@ -249,12 +249,12 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                   "Showing: ${_filteredItems.length} of ${widget.totalCount}",
                   style: BodyTextStyles.headingSmallStyle(AppColors.white),
                 ),
-                if (_filteredItems is List<Books>)
+                if (_filteredItems is List<BookModel>)
                   Text(
                     "Available: ${widget.availableCount}",
                     style: BodyTextStyles.bodySmallStyle(AppColors.white),
                   )
-                else if (_filteredItems is List<Members>)
+                else if (_filteredItems is List<MemberModel>)
                   Text(
                     "Active: ${widget.availableCount}",
                     style: BodyTextStyles.bodySmallStyle(AppColors.white),
@@ -262,24 +262,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               ],
             ),
             Row(
-              // direction: Axis.horizontal,
               children: [
-                // Reset Filters Button
-                // if (_hasActiveFilters)
-                //   Container(
-                //     margin: EdgeInsets.only(right: 10),
-                //     child: IconButton(
-                //       onPressed: _resetFilters,
-                //       icon: Icon(Icons.filter_alt_off, color: Colors.white),
-                //       tooltip: 'Reset Filters',
-                //       style: IconButton.styleFrom(
-                //         backgroundColor: Colors.orange,
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
                 // Export Button
                 Container(
                   margin: EdgeInsets.only(right: 10),
@@ -338,7 +321,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          if (_filteredItems is List<Books>) ...[
+          if (_filteredItems is List<BookModel>) ...[
             // Availability chips
             _buildChip(
               'All',
@@ -368,7 +351,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               }),
               color: Colors.red,
             ),
-          ] else if (_filteredItems is List<Members>) ...[
+          ] else if (_filteredItems is List<MemberModel>) ...[
             // Membership status chips
             _buildChip(
               'All',
@@ -451,7 +434,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           color: AppColors.background,
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 10),
           child: Builder(
             builder: (context) {
               if (_filteredItems.isEmpty) {
@@ -494,7 +477,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           Text(
             _hasActiveFilters
                 ? "No results found"
-                : "No ${widget.title.toLowerCase()} found!",
+                : "No ${widget.items is List<BookModel> ? "book":"member"} found!",
             style: BodyTextStyles.bodySmallStyle(Colors.black),
           ),
           if (_hasActiveFilters) ...[
@@ -539,7 +522,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_filteredItems is List<Books>) ...[
+              if (_filteredItems is List<BookModel>) ...[
                 // Book Filters
                 _buildDialogSection('Availability', [
                   _buildDialogRadio('All', _availabilityFilter == 'all', () {
@@ -572,10 +555,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                 _buildDialogSection('Language', [
                   _buildLanguageDropdown(),
                 ]),
-              ] else if (_filteredItems is List<Members>) ...[
+              ] else if (_filteredItems is List<MemberModel>) ...[
                 // Member Filters
                 _buildDialogSection('Membership Status', [
-                  _buildDialogRadio('All Members', _membershipFilter == 'all',
+                  _buildDialogRadio('All Member', _membershipFilter == 'all',
                           () {
                         setState(() => _membershipFilter = 'all');
                         Navigator.pop(context);
@@ -666,7 +649,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           width: isSelected ? 2.0 : 1.0,
         ),
       ),
-      color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
+      color: isSelected ? AppColors.primary.withAlpha((0.1*255).toInt()) : Colors.white,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         title: Text(
@@ -688,7 +671,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildGenreDropdown() {
-    final allBooks = widget.items as List<Books>;
+    final allBooks = widget.items as List<BookModel>;
     final genres = [
       'All',
       ...allBooks.map((b) => b.genre).toSet().toList()..sort()
@@ -726,7 +709,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
   }
 
   Widget _buildLanguageDropdown() {
-    final allBooks = widget.items as List<Books>;
+    final allBooks = widget.items as List<BookModel>;
     final languages = [
       'All',
       ...allBooks.map((b) => b.language).toSet().toList()..sort()
@@ -801,12 +784,12 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     );
 
     if (confirmed == true) {
-      if (widget.items is List<Books>) {
+      if (widget.items is List<BookModel>) {
         await context.read<BookViewModel>().clearAllBooks();
-        showSnackBar(text: "All Books cleared", context: context);
-      } else if (widget.items is List<Members>) {
-        await context.read<MembersProvider>().clearAllMembers();
-        showSnackBar(text: "All Members cleared", context: context);
+        showSnackBar(text: "All Book cleared", context: context);
+      } else if (widget.items is List<MemberModel>) {
+        await context.read<MembersViewModel>().clearAllMembers();
+        showSnackBar(text: "All Member cleared", context: context);
       }
     }
   }
@@ -850,9 +833,9 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         return;
       }
 
-      if (_filteredItems is List<Books>) {
+      if (_filteredItems is List<BookModel>) {
         await PdfExportService.exportBooksToPdf(_filteredItems);
-      } else if (_filteredItems is List<Members>) {
+      } else if (_filteredItems is List<MemberModel>) {
         await PdfExportService.exportMembersToPdf(_filteredItems);
       }
 

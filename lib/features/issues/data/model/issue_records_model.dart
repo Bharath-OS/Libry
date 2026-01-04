@@ -27,13 +27,20 @@ class IssueRecords {
   bool isReturned;
 
   @HiveField(7)
-  int fineAmount;
+  double fineAmount;
 
   @HiveField(8)
   String? bookName;
 
   @HiveField(9)
   String? memberName;
+
+  @HiveField(10)
+  DateTime? lastFineUpdateDate;
+
+  // Claude changed: Added new field to track if fine has been paid
+  @HiveField(11)
+  bool? isFinePaid;
 
   IssueRecords({
     required this.issueId,
@@ -45,16 +52,20 @@ class IssueRecords {
     required this.dueDate,
     this.returnDate,
     this.isReturned = false,
-    this.fineAmount = 0,
+    this.fineAmount = 0.0,
+    this.lastFineUpdateDate,
+    this.isFinePaid,
   });
 
-  // Simple copyWith for updates
+  // Claude changed: Updated copyWith to include isFinePaid
   IssueRecords copyWith({
     bool? isReturned,
     DateTime? returnDate,
-    int? fineAmount,
-    String? booksName,
-    String? membersName
+    double? fineAmount,
+    String? bookName,
+    String? memberName,
+    DateTime? lastFineUpdateDate,
+    bool? isFinePaid,
   }) {
     return IssueRecords(
       issueId: issueId,
@@ -62,11 +73,13 @@ class IssueRecords {
       memberId: memberId,
       borrowDate: borrowDate,
       dueDate: dueDate,
-      memberName: membersName ?? this.memberName,
-      bookName: booksName ?? this.bookName,
+      bookName: bookName ?? this.bookName,
+      memberName: memberName ?? this.memberName,
       returnDate: returnDate ?? this.returnDate,
       isReturned: isReturned ?? this.isReturned,
       fineAmount: fineAmount ?? this.fineAmount,
+      lastFineUpdateDate: lastFineUpdateDate,
+      isFinePaid: isFinePaid ?? this.isFinePaid,
     );
   }
 }

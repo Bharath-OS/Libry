@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:libry/features/issues/data/model/issue_records_model.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -68,7 +69,7 @@ class PdfExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'Books Export Report',
+                  'Book Export Report',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
@@ -199,7 +200,7 @@ class PdfExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'Members Export Report',
+                  'MemberModel Export Report',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
@@ -436,25 +437,25 @@ class PdfExportService {
                 ),
                 _buildSummaryItem(
                   'Active',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).activeCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Returned',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).returnedCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Due Today',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).issuedTodayCount.toString(),
                 ),
                 _buildSummaryItem(
                   'Over Due',
-                  Provider.of<IssueProvider>(
+                  Provider.of<IssueViewModel>(
                     context as BuildContext,
                   ).overDueCount.toString(),
                 ),
@@ -500,5 +501,35 @@ class PdfExportService {
       pdf: pdf,
       filename: 'issue_records${DateTime.now().millisecondsSinceEpoch}',
     );
+  }
+
+  // NEW: export issue records to PDF (simple table)
+  static Future<void> exportIssuesToPdf(List<IssueRecords> issues) async {
+    final pdf = pw.Document();
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context ctx) => pw.Column(
+          children: [
+            pw.Text('Issue Records', style: pw.TextStyle(fontSize: 18)),
+            pw.SizedBox(height: 12),
+            pw.TableHelper.fromTextArray(
+              headers: ['Book', 'Member', 'Issued', 'Due', 'Returned', 'Fine', 'Paid'],
+              data: issues.map((i) => [
+                i.bookName ?? '',
+                i.memberName ?? '',
+                i.borrowDate.toLocal().toString().split(' ').first,
+                i.dueDate.toLocal().toString().split(' ').first,
+                i.isReturned ? (i.returnDate?.toLocal().toString().split(' ').first ?? '') : 'No',
+                i.fineAmount.toStringAsFixed(2),
+                i.isFinePaid != null && i.isFinePaid! ? 'Yes' : 'No',
+              ]).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Save file logic: depending on your existing helper code do the same as other exports
+    // Example: final bytes = await pdf.save(); write to device or share
   }
 }

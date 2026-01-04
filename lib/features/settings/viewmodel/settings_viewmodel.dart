@@ -4,12 +4,15 @@ import 'package:libry/features/settings/data/service/settings_service.dart';
 class SettingsViewModel with ChangeNotifier {
   double _fineAmount = SettingsService.instance.fineAmount;
   int _issuePeriod = SettingsService.instance.issuePeriod;
+  int _borrowLimit = SettingsService.instance.borrowLimit;
   List<String> _genres = SettingsService.instance.getGenres();
   List<String> _languages = SettingsService.instance.getLanguages();
+  double get finePerDay => _fineAmount;
 
   void _syncData() {
     _fineAmount = SettingsService.instance.fineAmount;
     _issuePeriod = SettingsService.instance.issuePeriod;
+    _borrowLimit = SettingsService.instance.borrowLimit;
     _genres = SettingsService.instance.getGenres();
     _languages = SettingsService.instance.getLanguages();
     notifyListeners();
@@ -17,6 +20,7 @@ class SettingsViewModel with ChangeNotifier {
 
   double get fineAmount => _fineAmount;
   int get issuePeriod => _issuePeriod;
+  int get borrowLimit => _borrowLimit;
   List<String> get genres => _genres;
   List<String> get languages => _languages;
 
@@ -92,5 +96,13 @@ class SettingsViewModel with ChangeNotifier {
       return "Borrow duration updated";
     }
     return "Failed to update the borrow period";
+  }
+
+  String addBorrowLimit(int count){
+    if(SettingsService.instance.setBorrowLimit(count)){
+      _syncData();
+      return "Borrow limit updated.";
+    }
+    return "Failed to update borrow limit";
   }
 }

@@ -14,7 +14,7 @@ import '../viewmodel/book_provider.dart';
 
 
 class EditBookScreenView extends StatefulWidget {
-  final Books book;
+  final BookModel book;
   const EditBookScreenView({super.key, required this.book});
 
   @override
@@ -25,7 +25,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
-  late Books _book;
+  late BookModel _book;
   String? _temporaryImage;
   bool _isPickingImage = false;
   String? _selectedGenre;
@@ -137,7 +137,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         }
       }
 
-      final updatedBook = Books(
+      final updatedBook = BookModel(
         id: _book.id,
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
@@ -204,12 +204,12 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             AppTextField.customTextField(
               controller: controllers[0],
               label: "Book title",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: controllers[1],
               label: "Author name",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             //Language dropdown
             Padding(
@@ -251,7 +251,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             AppTextField.customTextField(
               controller: controllers[4],
               label: "Publisher",
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: controllers[5],
@@ -343,33 +343,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
             const SizedBox(height: 30),
 
             // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondaryButton,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _cancel,
-                    child: Text("Cancel"),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryButton,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: _saveBook,
-                    child: Text("Save Changes"),
-                  ),
-                ),
-              ],
-            ),
+            FormWidgets.formActionButtons(context: context, saveMethod: _saveBook)
           ],
         ),
       ),
@@ -385,6 +359,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
 
         // Image Picker Field
         TextFormField(
+          cursorColor: AppColors.background,
           style: textStyle,
           controller: _imageController,
           readOnly: true,

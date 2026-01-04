@@ -1,7 +1,6 @@
 import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:libry/features/members/view/add_members.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/list.dart';
@@ -14,18 +13,21 @@ class MembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int totalMembers = context.watch<MembersProvider>().totalCount;
-    int availableCount = context.watch<MembersProvider>().activeMembers;
-    return ListScreen<Members>(
-      title: "Members",
+    int totalMembers = context.watch<MembersViewModel>().totalCount;
+    int availableCount = context.watch<MembersViewModel>().activeMembers;
+    final membersWithId = context.watch<MembersViewModel>().members.where((m) => m.id != null).toList();
+
+    return ListScreen<MemberModel>(
+      title: "All Members",
       totalCount: totalMembers,
       availableCount: availableCount,
-      searchHint: "Search Members...",
-      items: context.watch<MembersProvider>().members,
+      searchHint: "Search Member...",
+      items: membersWithId,
       tileBuilder: (member) => Cards.memberCard(
-        memberDetails: member,
+        memberId: member.id!,
+        context: context,
         onDelete: () =>
-            context.read<MembersProvider>().removeMember(member.id!),
+            deleteMember(context: context, memberDetails: member,inDetailsScreen: false)
       ),
       onTap: (member) => Navigator.push(
         context,

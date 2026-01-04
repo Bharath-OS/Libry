@@ -36,7 +36,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     super.initState();
     controllers = List.generate(
       8,
-      (_) => TextEditingController(),
+          (_) => TextEditingController(),
     ); // Changed from 9 to 8
     _imageController = TextEditingController();
   }
@@ -105,7 +105,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
       final totalCopies = int.parse(controllers[7].text);
 
-      final book = Books(
+      final book = BookModel(
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
         language: _selectedLanguage!,
@@ -144,45 +144,9 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     List<String> genres = context.watch<SettingsViewModel>().genres;
     List<String> languages = context.watch<SettingsViewModel>().languages;
 
+    // Check if genres or languages are empty
     if (genres.isEmpty || languages.isEmpty) {
-      return LayoutWidgets.customScaffold(
-        body: SafeArea(
-          child: Container(
-            margin: EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    genres.isEmpty && languages.isEmpty
-                        ? "Genre and Language are not available"
-                        : genres.isEmpty
-                        ? "No genres available"
-                        : "No languages available",
-                    style: CardStyles.cardTitleStyle,
-                  ),
-                  SizedBox(height: 20),
-                  MyButton.primaryButton(
-                    method: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SettingsView()),
-                    ),
-                    text: genres.isEmpty && languages.isEmpty
-                        ? "Add Genres and Languages First"
-                        : genres.isEmpty
-                        ? "Add Genres First"
-                        : "Add Languages First",
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
+      return _buildEmptyState(genres.isEmpty, languages.isEmpty);
     }
 
     _selectedGenre ??= genres.first;
@@ -198,6 +162,195 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               languages: languages,
               inputControllers: controllers,
               textStyle: textStyle,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool noGenres, bool noLanguages) {
+    String title;
+    String description;
+    IconData icon;
+
+    if (noGenres && noLanguages) {
+      title = "Missing Categories";
+      description = "Genres and Languages are not set up yet.\nAdd them first to create books.";
+      icon = Icons.category_outlined;
+    } else if (noGenres) {
+      title = "No Genres Available";
+      description = "Book genres are not set up yet.\nAdd genres first to categorize your books.";
+      icon = Icons.local_offer_outlined;
+    } else {
+      title = "No Languages Available";
+      description = "Book languages are not set up yet.\nAdd languages first for better organization.";
+      icon = Icons.language_outlined;
+    }
+
+    return LayoutWidgets.customScaffold(
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Decorative Container
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primary.withAlpha((0.1*255).toInt()),
+                      border: Border.all(
+                        color: AppColors.primary.withAlpha((0.3*255).toInt()),
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        size: 60,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+              
+                  SizedBox(height: 32),
+              
+                  // Title
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.warning,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+              
+                  SizedBox(height: 16),
+              
+                  // Description
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.white,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+              
+                  SizedBox(height: 40),
+              
+                  // Action Buttons
+                  Column(
+                    children: [
+                      // Primary Action Button
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => SettingsView()),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 2,
+                            shadowColor: AppColors.primary.withAlpha((0.3*255).toInt()),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_circle_outline, size: 20),
+                              SizedBox(width: 10),
+                              Text(
+                                'Add Now',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+              
+                      SizedBox(height: 16),
+              
+                      // Secondary Action Button
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey[700],
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.arrow_back, size: 18,color: AppColors.white,),
+                            SizedBox(width: 8),
+                            Text(
+                              'Go Back',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.white
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+              
+                  SizedBox(height: 24),
+              
+                  // Tips Section
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.lightGrey),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.lightbulb_outline, color: Colors.orange, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Quick Tip',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Go to Settings → Categories to add genres and languages.\nThese help organize your library effectively.',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -222,13 +375,13 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               controller: inputControllers[0],
               label: "Book title",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: inputControllers[1],
               label: "Author name",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             //Language dropdown
             Padding(
@@ -239,6 +392,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   labelStyle: textStyle.copyWith(fontSize: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: AppColors.background)
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -270,9 +424,9 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             ),
             AppTextField.customTextField(
               controller: inputControllers[4],
-              label: "Publisher",
+              label: "Publisher Name",
               maxLength: 20,
-              validator: (value) => Validator.emptyValidator(value),
+              validator: (value) => Validator.nameValidator(value),
             ),
             AppTextField.customTextField(
               controller: inputControllers[5],
@@ -327,23 +481,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
             const SizedBox(height: 30),
 
             // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: MyButton.secondaryButton(
-                    method: _cancel,
-                    text: "Cancel",
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: MyButton.primaryButton(
-                    method: _submitForm,
-                    text: "Save",
-                  ),
-                ),
-              ],
-            ),
+            FormWidgets.formActionButtons(context: context, saveMethod: _submitForm)
           ],
         ),
       ),
@@ -359,12 +497,13 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
         // Image Picker Field
         TextFormField(
+          cursorColor: AppColors.background,
           style: textStyle,
           controller: _imageController,
           readOnly: true,
           decoration: InputDecoration(
             hintText: "Tap to select cover image",
-            hintStyle: textStyle.copyWith(color: Colors.grey),
+            hintStyle: textStyle.copyWith(color: AppColors.background),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             suffixIcon: _isPickingImage
                 ? Padding(
@@ -387,7 +526,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   ),
                 IconButton(
                   onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library),
+                  icon: Icon(Icons.photo_library,color: AppColors.background,),
                   tooltip: 'Pick from gallery',
                 ),
               ],

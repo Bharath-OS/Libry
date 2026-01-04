@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:libry/core/themes/styles.dart';
-
 import '../constants/app_colors.dart';
 import '../utilities/validation.dart';
 
@@ -14,16 +13,22 @@ class AppTextField {
     bool isObscure = false,
     int maxLines = 1,
     isReadOnly = false,
-    int? maxLength
+    int? maxLength,
+    Widget? suffixIcon
   }) {
     // Logic to select colors based on theme
     final textColor = isDarkTheme ? AppColors.darkTFText : AppColors.lightTFText;
     final borderColor = isDarkTheme ? AppColors.darkTFBorder : AppColors.lightTFBorder;
     final focusColor = isDarkTheme ? AppColors.darkTFFocus : AppColors.lightTFFocus;
-
+    final textStyle = TextStyle(
+      color: textColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        cursorColor: AppColors.background,
         style: TextFieldStyle.inputTextStyle,
         controller: controller,
         obscureText: isObscure,
@@ -32,11 +37,11 @@ class AppTextField {
         maxLines: maxLines,
         readOnly: isReadOnly,
         decoration: InputDecoration(
+          suffixIcon: suffixIcon,
           labelText: label,
-          labelStyle: TextStyle(
-            color: textColor.withAlpha((0.7 * 255).toInt()),
-            fontSize: 14,
-          ),
+          // counterText: '',
+          counterStyle: textStyle,
+          labelStyle: textStyle,
           // Border when the field is NOT selected
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
@@ -69,13 +74,17 @@ class AppTextField {
     required bool flagVariable,
     required VoidCallback onPressed,
     required Function(String) onChanged,
-    required Function(String) onFieldSubmitted
+    required Function(String) onFieldSubmitted,
+    bool isDisabled = false
   }) {
     return TextFormField(
+      cursorColor: AppColors.background,
       style: TextFieldStyle.inputTextStyle,
       controller: inputController,
+      readOnly: isDisabled,
       decoration: InputDecoration(
         hintText: label,
+        hintStyle: TextStyle(color: AppColors.background),
         prefixIcon: Icon(prefixIcon, color: AppColors.background),
         suffixIcon: flagVariable
             ? Icon(Icons.check, color: AppColors.success)

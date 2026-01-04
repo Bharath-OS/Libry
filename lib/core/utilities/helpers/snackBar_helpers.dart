@@ -23,7 +23,7 @@ void showAlertMessage({
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
-void deleteBook({required BuildContext context, required Books bookDetails, inDetailsScreen=true}) {
+void deleteBook({required BuildContext context, required BookModel bookDetails, inDetailsScreen=true}) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(

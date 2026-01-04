@@ -8,11 +8,11 @@ class BookViewModel extends ChangeNotifier {
   BookViewModel() {
     fetchBooks();
   }
-  List<Books> _books = [];
-  List<Books> _filteredBooks = [];
+  List<BookModel> _books = [];
+  List<BookModel> _filteredBooks = [];
   String _searchQuery = '';
 
-  List<Books> get books => _filteredBooks;
+  List<BookModel> get books => _filteredBooks;
   int get count => _filteredBooks.length;
   int get totalBooks => _books.length;
   int get availableBooks => _books.where((book)=>book.copiesAvailable > 0).length;
@@ -22,7 +22,7 @@ class BookViewModel extends ChangeNotifier {
     _searchQuery = query;
 
     if (_searchQuery.isNotEmpty) {
-      List<Books>? matchedBooks = matchSearch(query);
+      List<BookModel>? matchedBooks = matchSearch(query);
       _filteredBooks = matchedBooks ?? [];
     } else {
       _filteredBooks = _books;
@@ -31,7 +31,7 @@ class BookViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Books>? matchSearch(String query){
+  List<BookModel>? matchSearch(String query){
     final filteredBooks = _books.where((book) {
       return book.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           book.author.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -45,7 +45,7 @@ class BookViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addBook(Books book) async {
+  Future<void> addBook(BookModel book) async {
     await BooksDB.addBook(book);
     await fetchBooks();
   }
@@ -55,13 +55,13 @@ class BookViewModel extends ChangeNotifier {
     await fetchBooks();
   }
 
-  Future<void> updateBook(Books book) async {
+  Future<void> updateBook(BookModel book) async {
     await BooksDB.updateBook(book);
     await fetchBooks();
   }
 
   // Helper method to get book by ID
-  Books? getBookById(int id) {
+  BookModel? getBookById(int id) {
     try {
       return _books.firstWhere((book) => book.id == id);
     } catch (e) {
@@ -73,5 +73,13 @@ class BookViewModel extends ChangeNotifier {
     await BooksDB.clearAllBooks();
     await fetchBooks();
     notifyListeners();
+  }
+
+  Future<void> adjustBookCopies(String bookId, int delta) async {
+    final index = _books.indexWhere((b) => b.id == bookId);
+    if (index == -1) return;
+    _books[index].adjustCopies(delta);
+    notifyListeners();
+    // persist change if DB layer exists
   }
 }

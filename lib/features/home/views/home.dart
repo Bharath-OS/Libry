@@ -121,9 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickStats() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.watch<BookViewModel>();
-    final memberProvider = context.watch<MembersProvider>();
+    final memberProvider = context.watch<MembersViewModel>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTodayOverview() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
 
     return dashboardContainer([
       Text(
@@ -230,9 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildRecentActivity() {
-    final issueProvider = context.watch<IssueProvider>();
+    final issueProvider = context.watch<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
-    final memberProvider = context.read<MembersProvider>();
+    final memberProvider = context.read<MembersViewModel>();
 
     // Get recent issues (last 5)
     final recentIssues =

@@ -75,7 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             controller: _passwordController,
             validator: (password) => Validator.passwordValidator(password),
           ),
-          MyButton.primaryButton(text: 'Save', method: _editUserData),
+          FormWidgets.formActionButtons(context: context, saveMethod: _editUserData),
         ],
       ),
     );

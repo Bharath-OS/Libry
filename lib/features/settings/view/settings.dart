@@ -19,6 +19,7 @@ class SettingsScreenState extends State<SettingsView> {
   final iconColor = AppColors.primary;
   late double finePerDay;
   late int defaultIssueDays;
+  late int maxBorrowLimit;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class SettingsScreenState extends State<SettingsView> {
     final languages = context.watch<SettingsViewModel>().languages;
     finePerDay = context.watch<SettingsViewModel>().fineAmount;
     defaultIssueDays = context.watch<SettingsViewModel>().issuePeriod;
+    maxBorrowLimit = context.watch<SettingsViewModel>().borrowLimit;
 
     return LayoutWidgets.customScaffold(
       appBar: AppBar(title: Text('Settings')),
@@ -197,8 +199,22 @@ class SettingsScreenState extends State<SettingsView> {
           buildSettingTile(
             icon: Icons.book_online,
             title: 'Max Books Per Member',
-            subtitle: '5 books at a time',
-            trailing: Icon(Icons.info_outline, color: iconColor),
+            subtitle: '$maxBorrowLimit books at a time',
+            trailing: IconButton(
+              icon: Icon(Icons.edit, color: iconColor),
+              onPressed: () => showSettingsEditDialog(
+                context: context,
+                title: 'Set borrow limit',
+                label: 'Borrow limit',
+                initialValue: maxBorrowLimit.toString(),
+                validator: (days) => Validator.numberValidator(value: days),
+                onSave: (value) {
+                  context.read<SettingsViewModel>().addBorrowLimit(
+                    int.parse(value),
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),

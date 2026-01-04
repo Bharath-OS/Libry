@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import '../../features/books/viewmodel/book_provider.dart';
+import '../../features/issues/data/model/issue_records_model.dart';
+import '../../features/issues/viewmodel/issue_provider.dart';
+import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
 
 class IssueHistoryWidgets {
@@ -82,7 +88,7 @@ class IssueHistoryWidgets {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withAlpha((0.1 * 255).toInt()),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 20),
@@ -221,13 +227,13 @@ class IssueHistoryWidgets {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.history, size: 64, color: AppColors.darkGrey),
+          Icon(Icons.history, size: 64, color: AppColors.white),
           SizedBox(height: 16),
           Text(
             message,
             style: TextStyle(
               fontSize: 18,
-              color: AppColors.darkGrey,
+              color: AppColors.white,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -238,7 +244,7 @@ class IssueHistoryWidgets {
               child: Text(
                 'Clear Filter',
                 style: TextStyle(
-                  color: AppColors.primary,
+                  color: AppColors.warning,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -297,7 +303,7 @@ class IssueHistoryWidgets {
 
   /// Fine Warning Container
   static Widget buildFineWarning({
-    required int fine,
+    required double fine,
   }) {
     return Container(
       margin: EdgeInsets.only(top: 16),
@@ -411,7 +417,7 @@ class IssueHistoryWidgets {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withOpacity(0.3),
+            color: statusColor.withAlpha((0.3 * 255).toInt()),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -431,5 +437,149 @@ class IssueHistoryWidgets {
   /// Date Formatter
   static String formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  static Future<bool> showFinePaymentDialog({required double fine, required BuildContext context}) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: Colors.red[100],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.money_off, color: Colors.red,),
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Fine Payment Required',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red[700],
+                  fontSize: 20.sp
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Overdue fine',
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Rs $fine',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Please collect the fine before returning the book.',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text('Fine Paid'),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
+
+  static Future<bool> returnBook({required IssueRecords issue, required BuildContext context}) async {
+    final issueProvider = context.read<IssueViewModel>();
+    final bookProvider = context.read<BookViewModel>();
+    final memberProvider = context.read<MembersViewModel>();
+
+    // Calculate current fine
+    final fine = issueProvider.calculateFine(issue);
+
+    final book = bookProvider.getBookById(issue.bookId);
+    final member = memberProvider.getMemberById(issue.memberId);
+
+    if (book == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot return: Book has been deleted'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return false;
+    }
+
+    if (member == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cannot return: Member has been deleted'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return false;
+    }
+
+    // Claude changed: If there's a fine, must pay it before returning
+    if (fine > 0) {
+      final confirmed = await IssueHistoryWidgets.showFinePaymentDialog(fine: fine, context: context);
+      if (!confirmed) return false;
+
+      // Mark fine as paid in the issue and reduce member's fine balance
+      await issueProvider.markFinePaid(issue.issueId, fine);
+    }
+
+    // Process return
+    try {
+      // 1. Mark as returned in Hive
+      await issueProvider.returnBook(issue.issueId);
+      // 2. Update book copies
+      final updatedBook = book.copyWith(
+        copiesAvailable: book.copiesAvailable + 1,
+      );
+      await bookProvider.updateBook(updatedBook);
+      // 3. Update member borrow count
+      final updatedMember = member.copyWith(
+        currentlyBorrow: member.currentlyBorrow - 1,
+      );
+      await memberProvider.updateMember(updatedMember);
+      return true;
+    }
+    catch(_){
+      return false;
+    }
   }
 }

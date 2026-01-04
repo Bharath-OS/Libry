@@ -4,6 +4,7 @@ import 'package:libry/features/books/views/add_book_screen.dart';
 import 'package:libry/core/themes/styles.dart';
 import 'package:libry/features/issues/viewmodel/issue_provider.dart';
 import 'package:libry/features/auth/view/login.dart';
+import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
@@ -116,9 +117,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildKeyStats(Color color) {
-    final activeMembersCount = context.watch<IssueProvider>().activeCount;
-    final issuedTodayCount = context.watch<IssueProvider>().issuedTodayCount;
-    final fineOwes = context.watch<IssueProvider>().fineOwed;
+    final activeMembersCount = context.watch<MembersViewModel>().activeMembers;
+    final issuedTodayCount = context.watch<IssueViewModel>().issuedTodayCount;
+    final fineOwes = context.watch<IssueViewModel>().totalPendingFines;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
@@ -131,21 +132,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildStatCard(
             icon: Icons.book_rounded,
             stat: issuedTodayCount,
-            label: "Issued Today",
+            label: "Issued \nToday",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.people_rounded,
             stat: activeMembersCount,
-            label: "Active Members",
+            label: "Active \nMembers",
             color: color,
           ),
           verticalDivider(),
           _buildStatCard(
             icon: Icons.currency_rupee_rounded,
             stat: fineOwes,
-            label: "Fine Owes",
+            label: "Fine \nOwes",
             color: color,
           ),
         ],
@@ -190,8 +191,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           ),
           Divider(),
-          // actionButton(icon: Icons.file_copy_outlined, iconColor: color,text: "Download",textColor: color, method: (){}),
-          // Divider(),
           actionButton(
               icon: Icons.exit_to_app,
               iconColor: AppColors.error,
@@ -210,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildStatCard({
     required IconData icon,
-    required int stat,
+    required num stat,
     required String label,
     Color color = Colors.black,
   }) {
