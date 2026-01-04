@@ -9,7 +9,7 @@ class GlassMorphism extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final Widget child;
 
-  const GlassMorphism({
+  const GlassMorphism({super.key,
     required this.child,
     this.height,
     this.width,
@@ -23,7 +23,8 @@ class GlassMorphism extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          padding: this.padding,
+          constraints: const BoxConstraints(maxWidth: 400),
+          padding: padding,
           decoration: BoxDecoration(
             color: Colors.white.withAlpha((0.2 * 255).toInt()),
             borderRadius: BorderRadius.circular(this.borderRadius),
