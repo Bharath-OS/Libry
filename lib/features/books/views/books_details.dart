@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,7 @@ import '../../../core/widgets/layout_widgets.dart';
 
 
 class BookInfoScreenView extends StatefulWidget {
-  final int bookId;
+  final String bookId;
 
   const BookInfoScreenView({super.key, required this.bookId});
 
@@ -79,7 +79,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: _buildBookCover(book.coverPicture),
+              child: _buildBookCover(book.coverPictureData),
             ),
           ),
 
@@ -281,10 +281,10 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     );
   }
 
-  Widget _buildBookCover(String coverPicture) {
-    if (coverPicture.isNotEmpty && !coverPicture.startsWith('assets/')) {
-      return Image.file(
-        File(coverPicture),
+  Widget _buildBookCover(Uint8List? coverPictureData) {
+    if (coverPictureData != null && coverPictureData.isNotEmpty) {
+      return Image.memory(
+        coverPictureData,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return _buildPlaceholderCover();

@@ -12,7 +12,7 @@ import '../../members/viewmodel/members_provider.dart';
 import '../../../core/widgets/layout_widgets.dart';
 
 class BookHistoryScreenView extends StatefulWidget {
-  final int bookId;
+  final String bookId;
 
   const BookHistoryScreenView({super.key, required this.bookId});
 
@@ -90,7 +90,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                       itemBuilder: (context, index) {
                         final issue = filteredIssues[index];
                         final member = memberProvider.getMemberById(
-                          issue.memberId,
+                          issue.memberId!,
                         );
                         return _buildIssueCard(issue, member, issueProvider);
                       },

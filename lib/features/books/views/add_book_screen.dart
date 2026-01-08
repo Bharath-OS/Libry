@@ -1,6 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:libry/core/utilities/image_services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/themes/styles.dart';
@@ -26,18 +26,23 @@ class _AddBookScreenState extends State<AddBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
-  String? _temporaryImage;
+  Uint8List? _imageBytes;
   bool _isPickingImage = false;
   String? _selectedGenre;
   String? _selectedLanguage;
+  final style = const TextStyle(
+    color: Color(0xffC1DCFF),
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
 
   @override
   void initState() {
     super.initState();
     controllers = List.generate(
       8,
-          (_) => TextEditingController(),
-    ); // Changed from 9 to 8
+      (_) => TextEditingController(),
+    );
     _imageController = TextEditingController();
   }
 
@@ -47,25 +52,29 @@ class _AddBookScreenState extends State<AddBookScreenView> {
       controller.dispose();
     }
     _imageController.dispose();
-    ImageService.cleanupTemporaryImage();
     super.dispose();
   }
 
   Future<void> _pickImage() async {
     setState(() => _isPickingImage = true);
-
+    final ImagePicker picker = ImagePicker();
     try {
-      final tempPath = await ImageService.pickAndSaveTemporaryImage();
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+        maxWidth: 800,
+      );
 
-      if (tempPath != null) {
+      if (pickedFile != null) {
+        final bytes = await pickedFile.readAsBytes();
         setState(() {
-          _temporaryImage = tempPath;
+          _imageBytes = bytes;
           _imageController.text = 'Image selected';
         });
       }
     } catch (e) {
       AppDialogs.showSnackBar(
-        text: "Failed to pick an image.",
+        text: "Failed to pick an image: $e",
         context: context,
       );
     } finally {
@@ -75,10 +84,9 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
   void _clearImage() {
     setState(() {
-      _temporaryImage = null;
+      _imageBytes = null;
       _imageController.clear();
     });
-    ImageService.cleanupTemporaryImage();
   }
 
   void _submitForm() async {
@@ -97,11 +105,6 @@ class _AddBookScreenState extends State<AddBookScreenView> {
         );
         return;
       }
-      String? imagePath;
-      if (_temporaryImage != null) {
-        imagePath = await ImageService.makeImagePermanent(_temporaryImage);
-        _temporaryImage = null;
-      }
 
       final totalCopies = int.parse(controllers[7].text);
 
@@ -114,8 +117,8 @@ class _AddBookScreenState extends State<AddBookScreenView> {
         pages: int.parse(controllers[5].text.trim()),
         genre: _selectedGenre!,
         totalCopies: totalCopies,
-        copiesAvailable: totalCopies, // Set to same as totalCopies
-        coverPicture: imagePath ?? 'assets/images/dummy_book_cover.png',
+        copiesAvailable: totalCopies,
+        coverPictureData: _imageBytes,
       );
 
       context.read<BookViewModel>().addBook(book);
@@ -129,8 +132,6 @@ class _AddBookScreenState extends State<AddBookScreenView> {
   }
 
   void _cancel() {
-    ImageService.cleanupTemporaryImage();
-    _temporaryImage = null;
     Navigator.pop(context);
   }
 
@@ -144,7 +145,6 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     List<String> genres = context.watch<SettingsViewModel>().genres;
     List<String> languages = context.watch<SettingsViewModel>().languages;
 
-    // Check if genres or languages are empty
     if (genres.isEmpty || languages.isEmpty) {
       return _buildEmptyState(genres.isEmpty, languages.isEmpty);
     }
@@ -169,6 +169,194 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     );
   }
 
+  // --- BUILD WIDGETS ---
+
+  Widget addBookForm({
+    required List<String> genres,
+    required List<String> languages,
+    required List<TextEditingController> inputControllers,
+    required TextStyle textStyle,
+  }) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildImagePicker(),
+          const SizedBox(height: 24),
+          FormWidgets.formField(
+            title: 'Book Title',
+            child: AppTextField.customTextField(
+              controller: inputControllers[0],
+              label: "Enter book title",
+              validator: (String? value) => Validator.nameValidator(value),
+            ),
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Author Name',
+            child: AppTextField.customTextField(
+              controller: inputControllers[1],
+              label: "Enter author's name",
+              validator: (String? value) => Validator.nameValidator(value),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Genre',
+                  child: FormWidgets.dropdown(
+                    value: _selectedGenre,
+                    items: genres,
+                    onChanged: (val) => setState(() => _selectedGenre = val),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Language',
+                  child: FormWidgets.dropdown(
+                    value: _selectedLanguage,
+                    items: languages,
+                    onChanged: (val) => setState(() => _selectedLanguage = val),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Publish Year',
+                  child: AppTextField.customTextField(
+                    controller: inputControllers[3],
+                    label: "e.g., 2023",
+                    validator: (String? value) => Validator.yearValidator(value),
+                    keyboardType: TextInputType.number
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Pages',
+                  child: AppTextField.customTextField(
+                    controller: inputControllers[5],
+                    label: "e.g., 350",
+                    validator: (String? value) => Validator.numberValidator(value: value),
+                    keyboardType: TextInputType.number
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Publisher Name',
+            child: AppTextField.customTextField(
+              controller: inputControllers[4],
+              label: "Enter publisher's name",
+              validator: (String? value) => Validator.nameValidator(value),
+            ),
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Total Copies',
+            child: AppTextField.customTextField(
+              controller: inputControllers[7],
+              label: "e.g., 10",
+              validator: (String? value) => Validator.numberValidator(value: value),
+              keyboardType: TextInputType.number
+            ),
+          ),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: MyButton.secondaryButton(
+                  text: 'Cancel',
+                  method: _cancel,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: MyButton.primaryButton(
+                  text: 'Add Book',
+                  method: _submitForm,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Book Cover', style: style),
+        const SizedBox(height: 8),
+        Center(
+          child: Container(
+            width: 150,
+            height: 200,
+            decoration: BoxDecoration(
+              color: const Color(0xff0E1622),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.primary, width: 1),
+              image: _imageBytes != null
+                  ? DecorationImage(
+                      image: MemoryImage(_imageBytes!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: _imageBytes == null
+                ? const Center(
+                    child: Icon(
+                      Icons.book_outlined,
+                      color: AppColors.primary,
+                      size: 50,
+                    ),
+                  )
+                : null,
+          ),
+        ),
+        const SizedBox(height: 16),
+        AppTextField.customTextField(
+          isReadOnly: true,
+          controller: _imageController,
+          label: "Select an image",
+          method: _pickImage,
+          validator: (value) {
+            if (_imageBytes == null) {
+              return "Please select a cover image";
+            }
+            return null;
+          },
+          prefixIcon: Icon(
+            _isPickingImage ? Icons.hourglass_top_rounded : Icons.attach_file,
+            color: const Color(0xffC1DCFF),
+          ),
+          suffixIcon: _imageBytes != null
+              ? IconButton(
+                  icon: const Icon(Icons.clear, color: AppColors.warning),
+                  onPressed: _clearImage,
+                )
+              : null,
+        ),
+      ],
+    );
+  }
+
   Widget _buildEmptyState(bool noGenres, bool noLanguages) {
     String title;
     String description;
@@ -176,15 +364,15 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
     if (noGenres && noLanguages) {
       title = "Missing Categories";
-      description = "Genres and Languages are not set up yet.\nAdd them first to create books.";
+      description = "Genres and Languages are not set up yet. Add them first to create books.";
       icon = Icons.category_outlined;
     } else if (noGenres) {
       title = "No Genres Available";
-      description = "Book genres are not set up yet.\nAdd genres first to categorize your books.";
+      description = "Book genres are not set up yet. Add genres first to categorize your books.";
       icon = Icons.local_offer_outlined;
     } else {
       title = "No Languages Available";
-      description = "Book languages are not set up yet.\nAdd languages first for better organization.";
+      description = "Book languages are not set up yet. Add languages first for better organization.";
       icon = Icons.language_outlined;
     }
 
@@ -197,15 +385,14 @@ class _AddBookScreenState extends State<AddBookScreenView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Decorative Container
                   Container(
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withAlpha((0.1*255).toInt()),
+                      color: AppColors.primary.withAlpha((0.1 * 255).toInt()),
                       border: Border.all(
-                        color: AppColors.primary.withAlpha((0.3*255).toInt()),
+                        color: AppColors.primary.withAlpha((0.3 * 255).toInt()),
                         width: 2,
                       ),
                     ),
@@ -217,39 +404,29 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                       ),
                     ),
                   ),
-              
-                  SizedBox(height: 32),
-              
-                  // Title
+                  const SizedBox(height: 32),
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.warning,
                     ),
                     textAlign: TextAlign.center,
                   ),
-              
-                  SizedBox(height: 16),
-              
-                  // Description
+                  const SizedBox(height: 16),
                   Text(
                     description,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.white,
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
                   ),
-              
-                  SizedBox(height: 40),
-              
-                  // Action Buttons
+                  const SizedBox(height: 40),
                   Column(
                     children: [
-                      // Primary Action Button
                       Container(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -260,14 +437,16 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 24),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 2,
-                            shadowColor: AppColors.primary.withAlpha((0.3*255).toInt()),
+                            shadowColor:
+                                AppColors.primary.withAlpha((0.3 * 255).toInt()),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.add_circle_outline, size: 20),
@@ -283,40 +462,34 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                           ),
                         ),
                       ),
-              
-                      SizedBox(height: 16),
-              
-                      // Secondary Action Button
+                      const SizedBox(height: 16),
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.grey[700],
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.arrow_back, size: 18,color: AppColors.white,),
+                            Icon(Icons.arrow_back,
+                                size: 18, color: AppColors.white),
                             SizedBox(width: 8),
                             Text(
                               'Go Back',
                               style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.white
-                              ),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.white),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-              
-                  SizedBox(height: 24),
-              
-                  // Tips Section
+                  const SizedBox(height: 24),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
@@ -327,8 +500,9 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.lightbulb_outline, color: Colors.orange, size: 20),
-                            SizedBox(width: 8),
+                            const Icon(Icons.lightbulb_outline,
+                                color: Colors.orange, size: 20),
+                            const SizedBox(width: 8),
                             Text(
                               'Quick Tip',
                               style: TextStyle(
@@ -338,12 +512,12 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          'Go to Settings → Categories to add genres and languages.\nThese help organize your library effectively.',
+                          'Go to Settings → Categories to add genres and languages. These help organize your library effectively.',
                           style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 13,
+                            color: Colors.grey[700],
+                            height: 1.4,
                           ),
                         ),
                       ],
@@ -355,215 +529,6 @@ class _AddBookScreenState extends State<AddBookScreenView> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget addBookForm({
-    required List<String> genres,
-    required List<String> languages,
-    required List<TextEditingController> inputControllers,
-    required TextStyle textStyle,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            // Text Fields
-            AppTextField.customTextField(
-              controller: inputControllers[0],
-              label: "Book title",
-              maxLength: 20,
-              validator: (value) => Validator.nameValidator(value),
-            ),
-            AppTextField.customTextField(
-              controller: inputControllers[1],
-              label: "Author name",
-              maxLength: 20,
-              validator: (value) => Validator.nameValidator(value),
-            ),
-            //Language dropdown
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: "Language",
-                  labelStyle: textStyle.copyWith(fontSize: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppColors.background)
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    dropdownColor: AppColors.darkGrey,
-                    value: _selectedLanguage,
-                    isExpanded: true,
-                    style: textStyle,
-                    items: languages.map((String language) {
-                      return DropdownMenuItem<String>(
-                        value: language,
-                        child: Text(language),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedLanguage = newValue;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ),
-            AppTextField.customTextField(
-              controller: inputControllers[3],
-              label: "Publish year",
-              keyboardType: TextInputType.number,
-              validator: (value) => Validator.yearValidator(value),
-            ),
-            AppTextField.customTextField(
-              controller: inputControllers[4],
-              label: "Publisher Name",
-              maxLength: 20,
-              validator: (value) => Validator.nameValidator(value),
-            ),
-            AppTextField.customTextField(
-              controller: inputControllers[5],
-              label: "Number of pages",
-              keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value: value),
-            ),
-            //genre dropdown
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: "Genre",
-                  labelStyle: textStyle.copyWith(fontSize: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    dropdownColor: AppColors.darkGrey,
-                    value: _selectedGenre,
-                    isExpanded: true,
-                    style: textStyle,
-                    items: genres.map((String genre) {
-                      return DropdownMenuItem<String>(
-                        value: genre,
-                        child: Text(genre),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedGenre = newValue;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ),
-            AppTextField.customTextField(
-              controller: inputControllers[7],
-              label: "Total copies",
-              keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value:value),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Cover Image Section
-            _buildImageSection(textStyle),
-
-            const SizedBox(height: 30),
-
-            // Action Buttons
-            FormWidgets.formActionButtons(context: context, saveMethod: _submitForm)
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImageSection(TextStyle textStyle) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Cover Image", style: textStyle.copyWith(fontSize: 14)),
-        const SizedBox(height: 8),
-
-        // Image Picker Field
-        TextFormField(
-          cursorColor: AppColors.background,
-          style: textStyle,
-          controller: _imageController,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: "Tap to select cover image",
-            hintStyle: textStyle.copyWith(color: AppColors.background),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            suffixIcon: _isPickingImage
-                ? Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppColors.primaryButton,
-                ),
-              ),
-            )
-                : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_temporaryImage != null)
-                  IconButton(
-                    onPressed: _clearImage,
-                    icon: Icon(Icons.clear, color: Colors.red),
-                    tooltip: 'Remove image',
-                  ),
-                IconButton(
-                  onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library,color: AppColors.background,),
-                  tooltip: 'Pick from gallery',
-                ),
-              ],
-            ),
-          ),
-          onTap: _isPickingImage ? null : _pickImage,
-        ),
-
-        // Image Preview (only if image exists)
-        if (_temporaryImage != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Center(
-              child: Container(
-                height: 150,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    File(_temporaryImage!),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: Icon(Icons.broken_image, size: 40),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
