@@ -1,15 +1,42 @@
-class BookModel {
-  int? id;
+import 'package:hive/hive.dart';
+
+part 'books_model.g.dart';
+
+@HiveType(typeId: 2)
+class BookModel extends HiveObject {
+  @HiveField(0)
+  String? id;
+
+  @HiveField(1)
   String title;
+
+  @HiveField(2)
   String author;
+
+  @HiveField(3)
   String year;
+
+  @HiveField(4)
   String language;
+
+  @HiveField(5)
   String publisher;
+
+  @HiveField(6)
   String genre;
+
+  @HiveField(7)
   int pages;
+
+  @HiveField(8)
   int totalCopies;
+
+  @HiveField(9)
   int copiesAvailable;
+
+  @HiveField(10)
   String coverPicture;
+
   BookModel({
     this.id,
     required this.title,
@@ -31,7 +58,7 @@ class BookModel {
   }
 
   BookModel copyWith({
-    int? id,
+    String? id,
     String? title,
     String? author,
     String? year,
@@ -44,8 +71,8 @@ class BookModel {
     String? coverPicture,
   }) {
     return BookModel(
-      id: id??this.id,
-      title: title??this.title,
+      id: id ?? this.id,
+      title: title ?? this.title,
       author: author ?? this.author,
       year: year ?? this.year,
       language: language ?? this.language,
@@ -57,17 +84,4 @@ class BookModel {
       coverPicture: coverPicture ?? this.coverPicture,
     );
   }
-}
-
-class BookKeys {
-  static const String title = "title";
-  static const String author = "author";
-  static const String publishYear = "year";
-  static const String language = "language";
-  static const String publisherName = "publisher";
-  static const String genre = "genre";
-  static const String pages = "pages";
-  static const String totalCopies = "totalCopies";
-  static const String copiesAvailable = "copiesAvailable";
-  static const String coverPicture = "coverPicture";
 }
