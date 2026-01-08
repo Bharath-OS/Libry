@@ -309,12 +309,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       color: AppColors.background,
                     ),
                     child:
-                        book.coverPicture.isNotEmpty &&
-                            File(book.coverPicture).existsSync()
+                        book.coverPictureData != null &&
+                                book.coverPictureData!.isNotEmpty
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
-                            child: Image.file(
-                              File(book.coverPicture),
+                            child: Image.memory(
+                              book.coverPictureData!,
                               fit: BoxFit.cover,
                             ),
                           )
@@ -376,11 +376,12 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                     borderRadius: BorderRadius.circular(6),
                     color: AppColors.background.withAlpha((0.1 * 255).toInt()),
                   ),
-                  child: _selectedBook!.coverPicture.isNotEmpty
+                  child: _selectedBook!.coverPictureData!= null &&
+                          _selectedBook!.coverPictureData!.isNotEmpty
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(6),
-                          child: Image.file(
-                            File(_selectedBook!.coverPicture),
+                          child: Image.memory(
+                            _selectedBook!.coverPictureData!,
                             fit: BoxFit.cover,
                           ),
                         )
@@ -713,7 +714,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
         pages: _selectedBook!.pages,
         totalCopies: _selectedBook!.totalCopies,
         copiesAvailable: _selectedBook!.copiesAvailable - 1,
-        coverPicture: _selectedBook!.coverPicture,
+        coverPictureData: _selectedBook!.coverPictureData,
       );
       await bookProvider.updateBook(updatedBook);
 

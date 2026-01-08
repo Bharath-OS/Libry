@@ -89,9 +89,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                         itemCount: filteredIssues.length,
                         itemBuilder: (context, index) {
                           final issue = filteredIssues[index];
-                          final book = bookProvider.getBookById(issue.bookId);
+                          final book = bookProvider.getBookById(issue.bookId!);
                           final member = memberProvider.getMemberById(
-                            issue.memberId,
+                            issue.memberId!,
                           );
                           return Container(
                             margin: EdgeInsets.only(bottom: 16),

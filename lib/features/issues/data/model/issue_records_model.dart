@@ -9,10 +9,10 @@ class IssueRecords {
   final String issueId; // I001, I002, etc.
 
   @HiveField(1)
-  final int bookId;
+  final String? bookId;
 
   @HiveField(2)
-  final int memberId;
+  final String? memberId;
 
   @HiveField(3)
   final DateTime borrowDate;

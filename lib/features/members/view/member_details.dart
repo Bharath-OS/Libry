@@ -11,7 +11,7 @@ import '../../../core/widgets/layout_widgets.dart';
 import '../data/model/members_model.dart';
 
 class MemberDetailsScreen extends StatefulWidget {
-  final int memberId;
+  final String memberId;
 
   const MemberDetailsScreen({super.key, required this.memberId});
 

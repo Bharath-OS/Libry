@@ -43,7 +43,7 @@ class MembersViewModel extends ChangeNotifier {
     return matchedMembers.isNotEmpty ? matchedMembers : null;
   }
 
-  Future<String> renewMembership(int memberId) async {
+  Future<String> renewMembership(String memberId) async {
     try {
       final member = getMemberById(memberId);
       if (member == null) {
@@ -71,7 +71,7 @@ class MembersViewModel extends ChangeNotifier {
     // Keep an authoritative backing list and a filtered view
     _members
       ..clear()
-      ..addAll(members);
+      ..addAll(members!);
     _filteredMembers = List.from(members);
     notifyListeners();
   }
@@ -79,18 +79,19 @@ class MembersViewModel extends ChangeNotifier {
   Future<void> addMember(MemberModel member) async {
     // Capture inserted id (if DB returns it) and then refresh local cache
     try {
-      final insertedId = await MembersDB.addMember(member, count + 1);
-      // Optionally set the id on the passed object while we refresh
-      if (insertedId != null) member.id = insertedId;
+      // final insertedId = await MembersDB.addMember(member, count + 1);
+      // // Optionally set the id on the passed object while we refresh
+      // if (insertedId != null) member.id = insertedId;
+      await MembersDB.addMember(member);
     } catch (e) {
-      // ignore and continue - fetch will resync state
+      debugPrint('Error adding member: $e');
     }
 
     await fetchMembers();
   }
 
   //
-  Future<void> removeMember(int memberId) async {
+  Future<void> removeMember(String memberId) async {
     await MembersDB.removeMember(memberId);
     await fetchMembers();
   }
@@ -101,7 +102,7 @@ class MembersViewModel extends ChangeNotifier {
   }
 
   // Helper method to get member by ID
-  MemberModel? getMemberById(int id) {
+  MemberModel? getMemberById(String id) {
     try {
       return _members.firstWhere((member) => member.id == id);
     } catch (e) {

@@ -18,9 +18,9 @@ class IssueRecordsAdapter extends TypeAdapter<IssueRecords> {
     };
     return IssueRecords(
       issueId: fields[0] as String,
-      bookId: fields[1] as int,
+      bookId: fields[1] as String?,
       bookName: fields[8] as String?,
-      memberId: fields[2] as int,
+      memberId: fields[2] as String?,
       memberName: fields[9] as String?,
       borrowDate: fields[3] as DateTime,
       dueDate: fields[4] as DateTime,
