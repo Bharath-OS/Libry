@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Libry (web)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-browser-flag=--start-maximized", // Launch maximized
+                "--web-browser-flag=--profile-directory=Default" // Use your default profile
+            ]
+        },
+        {
+            "name": "Libry (mobile)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart"
+        }
+    ]
+}
