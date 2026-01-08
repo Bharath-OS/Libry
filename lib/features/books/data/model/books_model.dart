@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 
 part 'books_model.g.dart';
@@ -37,6 +39,9 @@ class BookModel extends HiveObject {
   @HiveField(10)
   String coverPicture;
 
+  @HiveField(11)
+  Uint8List? coverPictureData;
+
   BookModel({
     this.id,
     required this.title,
@@ -49,6 +54,7 @@ class BookModel extends HiveObject {
     required this.totalCopies,
     required this.copiesAvailable,
     this.coverPicture = "assets/images/dummy_book_cover.png",
+    this.coverPictureData,
   });
 
   // Simple helper to adjust copies count
@@ -69,6 +75,7 @@ class BookModel extends HiveObject {
     int? totalCopies,
     int? copiesAvailable,
     String? coverPicture,
+    Uint8List? coverPictureData,
   }) {
     return BookModel(
       id: id ?? this.id,
@@ -82,6 +89,7 @@ class BookModel extends HiveObject {
       totalCopies: totalCopies ?? this.totalCopies,
       copiesAvailable: copiesAvailable ?? this.copiesAvailable,
       coverPicture: coverPicture ?? this.coverPicture,
+      coverPictureData: coverPictureData ?? this.coverPictureData,
     );
   }
 }

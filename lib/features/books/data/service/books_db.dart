@@ -21,9 +21,13 @@ class BooksDBHive {
     await box.delete(bookId);
   }
 
-  static Future<List<BookModel>> getBooks() async {
-    final box = await _openBox();
-    return box.values.toList();
+  static Future<List<BookModel>?> getBooks() async {
+    try {
+      final box = await _openBox();
+      return box.values.toList();
+    } catch (_) {
+      return null;
+    }
   }
 
   static Future<void> updateBook(BookModel book) async {

@@ -1,17 +1,18 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/themes/styles.dart';
 import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/image_services.dart';
 import '../../../core/utilities/validation.dart';
+import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
 import '../../settings/viewmodel/settings_viewmodel.dart';
 import '../data/model/books_model.dart';
 import '../viewmodel/book_provider.dart';
-
 
 class EditBookScreenView extends StatefulWidget {
   final BookModel book;
@@ -25,48 +26,56 @@ class _EditBookScreenState extends State<EditBookScreenView> {
   final _formKey = GlobalKey<FormState>();
   late final List<TextEditingController> controllers;
   late final TextEditingController _imageController;
-  late BookModel _book;
-  String? _temporaryImage;
+
+  // Claude changed: Track original and new image bytes
+  Uint8List? _originalImageBytes; // Original image from database
+  Uint8List? _newImageBytes; // Newly selected image
+  bool _imageCleared = false; // Track if user intentionally cleared image
+
   bool _isPickingImage = false;
   String? _selectedGenre;
   String? _selectedLanguage;
 
-  // Track original values
   late int _originalTotalCopies;
   late int _originalCopiesAvailable;
 
+  final style = const TextStyle(
+    color: Color(0xffC1DCFF),
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
   @override
   void initState() {
     super.initState();
-    _book = widget.book;
-    controllers = List.generate(8, (_) => TextEditingController()); // Changed from 9 to 8
+    controllers = List.generate(8, (_) => TextEditingController());
     _imageController = TextEditingController();
 
-    // Store original values
-    _originalTotalCopies = _book.totalCopies;
-    _originalCopiesAvailable = _book.copiesAvailable;
+    _originalTotalCopies = widget.book.totalCopies;
+    _originalCopiesAvailable = widget.book.copiesAvailable;
 
-    // Initialize form
-    controllers[0].text = _book.title;
-    controllers[1].text = _book.author;
-    _selectedLanguage = _book.language;
-    controllers[3].text = _book.year;
-    controllers[4].text = _book.publisher;
-    controllers[5].text = _book.pages.toString();
-    _selectedGenre = _book.genre;
-    controllers[7].text = _book.totalCopies.toString();
-    // REMOVED: controllers[8] for copiesAvailable
+    // Claude changed: Store original image
+    _originalImageBytes = widget.book.coverPictureData;
 
-    // Set image text
-    if (_book.coverPicture.isNotEmpty &&
-        ImageService.isValidImagePath(_book.coverPicture)) {
+    // Initialize form fields
+    controllers[0].text = widget.book.title;
+    controllers[1].text = widget.book.author;
+    _selectedLanguage = widget.book.language;
+    controllers[3].text = widget.book.year;
+    controllers[4].text = widget.book.publisher;
+    controllers[5].text = widget.book.pages.toString();
+    _selectedGenre = widget.book.genre;
+    controllers[7].text = widget.book.totalCopies.toString();
+
+    if (_originalImageBytes != null) {
       _imageController.text = 'Current cover image';
     }
   }
 
   @override
   void dispose() {
-    ImageService.cleanupTemporaryImage();
+    // Claude changed: Clean up temporary image on dispose
+    ImageService.clearTemporaryImage();
+
     for (var controller in controllers) {
       controller.dispose();
     }
@@ -74,48 +83,48 @@ class _EditBookScreenState extends State<EditBookScreenView> {
     super.dispose();
   }
 
+  // Claude changed: Simplified image picking
   Future<void> _pickImage() async {
     setState(() => _isPickingImage = true);
 
     try {
-      final tempPath = await ImageService.pickAndSaveTemporaryImage();
+      final bytes = await ImageService.pickImage();
 
-      if (tempPath != null) {
+      if (bytes != null) {
         setState(() {
-          _temporaryImage = tempPath;
+          _newImageBytes = bytes;
+          _imageCleared = false;
           _imageController.text = 'New image selected';
         });
       }
     } catch (e) {
-      AppDialogs.showSnackBar(text: "Failed to pick Image", context: context);
+      if (mounted) {
+        AppDialogs.showSnackBar(
+          text: "Failed to pick an image: $e",
+          context: context,
+        );
+      }
     } finally {
       setState(() => _isPickingImage = false);
     }
   }
 
+  // Claude changed: Clear image (removes both original and new)
   void _clearImage() {
     setState(() {
-      _temporaryImage = null;
-      if (_book.coverPicture.isNotEmpty) {
-        _imageController.text = 'Current cover image';
-      } else {
-        _imageController.clear();
-      }
+      _newImageBytes = null;
+      _imageCleared = true;
+      _imageController.clear();
     });
-    ImageService.cleanupTemporaryImage();
+    ImageService.clearTemporaryImage();
   }
 
-  void _saveBook() async{
+  void _saveBook() async {
     if (_formKey.currentState!.validate()) {
       final newTotalCopies = int.parse(controllers[7].text);
-
-      // Calculate how many copies are currently borrowed
       final currentlyBorrowed = _originalTotalCopies - _originalCopiesAvailable;
-
-      // Calculate new available copies
       final newCopiesAvailable = newTotalCopies - currentlyBorrowed;
 
-      // Validate that new total isn't less than borrowed
       if (newCopiesAvailable < 0) {
         AppDialogs.showSnackBar(
           text: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
@@ -124,21 +133,20 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         return;
       }
 
-      // Use new image if selected, otherwise keep original
-      String imagePath = _book.coverPicture;
-      if (_temporaryImage != null) {
-        final permanentPath = await ImageService.makeImagePermanent(_temporaryImage);
-        if(permanentPath != null){
-          if(_book.coverPicture.isNotEmpty && !_book.coverPicture.startsWith('assets/') && await ImageService.checkImage(_book.coverPicture)){
-            await ImageService.deletePermanentImage(_book.coverPicture);
-          }
-          imagePath = permanentPath;
-          _temporaryImage = null;
-        }
+      // Claude changed: Determine final image bytes
+      Uint8List? finalImageBytes;
+      if (_imageCleared) {
+        // User cleared the image intentionally
+        finalImageBytes = null;
+      } else if (_newImageBytes != null) {
+        // User selected a new image
+        finalImageBytes = _newImageBytes;
+      } else {
+        // Keep original image
+        finalImageBytes = _originalImageBytes;
       }
 
-      final updatedBook = BookModel(
-        id: _book.id,
+      final bookToUpdate = widget.book.copyWith(
         title: controllers[0].text.trim(),
         author: controllers[1].text.trim(),
         language: _selectedLanguage!,
@@ -147,31 +155,33 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         pages: int.parse(controllers[5].text),
         genre: _selectedGenre!,
         totalCopies: newTotalCopies,
-        copiesAvailable: newCopiesAvailable, // Calculated automatically
-        coverPicture: imagePath,
+        copiesAvailable: newCopiesAvailable,
+        coverPictureData: finalImageBytes,
       );
 
-      context.read<BookViewModel>().updateBook(updatedBook);
-      Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Book updated successfully')));
+      context.read<BookViewModel>().updateBook(bookToUpdate);
+
+      // Claude changed: Confirm image changes
+      ImageService.confirmImage();
+
+      if (mounted) {
+        Navigator.pop(context);
+        AppDialogs.showSnackBar(
+          text: 'Book updated successfully',
+          context: context,
+        );
+      }
     }
   }
 
   void _cancel() {
-    ImageService.cleanupTemporaryImage();
-    _temporaryImage = null;
+    // Claude changed: Clean up temporary image on cancel
+    ImageService.clearTemporaryImage();
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = const TextStyle(
-      color: Color(0xffC1DCFF),
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    );
     List<String> genres = context.watch<SettingsViewModel>().genres;
     List<String> languages = context.watch<SettingsViewModel>().languages;
 
@@ -180,7 +190,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
         child: SingleChildScrollView(
           child: FormWidgets.formContainer(
             title: "Edit Book",
-            formWidget: _editBookForm(context, textStyle, genres, languages),
+            formWidget: _editBookForm(context, genres, languages),
           ),
         ),
       ),
@@ -189,255 +199,231 @@ class _EditBookScreenState extends State<EditBookScreenView> {
 
   Widget _editBookForm(
       BuildContext context,
-      TextStyle textStyle,
       List<String> genres,
       List<String> languages,
       ) {
     final currentlyBorrowed = _originalTotalCopies - _originalCopiesAvailable;
 
-    return SizedBox(
-      width: double.infinity,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            AppTextField.customTextField(
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildImagePicker(),
+          const SizedBox(height: 24),
+          FormWidgets.formField(
+            title: 'Book Title',
+            child: AppTextField.customTextField(
               controller: controllers[0],
-              label: "Book title",
-              validator: (value) => Validator.nameValidator(value),
+              label: "Enter book title",
+              validator: (String? value) => Validator.nameValidator(value),
             ),
-            AppTextField.customTextField(
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Author Name',
+            child: AppTextField.customTextField(
               controller: controllers[1],
-              label: "Author name",
-              validator: (value) => Validator.nameValidator(value),
+              label: "Enter author's name",
+              validator: (String? value) => Validator.nameValidator(value),
             ),
-            //Language dropdown
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: "Language",
-                  labelStyle: textStyle.copyWith(fontSize: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedLanguage,
-                    isExpanded: true,
-                    style: textStyle,
-                    items: languages.map((String language) {
-                      return DropdownMenuItem<String>(
-                        value: language,
-                        child: Text(language),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedLanguage = newValue;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ),
-            AppTextField.customTextField(
-              controller: controllers[3],
-              label: "Publish year",
-              keyboardType: TextInputType.number,
-              validator: (value) => Validator.yearValidator(value),
-            ),
-            AppTextField.customTextField(
-              controller: controllers[4],
-              label: "Publisher",
-              validator: (value) => Validator.nameValidator(value),
-            ),
-            AppTextField.customTextField(
-              controller: controllers[5],
-              label: "Number of pages",
-              keyboardType: TextInputType.number,
-              validator: (value) => Validator.numberValidator(value:value),
-            ),
-            //genre dropdown
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: "Genre",
-                  labelStyle: textStyle.copyWith(fontSize: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Genre',
+                  child: FormWidgets.dropdown(
                     value: _selectedGenre,
-                    isExpanded: true,
-                    style: textStyle,
-                    items: genres.map((String genre) {
-                      return DropdownMenuItem<String>(
-                        value: genre,
-                        child: Text(genre),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedGenre = newValue;
-                      });
-                    },
+                    items: genres,
+                    onChanged: (val) => setState(() => _selectedGenre = val),
                   ),
                 ),
               ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Language',
+                  child: FormWidgets.dropdown(
+                    value: _selectedLanguage,
+                    items: languages,
+                    onChanged: (val) => setState(() => _selectedLanguage = val),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Publish Year',
+                  child: AppTextField.customTextField(
+                    controller: controllers[3],
+                    label: "e.g., 2023",
+                    validator: (String? value) => Validator.yearValidator(value),
+                    keyboardType: TextInputType.number
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: FormWidgets.formField(
+                  title: 'Pages',
+                  child: AppTextField.customTextField(
+                    controller: controllers[5],
+                    label: "e.g., 350",
+                    validator: (String? value) => Validator.numberValidator(value: value),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Publisher Name',
+            child: AppTextField.customTextField(
+              controller: controllers[4],
+              label: "Enter publisher's name",
+              validator: (String? value) => Validator.nameValidator(value),
             ),
-            AppTextField.customTextField(
+          ),
+          const SizedBox(height: 16),
+          FormWidgets.formField(
+            title: 'Total Copies',
+            child: AppTextField.customTextField(
               controller: controllers[7],
-              label: "Total copies",
-              keyboardType: TextInputType.number,
+              label: "e.g., 10",
               validator: (value) {
-                final error = Validator.numberValidator(value:value);
-                if (error != null) return error;
-
-                final newTotal = int.tryParse(value ?? '0') ?? 0;
+                if (value == null || value.isEmpty) {
+                  return "Please enter total copies";
+                }
+                final newTotal = int.tryParse(value);
+                if (newTotal == null || newTotal < 1) {
+                  return "Must be at least 1";
+                }
                 if (newTotal < currentlyBorrowed) {
-                  return "Total cannot be less than borrowed ($currentlyBorrowed)";
+                  return "Cannot be less than borrowed ($currentlyBorrowed)";
                 }
                 return null;
               },
+              keyboardType: TextInputType.number,
             ),
-
-            // Show info about currently borrowed copies
-            if (currentlyBorrowed > 0)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withAlpha((0.1 * 255).toInt()),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.withAlpha((0.3*255).toInt())),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          "Currently borrowed: $currentlyBorrowed",
-                          style: textStyle.copyWith(
-                            fontSize: 12,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+          ),
+          if (currentlyBorrowed > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                '$currentlyBorrowed copies are currently on loan.',
+                style: const TextStyle(color: AppColors.lightGrey, fontSize: 12),
+              ),
+            ),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: MyButton.secondaryButton(
+                  text: 'Cancel',
+                  method: _cancel,
                 ),
               ),
-
-            const SizedBox(height: 20),
-
-            // Image Section
-            _buildImageSection(textStyle),
-
-            const SizedBox(height: 30),
-
-            // Action Buttons
-            FormWidgets.formActionButtons(context: context, saveMethod: _saveBook)
-          ],
-        ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: MyButton.primaryButton(
+                  text: 'Save Changes',
+                  method: _saveBook,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildImageSection(TextStyle textStyle) {
+  // Claude changed: Updated image picker with proper display logic
+  Widget _buildImagePicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Cover Image", style: textStyle.copyWith(fontSize: 14)),
+        Text('Book Cover', style: style),
         const SizedBox(height: 8),
-
-        // Image Picker Field
-        TextFormField(
-          cursorColor: AppColors.background,
-          style: textStyle,
-          controller: _imageController,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: "Tap to change cover image",
-            hintStyle: textStyle.copyWith(color: Colors.grey),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            suffixIcon: _isPickingImage
-                ? Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppColors.primaryButton,
-                ),
+        Center(
+          child: Container(
+            width: 150,
+            height: 200,
+            decoration: BoxDecoration(
+              color: const Color(0xff0E1622),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.primary, width: 1),
+              image: _buildImage(),
+            ),
+            child: _buildImage() == null
+                ? const Center(
+              child: Icon(
+                Icons.book_outlined,
+                color: AppColors.primary,
+                size: 50,
               ),
             )
-                : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_temporaryImage != null)
-                  IconButton(
-                    onPressed: _clearImage,
-                    icon: Icon(Icons.clear, color: Colors.red),
-                    tooltip: 'Remove new image',
-                  ),
-                IconButton(
-                  onPressed: _pickImage,
-                  icon: Icon(Icons.photo_library),
-                  tooltip: 'Pick from gallery',
-                ),
-              ],
-            ),
+                : null,
           ),
-          onTap: _isPickingImage ? null : _pickImage,
         ),
-
-        // Show either new image preview or current image path
-        if (_temporaryImage != null)
-          _buildImagePreview(_temporaryImage!)
-        else if (_book.coverPicture.isNotEmpty && ImageService.isValidImagePath(_book.coverPicture))
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              "Current image: ${_book.coverPicture.split('/').last}",
-              style: textStyle.copyWith(fontSize: 12, color: Colors.grey),
-            ),
+        const SizedBox(height: 16),
+        AppTextField.customTextField(
+          isReadOnly: true,
+          controller: _imageController,
+          label: "Select an image",
+          method: _pickImage,
+          prefixIcon: Icon(
+            _isPickingImage ? Icons.hourglass_top_rounded : Icons.attach_file,
+            color: const Color(0xffC1DCFF),
           ),
+          suffixIcon: (_newImageBytes != null || (!_imageCleared && _originalImageBytes != null))
+              ? IconButton(
+            icon: const Icon(Icons.clear, color: AppColors.warning),
+            onPressed: _clearImage,
+          )
+              : null,
+            validator: null
+            // validator: (value) {
+            //   if (_imageBytes == null) {
+            //     return "Please select a cover image";
+            //   }
+            //   return null;
+            // },
+        ),
       ],
     );
   }
 
-  Widget _buildImagePreview(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: Center(
-        child: Container(
-          height: 150,
-          width: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.file(
-              File(imagePath),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[200],
-                  child: Icon(Icons.broken_image, size: 40),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
+  // Claude changed: Build image with proper priority (new > original > none)
+  DecorationImage? _buildImage() {
+    if (_imageCleared) {
+      // User intentionally cleared the image
+      return null;
+    }
+
+    if (_newImageBytes != null) {
+      // Show newly selected image
+      return DecorationImage(
+        image: MemoryImage(_newImageBytes!),
+        fit: BoxFit.cover,
+      );
+    }
+
+    if (_originalImageBytes != null) {
+      // Show original image
+      return DecorationImage(
+        image: MemoryImage(_originalImageBytes!),
+        fit: BoxFit.cover,
+      );
+    }
+
+    return null;
   }
 }
