@@ -390,9 +390,9 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withAlpha((0.1 * 255).toInt()),
+                      color: AppColors.primary.withAlpha((0.5 * 255).toInt()),
                       border: Border.all(
-                        color: AppColors.primary.withAlpha((0.3 * 255).toInt()),
+                        color: AppColors.background.withAlpha((0.3 * 255).toInt()),
                         width: 2,
                       ),
                     ),
@@ -400,7 +400,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                       child: Icon(
                         icon,
                         size: 60,
-                        color: AppColors.primary,
+                        color: AppColors.warning,
                       ),
                     ),
                   ),

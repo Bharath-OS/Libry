@@ -63,7 +63,8 @@ class FormWidgets {
     required void Function(T?)? onChanged,
   }) {
     return DropdownButtonFormField<T>(
-      value: value,
+      dropdownColor: AppColors.darkGrey,
+      initialValue: value,
       items: items.map((T item) {
         return DropdownMenuItem<T>(
           value: item,
