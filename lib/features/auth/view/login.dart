@@ -49,6 +49,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  bool shouldNotVisible = true;
   Widget _form(bool isLoading) {
     return Form(
       key: _formKey,
@@ -65,10 +66,19 @@ class _LoginViewState extends State<LoginView> {
           AppTextField.customTextField(
             label: "Password",
             controller: passwordController,
-            isObscure: true,
+            isObscure: shouldNotVisible,
             validator: (value) {
               return Validator.passwordValidator(value);
             },
+            suffixIcon: IconButton(
+              onPressed: () => setState(() => shouldNotVisible = !shouldNotVisible),
+              icon: Icon(
+                !shouldNotVisible
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: AppColors.background,
+              ),
+            ),
           ),
           Selector<AuthViewModel, bool>(
             selector: (_, auth) => auth.isLoading,

@@ -43,7 +43,7 @@ class AppTextField {
           suffixIcon: suffixIcon,
           labelText: label,
           prefixIcon: prefixIcon,
-          // counterText: '',
+          counterText: '',
           counterStyle: textStyle,
           labelStyle: textStyle,
           // Border when the field is NOT selected
