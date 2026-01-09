@@ -24,7 +24,7 @@ class IssueViewModel with ChangeNotifier {
       .where((i) => DateUtils.isSameDay(i.borrowDate, DateTime.now()))
       .length;
 
-  double getMemberFine(int memberId){
+  double getMemberFine(String memberId){
     final issues = IssueDBHive.getIssuesByMember(memberId);
     return issues
         .where((issue) => !issue.isReturned)
@@ -66,8 +66,8 @@ class IssueViewModel with ChangeNotifier {
 
   // Borrow a book (Restored name)
   Future<String> borrowBook({
-    required int bookId,
-    required int memberId,
+    required String bookId,
+    required String memberId,
     required DateTime dueDate,
     required String memberName,
     required String bookName,
@@ -112,7 +112,7 @@ class IssueViewModel with ChangeNotifier {
           await IssueDBHive.box.put(issue.issueId, updatedIssue);
 
           // Update SQLite Member Balance
-          await MembersDB.incrementMemberFine(issue.memberId, additionalFine);
+          await MembersDB.incrementMemberFine(issue.memberId!, additionalFine);
           hasChanges = true;
         }
       }
@@ -125,7 +125,7 @@ class IssueViewModel with ChangeNotifier {
     final issue = IssueDBHive.getIssueById(issueId);
     if (issue == null) return;
 
-    await MembersDB.incrementMemberFine(issue.memberId, amountPaid);
+    await MembersDB.incrementMemberFine(issue.memberId!, amountPaid);
 
     final updatedIssue = issue.copyWith(
       fineAmount: 0.0,
