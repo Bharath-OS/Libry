@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
@@ -10,8 +11,8 @@ import '../constants/app_colors.dart';
 import 'buttons.dart';
 
 class Cards {
-  static Widget bookCard({required int bookId, required VoidCallback onDelete, required BuildContext context}) {
-    final bookDetails = context.watch<BookViewModel>().getBookById(bookId);
+  static Widget bookCard({required String id, required VoidCallback onDelete, required BuildContext context}) {
+    final bookDetails = context.watch<BookViewModel>().getBookById(id);
     final bool isAvailable = bookDetails!.copiesAvailable > 0;
     final Color statusColor = isAvailable ? Colors.green : Colors.red;
     final String statusText = isAvailable ? 'Available' : 'Unavailable';
@@ -41,8 +42,8 @@ class Cards {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.file(
-                  File(bookDetails.coverPicture),
+                child: Image.memory(
+                  bookDetails.coverPictureData as Uint8List,
                   width: 80,
                   height: 100,
                   fit: BoxFit.cover,
@@ -172,8 +173,9 @@ class Cards {
     );
   }
 
-  static Widget memberCard({required int memberId, required VoidCallback onDelete, required BuildContext context}) {
-    final memberDetails = context.watch<MembersViewModel>().getMemberById(memberId) ?? MemberModel(name: "Guest", email: 'guest@gmail.com', phone: '9999999999', address: 'null', totalBorrow: 0, currentlyBorrow: 0, joined: DateTime.now(), expiry: DateTime.now());
+  static Widget memberCard({required String memberId, required VoidCallback onDelete, required BuildContext context}) {
+    final memberDetails = context.watch<MembersViewModel>().getMemberById(memberId);
+    if(memberDetails == null) return Container();
     final bool isActive = memberDetails.expiry.isAfter(DateTime.now());
     final Color statusColor = isActive ? Colors.green : Colors.red;
 

@@ -14,7 +14,9 @@ class AppTextField {
     int maxLines = 1,
     isReadOnly = false,
     int? maxLength,
-    Widget? suffixIcon
+    Widget? suffixIcon,
+    Widget? prefixIcon,
+    VoidCallback? method,
   }) {
     // Logic to select colors based on theme
     final textColor = isDarkTheme ? AppColors.darkTFText : AppColors.lightTFText;
@@ -28,6 +30,7 @@ class AppTextField {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        onTap: method,
         cursorColor: AppColors.background,
         style: TextFieldStyle.inputTextStyle,
         controller: controller,
@@ -39,6 +42,7 @@ class AppTextField {
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           labelText: label,
+          prefixIcon: prefixIcon,
           // counterText: '',
           counterStyle: textStyle,
           labelStyle: textStyle,

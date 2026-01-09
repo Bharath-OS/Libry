@@ -522,8 +522,8 @@ class IssueHistoryWidgets {
     // Calculate current fine
     final fine = issueProvider.calculateFine(issue);
 
-    final book = bookProvider.getBookById(issue.bookId);
-    final member = memberProvider.getMemberById(issue.memberId);
+    final book = bookProvider.getBookById(issue.bookId!);
+    final member = memberProvider.getMemberById(issue.memberId!);
 
     if (book == null) {
       ScaffoldMessenger.of(context).showSnackBar(

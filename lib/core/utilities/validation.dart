@@ -72,7 +72,10 @@ class Validator {
       return formatError;
     }
     UserModel? user = UserModelService.getData();
-    if (user?.email == email) {
+    if(user == null){
+      return null;
+    }
+    else if (user.email == email) {
       return "The email already existing.\nTry Logging instead";
     }
     return null;
