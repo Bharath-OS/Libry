@@ -10,14 +10,14 @@ class MembersDB {
   
   static Future<Box<MemberModel>> get _box async => _memberBox ?? await Hive.openBox<MemberModel>(_boxName);
 
-  static Future<bool> addMember(MemberModel member) async{
+  static Future<String?> addMember(MemberModel member) async{
     try{
       final box = await _box;
-      member.id = const Uuid().v4();
-      await box.put(member.id, member);
-      return true;
-    }catch(_){
-      return false;
+      final updatedMember = member.copyWith(id: const Uuid().v4());
+      await box.put(updatedMember.id, updatedMember);
+      return null;
+    }catch(e){
+      return "Error: $e";
     }
   }
 

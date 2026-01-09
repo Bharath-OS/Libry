@@ -60,7 +60,7 @@ class MembersViewModel extends ChangeNotifier {
       final updatedMember = member.copyWith(expiry: newExpiryDate);
 
       await updateMember(updatedMember);
-      return'Membership extended until ${dateFormat(date: newExpiryDate,format: 'MMM dd yyyy')}';
+      return 'Membership extended until ${dateFormat(date: newExpiryDate, format: 'MMM dd yyyy')}';
     } catch (e) {
       return 'Exception renewing membership: $e';
     }
@@ -68,7 +68,6 @@ class MembersViewModel extends ChangeNotifier {
 
   Future<void> fetchMembers() async {
     final members = await MembersDB.getMembers();
-    // Keep an authoritative backing list and a filtered view
     _members
       ..clear()
       ..addAll(members!);
@@ -76,18 +75,27 @@ class MembersViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addMember(MemberModel member) async {
-    // Capture inserted id (if DB returns it) and then refresh local cache
+  String generateId(int count){
+    return "M${count.toString().padLeft(2,"0")}";
+  }
+
+  Future<bool> addMember(MemberModel member) async {
+    late String? success;
+    final id = generateId(totalCount+1);
     try {
-      // final insertedId = await MembersDB.addMember(member, count + 1);
-      // // Optionally set the id on the passed object while we refresh
-      // if (insertedId != null) member.id = insertedId;
-      await MembersDB.addMember(member);
+      success = await MembersDB.addMember(member.copyWith(memberId: id));
+      if (success == null) {
+        await fetchMembers();
+        return true;
+      }
+      else{
+        debugPrint(success);
+        return false;
+      }
     } catch (e) {
       debugPrint('Error adding member: $e');
+      return false;
     }
-
-    await fetchMembers();
   }
 
   //

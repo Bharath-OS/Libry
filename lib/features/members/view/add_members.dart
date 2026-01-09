@@ -36,7 +36,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final membersProvider = Provider.of<MembersViewModel>(
         context,
@@ -56,12 +56,22 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
         expiry: DateTime.now().add(Duration(days: 365)), // 1 year membership
       );
 
-      membersProvider.addMember(newMember);
+      bool success = await membersProvider.addMember(newMember);
+      if(success){
+        for (var controller in controllers) {
+          controller.clear();
+        }
       Navigator.pop(context);
       AppDialogs.showSnackBar(
         text: "${newMember.name} successfully added",
         context: context,
       );
+      }else{
+        AppDialogs.showSnackBar(
+          text: "Error adding member: ${newMember.name}",
+          context: context,
+        );
+      }
     }
   }
 
@@ -91,7 +101,7 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
             controller: controllers[0],
             label: 'Full Name',
             validator: (value) => Validator.nameValidator(value),
-            maxLength: 24,
+            // maxLength: 24,
           ),
           AppTextField.customTextField(
             controller: controllers[1],
