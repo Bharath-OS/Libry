@@ -31,10 +31,6 @@ class MembersDB {
     }
   }
 
-  static String _generateMemberId(int sequentialId) {
-    return 'M${sequentialId.toString().padLeft(3, '0')}';
-  }
-
   static Future<List<MemberModel>?> getMembers() async {
     try{
       final box = await _box;
