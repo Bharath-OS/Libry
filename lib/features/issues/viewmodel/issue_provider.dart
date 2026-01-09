@@ -6,6 +6,10 @@ import '../data/service/issue_records_db.dart';
 import '../data/model/issue_records_model.dart';
 
 class IssueViewModel with ChangeNotifier {
+
+  IssueViewModel(){
+    init();
+  }
   List<IssueRecords> _allIssues = [];
   List<IssueRecords> _filteredIssues = [];
   String _filter = 'all';
