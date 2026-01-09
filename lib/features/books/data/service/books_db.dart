@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
 
 import '../model/books_model.dart';
 
@@ -10,9 +9,13 @@ class BooksDBHive {
     return Hive.openBox<BookModel>(_boxName);
   }
 
+  static String generateId(int count){
+    return 'B${count.toString().padLeft(2,"0")}';
+  }
+
   static Future<void> addBook(BookModel book) async {
     final box = await _openBox();
-    book.id = const Uuid().v4(); // Generate a unique ID
+    book.id = generateId(box.values.length+1);
     await box.put(book.id, book);
   }
 
