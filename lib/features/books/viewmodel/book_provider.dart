@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:libry/features/books/data/service/books_db.dart';
-import 'package:libry/database/libry_db.dart';
 
 import '../data/model/books_model.dart';
 
@@ -40,28 +39,29 @@ class BookViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchBooks() async {
-    _books = await BooksDB.getBooks();
+    final books = await BooksDBHive.getBooks();
+    _books = books ?? []; // Safely handle the null case
     _filteredBooks = _books;
     notifyListeners();
   }
 
   Future<void> addBook(BookModel book) async {
-    await BooksDB.addBook(book);
+    await BooksDBHive.addBook(book);
     await fetchBooks();
   }
 
-  Future<void> removeBook(int bookId) async {
-    await BooksDB.deleteBook(bookId);
+  Future<void> removeBook(String bookId) async {
+    await BooksDBHive.deleteBook(bookId);
     await fetchBooks();
   }
 
   Future<void> updateBook(BookModel book) async {
-    await BooksDB.updateBook(book);
+    await BooksDBHive.updateBook(book);
     await fetchBooks();
   }
 
   // Helper method to get book by ID
-  BookModel? getBookById(int id) {
+  BookModel? getBookById(String id) {
     try {
       return _books.firstWhere((book) => book.id == id);
     } catch (e) {
@@ -70,16 +70,15 @@ class BookViewModel extends ChangeNotifier {
   }
 
   Future<void> clearAllBooks() async {
-    await BooksDB.clearAllBooks();
+    await BooksDBHive.clearAllBooks();
     await fetchBooks();
-    notifyListeners();
   }
 
   Future<void> adjustBookCopies(String bookId, int delta) async {
     final index = _books.indexWhere((b) => b.id == bookId);
     if (index == -1) return;
-    _books[index].adjustCopies(delta);
-    notifyListeners();
-    // persist change if DB layer exists
+    final book = _books[index];
+    book.adjustCopies(delta);
+    await updateBook(book);
   }
 }

@@ -1,10 +1,3 @@
-// Claude changed: This file has been updated to properly handle fine payment
-// Key changes:
-// 1. Fine payment now reduces member's fine balance
-// 2. Fine is marked as paid using isFinePaid flag
-// 3. Returned books can't be returned again
-// 4. Fine calculation uses the new calculateFine logic
-
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
@@ -89,9 +82,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                         itemCount: filteredIssues.length,
                         itemBuilder: (context, index) {
                           final issue = filteredIssues[index];
-                          final book = bookProvider.getBookById(issue.bookId);
+                          final book = bookProvider.getBookById(issue.bookId!);
                           final member = memberProvider.getMemberById(
-                            issue.memberId,
+                            issue.memberId!,
                           );
                           return Container(
                             margin: EdgeInsets.only(bottom: 16),
@@ -147,7 +140,6 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       statusColor = Colors.orange;
       statusText = 'Active';
     }
-
     return Card(
       margin: EdgeInsets.zero,
       elevation: 2,
@@ -480,35 +472,11 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          bool isSuccess = await IssueHistoryWidgets.returnBook(
+                          await IssueHistoryWidgets.returnBook(
                             issue: issue,
                             context: context,
                           );
-                          if (mounted && isSuccess) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Book returned successfully'),
-                                backgroundColor: Colors.green,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            );
-                          } else {
-                            if(mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Error returning book'),
-                                  backgroundColor: Colors.red,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              );
-                            }
-                          }
+                          issueProvider.refresh();
                         },
                         icon: Icon(Icons.assignment_return, size: 18),
                         label: Text('Return Book'),

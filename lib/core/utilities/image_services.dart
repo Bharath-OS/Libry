@@ -1,18 +1,14 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 
+// Claude changed: Simplified ImageService to work with Uint8List for cross-platform compatibility
 class ImageService {
   static final ImagePicker _picker = ImagePicker();
-  static String? _temporaryImagePath; // Track temporary images
+  static Uint8List? _temporaryImageBytes; // Track temporary image in memory
 
-  static Future<bool> checkImage(String? path) async{
-    return await File(path!).exists();
-  }
-
-  // Pick and temporarily save image (not permanent yet)
-  static Future<String?> pickAndSaveTemporaryImage() async {
+  // Claude changed: Pick image and return bytes (works on Android & Web)
+  static Future<Uint8List?> pickImage() async {
     try {
       final XFile? pickedImage = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -21,95 +17,43 @@ class ImageService {
       );
 
       if (pickedImage != null) {
-        // Get temp directory
-        final tempDir = await getTemporaryDirectory();
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final fileName = 'temp_book_cover_$timestamp.jpg';
-        final tempPath = '${tempDir.path}/$fileName';
+        final bytes = await pickedImage.readAsBytes();
 
-        // Save to temp location
-        final tempFile = File(tempPath);
-        await tempFile.writeAsBytes(await pickedImage.readAsBytes());
-
-        // Delete previous temp image if exists
-        await _deleteTemporaryImage();
-
-        // Store new temp path
-        _temporaryImagePath = tempPath;
-        return tempPath;
+        // Store as temporary
+        _temporaryImageBytes = bytes;
+        return bytes;
       }
       return null;
     } catch (e) {
-      // throw Exception('Error picking image: $e');
+      debugPrint('Error picking image: $e');
       return null;
     }
   }
 
-  // Make temporary image permanent (call this only when saving)
-  static Future<String?> makeImagePermanent(String? tempPath) async {
-    if (tempPath == null || !await File(tempPath).exists()) {
-      return null;
-    }
-
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'book_cover_$timestamp.jpg';
-      final permanentPath = '${appDir.path}/$fileName';
-
-      // Copy to permanent location
-      final permanentFile = File(permanentPath);
-      await permanentFile.writeAsBytes(await File(tempPath).readAsBytes());
-
-      // Delete temporary file
-      await File(tempPath).delete();
-      _temporaryImagePath = null;
-
-      return permanentPath;
-    } catch (e) {
-      debugPrint('Error making image permanent: $e');
-      return null;
-    }
+  // Claude changed: Get temporary image bytes
+  static Uint8List? getTemporaryImage() {
+    return _temporaryImageBytes;
   }
 
-  // Clean up temporary image (call on cancel)
-  static Future<void> cleanupTemporaryImage() async {
-    await _deleteTemporaryImage();
+  // Claude changed: Clear temporary image (call on cancel)
+  static void clearTemporaryImage() {
+    _temporaryImageBytes = null;
   }
 
-  // Delete old permanent image (call when replacing in edit)
-  static Future<void> deletePermanentImage(String? imagePath) async {
-    if (imagePath == null || imagePath.isEmpty) return;
+  // Claude changed: Confirm image (call on save) - just clears the temp reference
+  static void confirmImage() {
+    _temporaryImageBytes = null;
+  }
 
-    try {
-      final file = File(imagePath);
-      if (await file.exists()) {
-        await file.delete();
-      }
-    } catch (e) {
-      debugPrint('Error deleting image: $e');
+  // Claude changed: Helper to display image from bytes or asset
+  static ImageProvider getImageProvider(Uint8List? imageBytes, {String? fallbackAsset}) {
+    if (imageBytes != null && imageBytes.isNotEmpty) {
+      return MemoryImage(imageBytes);
     }
-  }
-
-  // Helper method to delete temporary image
-  static Future<void> _deleteTemporaryImage() async {
-    if (_temporaryImagePath != null) {
-      try {
-        final file = File(_temporaryImagePath!);
-        if (await file.exists()) {
-          await file.delete();
-        }
-      } catch (e) {
-        debugPrint('Error deleting temp image: $e');
-      }
-      _temporaryImagePath = null;
+    if (fallbackAsset != null && fallbackAsset.isNotEmpty) {
+      return AssetImage(fallbackAsset);
     }
-  }
-
-  // Check if path is a valid image file
-  static bool isValidImagePath(String? path) {
-    if (path == null || path.isEmpty) return false;
-    if (path.startsWith('assets/')) return true; // Default asset image
-    return File(path).existsSync();
+    // Default fallback
+    return const AssetImage('assets/images/dummy_book_cover.png');
   }
 }

@@ -221,7 +221,7 @@ class MyButton {
                 if (item is MemberModel) {
                   deleteMember(
                     context: context,
-                    memberDetails: item,
+                    memberId: item.id!,
                     inDetailsScreen: true,
                   );
                 } else if (item is BookModel) {

@@ -55,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 
-  bool _shouldVisible = true;
+  bool shouldNotVisible = true;
   Widget _form() {
     return Form(
       key: _formKey,
@@ -80,15 +80,15 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           AppTextField.customTextField(
             label: "Password",
-            isObscure: !_shouldVisible,
+            isObscure: shouldNotVisible,
             controller: passwordController,
             validator: (value) {
               return Validator.passwordValidator(value);
             },
             suffixIcon: IconButton(
-              onPressed: () => setState(() => _shouldVisible = !_shouldVisible),
+              onPressed: () => setState(() => shouldNotVisible = !shouldNotVisible),
               icon: Icon(
-                _shouldVisible
+                !shouldNotVisible
                     ? Icons.visibility_off_outlined
                     : Icons.visibility_outlined,
                 color: AppColors.background,

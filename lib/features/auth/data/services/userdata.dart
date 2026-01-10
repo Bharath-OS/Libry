@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/utilities/helpers.dart';
 import 'package:libry/features/auth/data/model/user_model.dart';
 import 'package:libry/features/auth/data/model/keys.dart';
 
@@ -26,7 +25,7 @@ class UserModelService {
           UserModel(name: "Guest", email: "guest@gmail.com");
       return user;
     } catch (e) {
-      debugPrint(e as String?);
+      debugPrint('Exception caught: $e');
       return null;
     }
   }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:libry/features/members/data/model/members_model.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
-import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
 import '../../features/books/data/model/books_model.dart';
 import '../../features/books/viewmodel/book_provider.dart';
 import '../constants/app_colors.dart';
@@ -33,12 +30,12 @@ void deleteBook({
   required BookModel bookDetails,
   inDetailsScreen = true,
 }) {
-  final borrowCount = bookDetails.totalCopies - bookDetails.copiesAvailable;
+  final currentlyBorrow = bookDetails.totalCopies - bookDetails.copiesAvailable;
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
       title: const Text("Delete Book"),
-      content: borrowCount == 0
+      content: currentlyBorrow == 0
           ? const Text("Are you sure you want to delete this book?")
           : const Text(
               "You cannot delete this book while it is being borrowed. Return all books first before deletion.",
@@ -51,7 +48,7 @@ void deleteBook({
         ),
         MyButton.deleteButton(
           isTextButton: true,
-          isDisabled: borrowCount != 0,
+          isDisabled: currentlyBorrow != 0,
           method: () {
             // 🔥 Use the actual book ID, not index 0
             context.read<BookViewModel>().removeBook(bookDetails.id!);
@@ -72,16 +69,16 @@ void deleteBook({
 
 void deleteMember({
   required BuildContext context,
-  required MemberModel memberDetails,
+  required String memberId,
   inDetailsScreen = true,
 }) {
-  final borrowLimit = SettingsService.instance.borrowLimit;
-  final borrowCount = borrowLimit - memberDetails.currentlyBorrow;
+  final memberDetails = context.read<MembersViewModel>().getMemberById(memberId);
+  final currentlyBorrow = memberDetails?.currentlyBorrow;
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
       title: const Text("Delete Member"),
-      content: borrowCount == 0
+      content: currentlyBorrow == 0
           ? const Text("Are you sure you want to delete this member?")
           : const Text(
           "You cannot delete this member while they still have borrowed books. Please return all books before deleting the member."
@@ -94,16 +91,16 @@ void deleteMember({
         ),
         MyButton.deleteButton(
           isTextButton: true,
-          isDisabled: borrowCount != 0,
+          isDisabled: currentlyBorrow != 0,
           method: () {
             // Safely handle missing ID
-            if (memberDetails.id == null) {
+            if (memberDetails?.id == null) {
               Navigator.pop(context);
               showSnackBar(text: "Cannot delete member: missing ID", context: context);
               return;
             }
 
-            context.read<MembersViewModel>().removeMember(memberDetails.id!);
+            context.read<MembersViewModel>().removeMember(memberDetails!.id!);
             Navigator.pop(context); // Close dialog
             inDetailsScreen
                 ? Navigator.pop(context)

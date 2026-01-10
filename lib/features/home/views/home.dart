@@ -281,8 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
       //Not empty case
       else
         ...limitedIssues.map((issue) {
-          final book = bookProvider.getBookById(issue.bookId);
-          final member = memberProvider.getMemberById(issue.memberId);
+          final book = bookProvider.getBookById(issue.bookId!);
+          final member = memberProvider.getMemberById(issue.memberId!);
           final daysLeft = issue.dueDate.difference(DateTime.now()).inDays;
           final isOverdue = daysLeft < 0;
 

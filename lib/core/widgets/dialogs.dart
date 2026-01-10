@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
 import 'buttons.dart';
 
 class AppDialogs {
@@ -30,10 +31,10 @@ class AppDialogs {
 
   static void showSnackBar({
     required BuildContext context,
-    required String message,
+    required String message, bool isError = false,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(content: Text(message,style: TextStyle(color: isError?AppColors.white:Colors.black),),backgroundColor: isError?AppColors.error:AppColors.white,),
     );
   }
 

@@ -43,7 +43,7 @@ class MembersViewModel extends ChangeNotifier {
     return matchedMembers.isNotEmpty ? matchedMembers : null;
   }
 
-  Future<String> renewMembership(int memberId) async {
+  Future<String> renewMembership(String memberId) async {
     try {
       final member = getMemberById(memberId);
       if (member == null) {
@@ -60,7 +60,7 @@ class MembersViewModel extends ChangeNotifier {
       final updatedMember = member.copyWith(expiry: newExpiryDate);
 
       await updateMember(updatedMember);
-      return'Membership extended until ${dateFormat(date: newExpiryDate,format: 'MMM dd yyyy')}';
+      return 'Membership extended until ${dateFormat(date: newExpiryDate, format: 'MMM dd yyyy')}';
     } catch (e) {
       return 'Exception renewing membership: $e';
     }
@@ -68,29 +68,39 @@ class MembersViewModel extends ChangeNotifier {
 
   Future<void> fetchMembers() async {
     final members = await MembersDB.getMembers();
-    // Keep an authoritative backing list and a filtered view
     _members
       ..clear()
-      ..addAll(members);
+      ..addAll(members!);
     _filteredMembers = List.from(members);
     notifyListeners();
   }
 
-  Future<void> addMember(MemberModel member) async {
-    // Capture inserted id (if DB returns it) and then refresh local cache
-    try {
-      final insertedId = await MembersDB.addMember(member, count + 1);
-      // Optionally set the id on the passed object while we refresh
-      if (insertedId != null) member.id = insertedId;
-    } catch (e) {
-      // ignore and continue - fetch will resync state
-    }
+  String generateId(int count){
+    return "M${count.toString().padLeft(2,"0")}";
+  }
 
-    await fetchMembers();
+  Future<bool> addMember(MemberModel member) async {
+    late String? success;
+    final id = generateId(totalCount+1);
+    final memberWithId = member.copyWith(memberId: id, id: id);
+    try {
+      success = await MembersDB.addMember(memberWithId);
+      if (success == null) {
+        await fetchMembers();
+        return true;
+      }
+      else{
+        debugPrint(success);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error adding member: $e');
+      return false;
+    }
   }
 
   //
-  Future<void> removeMember(int memberId) async {
+  Future<void> removeMember(String memberId) async {
     await MembersDB.removeMember(memberId);
     await fetchMembers();
   }
@@ -101,7 +111,7 @@ class MembersViewModel extends ChangeNotifier {
   }
 
   // Helper method to get member by ID
-  MemberModel? getMemberById(int id) {
+  MemberModel? getMemberById(String id) {
     try {
       return _members.firstWhere((member) => member.id == id);
     } catch (e) {

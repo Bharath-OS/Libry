@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:libry/core/widgets/dialogs.dart';
 import 'package:provider/provider.dart';
 import '../../features/books/viewmodel/book_provider.dart';
 import '../../features/issues/data/model/issue_records_model.dart';
 import '../../features/issues/viewmodel/issue_provider.dart';
 import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
+import 'buttons.dart';
 
 class IssueHistoryWidgets {
   static Widget buildStatsCards({
@@ -63,23 +65,19 @@ class IssueHistoryWidgets {
   }
 
   static Widget _buildStatCard(
-      String label,
-      String value,
-      Color bgColor,
-      Color color,
-      IconData icon,
-      ) {
+    String label,
+    String value,
+    Color bgColor,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -302,9 +300,7 @@ class IssueHistoryWidgets {
   }
 
   /// Fine Warning Container
-  static Widget buildFineWarning({
-    required double fine,
-  }) {
+  static Widget buildFineWarning({required double fine}) {
     return Container(
       margin: EdgeInsets.only(top: 16),
       padding: EdgeInsets.all(12),
@@ -439,147 +435,157 @@ class IssueHistoryWidgets {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  static Future<bool> showFinePaymentDialog({required double fine, required BuildContext context}) async {
+  static Future<bool> showFinePaymentDialog({
+    required double fine,
+    required BuildContext context,
+    required IssueRecords issue,
+  }) async {
+    final issueProvider = context.read<IssueViewModel>();
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.r),
-              decoration: BoxDecoration(
-                color: Colors.red[100],
-                shape: BoxShape.circle,
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.r),
+                  decoration: BoxDecoration(
+                    color: Colors.red[100],
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.money_off, color: Colors.red),
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'Fine Payment Required',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red[700],
+                    fontSize: 20.sp,
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Overdue fine',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Rs $fine',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Please collect the fine before returning the book.',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: [
+              MyButton.outlinedButton(
+                method: () => Navigator.pop(context, false),
+                text: 'Cancel',
+                color: AppColors.lightGrey
               ),
-              child: Icon(Icons.money_off, color: Colors.red,),
-            ),
-            SizedBox(width: 12),
-            Text(
-              'Fine Payment Required',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red[700],
-                  fontSize: 20.sp
+              MyButton.primaryButton(
+                method: () async{
+                  await issueProvider.markFinePaid(issue.issueId, fine);
+                  Navigator.pop(context, true);
+                },
+                text: 'Fine Paid',
               ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Overdue fine',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Rs $fine',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Please collect the fine before returning the book.',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
-            child: Text('Cancel'),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text('Fine Paid'),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
-  static Future<bool> returnBook({required IssueRecords issue, required BuildContext context}) async {
+  static Future<void> returnBook({
+    required IssueRecords issue,
+    required BuildContext context,
+  }) async {
+    // 1. Get providers
     final issueProvider = context.read<IssueViewModel>();
     final bookProvider = context.read<BookViewModel>();
     final memberProvider = context.read<MembersViewModel>();
 
-    // Calculate current fine
-    final fine = issueProvider.calculateFine(issue);
-
-    final book = bookProvider.getBookById(issue.bookId);
-    final member = memberProvider.getMemberById(issue.memberId);
-
-    if (book == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Cannot return: Book has been deleted'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return false;
+    // 2. Pre-condition checks (guard clauses)
+    if (issue.isReturned) {
+      AppDialogs.showSnackBar(context: context, message: "This book has already been returned");
+      return;
     }
 
-    if (member == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Cannot return: Member has been deleted'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return false;
+    final book = bookProvider.getBookById(issue.bookId!);
+    final member = memberProvider.getMemberById(issue.memberId!);
+
+    if (book == null || member == null) {
+      final missingItem = book == null ? "Book" : "Member";
+      AppDialogs.showSnackBar(context: context, message: "Cannot return: $missingItem has been deleted", isError: true);
+      return;
     }
 
-    // Claude changed: If there's a fine, must pay it before returning
-    if (fine > 0) {
-      final confirmed = await IssueHistoryWidgets.showFinePaymentDialog(fine: fine, context: context);
-      if (!confirmed) return false;
-
-      // Mark fine as paid in the issue and reduce member's fine balance
-      await issueProvider.markFinePaid(issue.issueId, fine);
-    }
-
-    // Process return
-    try {
-      // 1. Mark as returned in Hive
+    // 3. Define the core return logic in a local function
+    Future<void> processTheReturn() async {
+      // Mark issue as returned
       await issueProvider.returnBook(issue.issueId);
-      // 2. Update book copies
-      final updatedBook = book.copyWith(
-        copiesAvailable: book.copiesAvailable + 1,
-      );
-      await bookProvider.updateBook(updatedBook);
-      // 3. Update member borrow count
-      final updatedMember = member.copyWith(
-        currentlyBorrow: member.currentlyBorrow - 1,
-      );
-      await memberProvider.updateMember(updatedMember);
-      return true;
+
+      // Update book copies
+      await bookProvider.updateBook(book.copyWith(copiesAvailable: book.copiesAvailable + 1));
+
+      // Update member borrow count
+      await memberProvider.updateMember(member.copyWith(currentlyBorrow: member.currentlyBorrow - 1));
+
+      AppDialogs.showSnackBar(context: context, message: "Book returned successfully");
     }
-    catch(_){
-      return false;
+
+    // 4. Orchestrate the workflow
+    final fine = issueProvider.calculateFine(issue);
+    if (fine > 0) {
+      // WORKFLOW WITH FINE:
+      // Show fine dialog and wait for the result.
+      final bool wasFinePaid = await showFinePaymentDialog(fine: fine, context: context, issue: issue);
+
+      // Only proceed if the fine was paid.
+      if (wasFinePaid) {
+        await processTheReturn();
+      }
+    } else {
+      // WORKFLOW WITHOUT FINE:
+      // Show a simple confirmation dialog.
+      final bool? confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text('Confirm Return'),
+          content: Text('Are you sure you want to return this book?'),
+          actions: [
+            MyButton.outlinedButton(
+              color: AppColors.lightGrey,
+              method: () => Navigator.pop(dialogContext, false),
+              text: 'Cancel',
+            ),
+            MyButton.primaryButton(
+              method: () => Navigator.pop(dialogContext, true),
+              text: 'Return Book',
+            ),
+          ],
+        ),
+      );
+
+      // Only proceed if the user confirmed.
+      if (confirmed == true) {
+        await processTheReturn();
+      }
     }
   }
 }

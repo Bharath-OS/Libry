@@ -45,8 +45,8 @@ class IssueDBHive {
   }
 
   static Future<String> addIssue({
-    required int bookId,
-    required int memberId,
+    required String bookId,
+    required String memberId,
     required DateTime dueDate,
     required String memberName,
     required String bookName,
@@ -98,11 +98,11 @@ class IssueDBHive {
     await box.delete(issueId);
   }
 
-  static List<IssueRecords> getIssuesByMember(int memberId) {
+  static List<IssueRecords> getIssuesByMember(String memberId) {
     return box.values.where((issue) => issue.memberId == memberId).toList();
   }
 
-  static List<IssueRecords> getActiveIssuesByMember(int memberId) {
+  static List<IssueRecords> getActiveIssuesByMember(String memberId) {
     return box.values
         .where((issue) => issue.memberId == memberId && !issue.isReturned)
         .toList();
@@ -119,17 +119,21 @@ class IssueDBHive {
   }
 
   static Future<void> clearAll() async {
-    final List<BookModel> books = await BooksDB.getBooks();
-    final List<MemberModel> members = await MembersDB.getMembers();
+    final List<BookModel>? books = await BooksDBHive.getBooks();
+    final List<MemberModel>? members = await MembersDB.getMembers();
 
-    for (var book in books) {
-      final updatedBook = book.copyWith(copiesAvailable: book.totalCopies);
-      BooksDB.updateBook(updatedBook);
+    if(books != null) {
+      for (var book in books) {
+        final updatedBook = book.copyWith(copiesAvailable: book.totalCopies);
+        BooksDBHive.updateBook(updatedBook);
+      }
     }
 
-    for (var member in members) {
-      final updatedMember = member.copyWith(currentlyBorrow: 0);
-      MembersDB.updateMember(updatedMember);
+    if(members != null){
+      for (var member in members) {
+        final updatedMember = member.copyWith(currentlyBorrow: 0);
+        MembersDB.updateMember(updatedMember);
+      }
     }
     await box.clear();
     _nextId = 1;

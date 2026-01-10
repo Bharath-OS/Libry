@@ -12,7 +12,7 @@ import '../../members/viewmodel/members_provider.dart';
 import '../../../core/widgets/layout_widgets.dart';
 
 class BookHistoryScreenView extends StatefulWidget {
-  final int bookId;
+  final String bookId;
 
   const BookHistoryScreenView({super.key, required this.bookId});
 
@@ -90,7 +90,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                       itemBuilder: (context, index) {
                         final issue = filteredIssues[index];
                         final member = memberProvider.getMemberById(
-                          issue.memberId,
+                          issue.memberId!,
                         );
                         return _buildIssueCard(issue, member, issueProvider);
                       },
@@ -283,35 +283,11 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      bool isSuccess = await IssueHistoryWidgets.returnBook(
+                      await IssueHistoryWidgets.returnBook(
                         issue: issue,
                         context: context,
                       );
-                      if (mounted && isSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Book returned successfully'),
-                            backgroundColor: Colors.green,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        );
-                      } else {
-                        if(mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error returning book'),
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          );
-                        }
-                      }
+                      setState(() {});
                     },
                     icon: Icon(Icons.assignment_return),
                     label: Text('Return Book'),

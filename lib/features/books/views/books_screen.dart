@@ -20,7 +20,7 @@ class BookListScreenView extends StatelessWidget {
       searchHint: "Search Book...",
       items: context.watch<BookViewModel>().books,
       tileBuilder: (book) => Cards.bookCard(
-        bookId: book.id!,
+        id: book.id!,
         context: context,
         onDelete: () => deleteBook(
           context: context,

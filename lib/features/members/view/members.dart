@@ -27,7 +27,7 @@ class MembersScreen extends StatelessWidget {
         memberId: member.id!,
         context: context,
         onDelete: () =>
-            deleteMember(context: context, memberDetails: member,inDetailsScreen: false)
+            deleteMember(context: context, memberId: member.id!,inDetailsScreen: false)
       ),
       onTap: (member) => Navigator.push(
         context,

@@ -1,16 +1,44 @@
+import 'package:hive/hive.dart';
+
+part 'members_model.g.dart';
+
+@HiveType(typeId: 1)
 class MemberModel {
-  int? id;
+  @HiveField(0)
+  String? id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   String? memberId;
+
+  @HiveField(3)
   String email;
+
+  @HiveField(4)
   String phone;
+
+  @HiveField(5)
   String address;
+
+  @HiveField(6)
   int totalBorrow;
+
+  @HiveField(7)
   int currentlyBorrow;
-  double fine; // ensure double
+
+  @HiveField(8)
+  double fine;
+
+  @HiveField(9)
   DateTime joined;
+
+  @HiveField(10)
   DateTime expiry;
-  double fineBalance; // NEW: total outstanding fine for member
+
+  @HiveField(11)
+  double fineBalance;
 
   MemberModel({
     this.id,
@@ -19,16 +47,16 @@ class MemberModel {
     required this.email,
     required this.phone,
     required this.address,
-    required this.totalBorrow,
-    required this.currentlyBorrow,
+    this.totalBorrow = 0,
+    this.currentlyBorrow = 0,
     this.fine = 0.0,
     required this.joined,
     required this.expiry,
-    this.fineBalance = 0.0, // default 0.0
+    this.fineBalance = 0.0, // NEW
   });
 
   MemberModel copyWith({
-    int? id,
+    String? id,
     String? name,
     String? memberId,
     String? email,
@@ -37,6 +65,7 @@ class MemberModel {
     int? totalBorrow,
     int? currentlyBorrow,
     double? fine,
+    double? fineBalance,
     DateTime? joined,
     DateTime? expiry,
   }) {
@@ -50,6 +79,7 @@ class MemberModel {
       totalBorrow: totalBorrow ?? this.totalBorrow,
       currentlyBorrow: currentlyBorrow ?? this.currentlyBorrow,
       fine: fine ?? this.fine,
+      fineBalance: fineBalance ?? this.fineBalance,
       joined: joined ?? this.joined,
       expiry: expiry ?? this.expiry,
     );
@@ -63,7 +93,7 @@ class MemberModel {
 
   factory MemberModel.fromMap(Map<String, dynamic> map) {
     return MemberModel(
-      id: map['id'] as int?,
+      id: map['id'] as String?,
       memberId: map['member_id'] as String?,
       name: map['name'] as String,
       email: map['email'] as String,
@@ -94,18 +124,4 @@ class MemberModel {
       'fineBalance': fineBalance, // NEW
     };
   }
-}
-
-class MembersKey{
-  static const String id = 'id';
-  static const String name = 'name';
-  static const String memberId = "member_id";
-  static const String email = 'email';
-  static const String phone = "phone";
-  static const String address = "address";
-  static const String totalBorrow = 'total_borrow';
-  static const String currentlyBorrow = "currently_borrow";
-  static const String fine = 'fine';
-  static const String joined = "joined_date";
-  static const String expiry = "expiry_date";
 }
