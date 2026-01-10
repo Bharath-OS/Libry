@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libry/features/members/viewmodel/members_provider.dart';
-import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
 import '../../features/books/data/model/books_model.dart';
 import '../../features/books/viewmodel/book_provider.dart';
 import '../constants/app_colors.dart';
@@ -74,10 +72,8 @@ void deleteMember({
   required String memberId,
   inDetailsScreen = true,
 }) {
-  final borrowLimit = SettingsService.instance.borrowLimit;
   final memberDetails = context.read<MembersViewModel>().getMemberById(memberId);
-  final currentlyBorrow = context.read<MembersViewModel>().getMemberById(memberId)?.currentlyBorrow ?? 0;
-  // final borrowCount = borrowLimit - currentlyBorrow;
+  final currentlyBorrow = memberDetails?.currentlyBorrow;
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
