@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
 import '../model/members_model.dart';
 
 // BookRepository - Handles only book operations
@@ -13,8 +12,7 @@ class MembersDB {
   static Future<String?> addMember(MemberModel member) async{
     try{
       final box = await _box;
-      final updatedMember = member.copyWith(id: const Uuid().v4());
-      await box.put(updatedMember.id, updatedMember);
+      await box.put(member.id, member);
       return null;
     }catch(e){
       return "Error: $e";

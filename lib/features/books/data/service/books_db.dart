@@ -15,8 +15,9 @@ class BooksDBHive {
 
   static Future<void> addBook(BookModel book) async {
     final box = await _openBox();
-    book.id = generateId(box.values.length+1);
-    await box.put(book.id, book);
+    final id = generateId(box.values.length+1);
+    final bookWithId = book.copyWith(id: id);
+    await box.put(id,bookWithId);
   }
 
   static Future<void> deleteBook(String bookId) async {

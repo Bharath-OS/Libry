@@ -82,8 +82,9 @@ class MembersViewModel extends ChangeNotifier {
   Future<bool> addMember(MemberModel member) async {
     late String? success;
     final id = generateId(totalCount+1);
+    final memberWithId = member.copyWith(memberId: id, id: id);
     try {
-      success = await MembersDB.addMember(member.copyWith(memberId: id));
+      success = await MembersDB.addMember(memberWithId);
       if (success == null) {
         await fetchMembers();
         return true;
