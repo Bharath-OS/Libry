@@ -2,8 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/themes/styles.dart';
-import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/widgets/dialogs.dart';
 import '../../../core/utilities/image_services.dart';
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/buttons.dart';
@@ -100,7 +99,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
     } catch (e) {
       if (mounted) {
         AppDialogs.showSnackBar(
-          text: "Failed to pick an image: $e",
+          message: "Failed to pick an image: $e",
           context: context,
         );
       }
@@ -127,7 +126,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
 
       if (newCopiesAvailable < 0) {
         AppDialogs.showSnackBar(
-          text: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
+          message: "Total copies cannot be less than currently borrowed copies ($currentlyBorrowed)",
           context: context,
         );
         return;
@@ -167,7 +166,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
       if (mounted) {
         Navigator.pop(context);
         AppDialogs.showSnackBar(
-          text: 'Book updated successfully',
+          message: 'Book updated successfully',
           context: context,
         );
       }
@@ -318,7 +317,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
                 '$currentlyBorrowed copies are currently on loan.',
-                style: const TextStyle(color: AppColors.lightGrey, fontSize: 12),
+                style: const TextStyle(color: AppColors.background, fontSize: 12),
               ),
             ),
           const SizedBox(height: 40),
@@ -334,7 +333,7 @@ class _EditBookScreenState extends State<EditBookScreenView> {
               const SizedBox(width: 20),
               Expanded(
                 child: MyButton.primaryButton(
-                  text: 'Save Changes',
+                  text: 'Save',
                   method: _saveBook,
                 ),
               ),
