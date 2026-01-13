@@ -99,7 +99,7 @@ Widget buildManagementCard({
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: items.length,
-              separatorBuilder: (_, __) => Divider(height: 1),
+              separatorBuilder: (_, _) => Divider(height: 1),
               itemBuilder: (context, index) {
                 return ListTile(
                   contentPadding: EdgeInsets.symmetric(
@@ -198,7 +198,7 @@ void showSettingsEditDialog({
       content: Form(
         key: formKey,
         child: TextFormField(
-          cursorColor: AppColors.background,
+          cursorColor: AppColors.lightGrey,
           controller: controller,
           keyboardType: keyboardType,
           autofocus: true,
