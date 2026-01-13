@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:libry/features/auth/data/services/userdata.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:libry/features/home/views/widget/widgets.dart';
@@ -57,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    String formattedDate = dateFormat(date: time);
+    String formattedDate = dateFormat(date: time, format: 'EEEE d, MMM y');
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

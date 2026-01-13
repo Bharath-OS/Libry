@@ -3,6 +3,7 @@ import 'package:libry/core/utilities/helpers.dart';
 import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers/date_formater.dart';
 import '../data/model/books_model.dart';
 import '../../issues/data/model/issue_records_model.dart';
 import '../../members/data/model/members_model.dart';
@@ -237,7 +238,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Borrowed',
-                    value: IssueHistoryWidgets.formatDate(issue.borrowDate),
+                    value: dateFormat(date:issue.borrowDate),
                     icon: Icons.calendar_today,
                   ),
                 ),
@@ -249,7 +250,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Due Date',
-                    value: IssueHistoryWidgets.formatDate(issue.dueDate),
+                    value: dateFormat(date:issue.dueDate),
                     icon: Icons.event,
                   ),
                 ),
@@ -257,7 +258,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: IssueHistoryWidgets.formatDate(
+                          value: dateFormat(date:
                             issue.returnDate!,
                           ),
                           icon: Icons.check_circle,
