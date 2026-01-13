@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/core/utilities/helpers/date_formater.dart';
 import 'package:libry/features/settings/data/service/settings_service.dart';
 import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/themes/styles.dart';
-import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/glassmorphism.dart';
 import '../../../core/widgets/layout_widgets.dart';
@@ -336,7 +332,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        book.copiesAvailable > 0 ? "copies avilable ${book.copiesAvailable}/${book.totalCopies}" : "Book is unavailable to borrow",
+                        book.copiesAvailable > 0 ? "copies available ${book.copiesAvailable}/${book.totalCopies}" : "Book is unavailable to borrow",
                         style: TextStyle(
                           fontSize: 11,
                           color: book.copiesAvailable > 0
@@ -346,7 +342,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                       ),
                     ],
                   ),
-                  trailing: book.copiesAvailable > 0 ? Icon(Icons.arrow_forward_ios, size: 16.sp) : null,
+                  trailing: book.copiesAvailable > 0 ? Icon(Icons.arrow_forward_ios, size: 16) : null,
                   onTap: book.copiesAvailable > 0
                       ? () => _selectBook(book)
                       : null,
@@ -409,6 +405,7 @@ class _IssueBookScreenState extends State<IssueBookScreen> {
                           ),
                           fontSize: 12,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         "Available: ${_selectedBook!.copiesAvailable}/${_selectedBook!.totalCopies}",
