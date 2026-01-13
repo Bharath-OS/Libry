@@ -50,6 +50,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   bool shouldNotVisible = true;
+
   Widget _form(bool isLoading) {
     return Form(
       key: _formKey,
@@ -82,10 +83,10 @@ class _LoginViewState extends State<LoginView> {
           ),
           Selector<AuthViewModel, bool>(
             selector: (_, auth) => auth.isLoading,
-            builder: (_, isLoading, __) {
+            builder: (_, isLoading, _) {
               return MyButton.primaryButton(
                 method: () => validateLogin(),
-                text: isLoading ? "Processing..." : "Login",
+                text: "Login",
               );
             },
           ),

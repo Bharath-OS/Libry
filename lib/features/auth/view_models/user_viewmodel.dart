@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:libry/features/auth/data/model/user_model.dart';
 import 'package:libry/features/auth/data/services/userdata.dart';
 
-import '../../home/views/main_screen.dart';
-
 class AuthViewModel with ChangeNotifier {
   // late UserModel _user;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-
 
   String? registerUser({
     required UserModel user,
@@ -41,8 +38,7 @@ class AuthViewModel with ChangeNotifier {
         _isLoading = false;
         notifyListeners();
         return null;
-      }
-      else{
+      } else {
         return "Something went wrong. Try again later";
       }
     } else {
@@ -50,13 +46,12 @@ class AuthViewModel with ChangeNotifier {
     }
   }
 
-  String? editUser({required UserModel updatedUser}){
+  String? editUser({required UserModel updatedUser}) {
     final result = UserModelService.editData(user: updatedUser);
     notifyListeners();
-    if(result){
+    if (result) {
       return "Profile updated successfully";
-    }
-    else{
+    } else {
       return "Failed to update profile";
     }
   }
