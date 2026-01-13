@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:libry/features/books/viewmodel/book_provider.dart';
@@ -47,7 +46,7 @@ class Cards {
                   width: 80,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     width: 80,
                     height: 100,
                     decoration: BoxDecoration(

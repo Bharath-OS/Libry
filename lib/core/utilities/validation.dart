@@ -13,8 +13,8 @@ class Validator {
     if (emptyValidator(name) != null) {
       return emptyValidator(name);
     } else {
-      if (name!.length <= 2 || name.length >= 24) {
-        return 'Name should have more than 2 characters\nand less than 24 characters.';
+      if (name!.length <= 2) {
+        return 'Name should have more than 2 characters';
       } else if (_hasNumbers(name)) {
         return "Name can't contain numbers";
       } else if (_hasSpecialCharacters(name)) {
