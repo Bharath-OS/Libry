@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
+import '../../features/books/viewmodel/book_provider.dart';
 import '../../features/issues/data/model/issue_records_model.dart';
 import '../../features/members/data/model/members_model.dart';
 import '../../features/books/data/model/books_model.dart';
+import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
 import 'buttons.dart';
 

@@ -1,6 +1,5 @@
+import 'package:Libry/features/auth/view/register.dart';
 import 'package:flutter/material.dart';
-import 'package:libry/features/auth/view/register.dart';
-import 'package:libry/features/auth/view_models/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
@@ -11,6 +10,7 @@ import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
 import 'package:flutter/gestures.dart';
 import '../../home/views/main_screen.dart';
+import '../view_models/user_viewmodel.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

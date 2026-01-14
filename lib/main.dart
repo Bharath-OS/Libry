@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:libry/features/auth/view_models/user_viewmodel.dart';
-import 'package:libry/features/issues/data/service/issue_records_db.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/features/issues/viewmodel/issue_provider.dart';
-import 'package:libry/features/members/data/model/members_model.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
-import 'package:libry/features/settings/data/service/settings_service.dart';
-import 'package:libry/features/settings/viewmodel/settings_viewmodel.dart';
 import 'core/themes/styles.dart';
+import 'features/auth/view_models/user_viewmodel.dart';
+import 'features/books/viewmodel/book_provider.dart';
+import 'features/issues/data/service/issue_records_db.dart';
+import 'features/issues/viewmodel/issue_provider.dart';
+import 'features/members/data/model/members_model.dart';
+import 'features/members/viewmodel/members_provider.dart';
+import 'features/settings/data/service/settings_service.dart';
+import 'features/settings/viewmodel/settings_viewmodel.dart';
 import 'features/splash/splash.dart';
 import 'features/issues/data/model/issue_records_model.dart';
 import 'features/auth/data/model/user_model.dart';

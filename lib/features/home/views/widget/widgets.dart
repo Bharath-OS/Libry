@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:libry/features/books/data/model/books_model.dart';
-import 'package:libry/features/members/data/model/members_model.dart';
-
 import '../../../../core/constants/app_colors.dart';
+import '../../../books/data/model/books_model.dart';
+import '../../../members/data/model/members_model.dart';
 
 Widget addVerticalDivider(){
   return Container(

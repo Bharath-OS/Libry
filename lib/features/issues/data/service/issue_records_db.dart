@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
-import 'package:libry/features/books/data/model/books_model.dart';
-import 'package:libry/features/members/data/model/members_model.dart';
+import '../../../books/data/model/books_model.dart';
 import '../../../books/data/service/books_db.dart';
+import '../../../members/data/model/members_model.dart';
 import '../../../members/data/service/members_db.dart';
 import '../model/issue_records_model.dart';
 

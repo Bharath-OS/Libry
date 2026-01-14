@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/constants/app_colors.dart';
-import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
-import 'package:libry/features/books/data/model/books_model.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/features/issues/data/model/issue_records_model.dart';
-import 'package:libry/features/issues/viewmodel/issue_provider.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
+import '../../../core/widgets/issue_history_reusable_widgets.dart';
 import '../../../core/widgets/layout_widgets.dart';
+import '../../books/data/model/books_model.dart';
+import '../../books/viewmodel/book_provider.dart';
+import '../../issues/data/model/issue_records_model.dart';
+import '../../issues/viewmodel/issue_provider.dart';
 import '../data/model/members_model.dart';
+import '../viewmodel/members_provider.dart';
 
 class MemberHistoryScreen extends StatefulWidget {
   final String memberId;

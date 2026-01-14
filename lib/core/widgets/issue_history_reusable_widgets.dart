@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:libry/core/widgets/dialogs.dart';
 import 'package:provider/provider.dart';
 import '../../features/books/viewmodel/book_provider.dart';
 import '../../features/issues/data/model/issue_records_model.dart';
 import '../../features/issues/viewmodel/issue_provider.dart';
 import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
+import '../widgets/dialogs.dart';
 import 'buttons.dart';
 
 class IssueHistoryWidgets {

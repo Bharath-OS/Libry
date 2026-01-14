@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/buttons.dart';
 import '../data/model/books_model.dart';
 import '../../../core/widgets/layout_widgets.dart';
+import '../viewmodel/book_provider.dart';
 
 
 class BookInfoScreenView extends StatefulWidget {
