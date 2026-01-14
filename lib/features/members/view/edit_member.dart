@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // You'll need this
-import '../../../core/constants/app_colors.dart';
-import '../../../core/utilities/helpers.dart' as AppDialogs;
 import '../../../core/utilities/validation.dart';
-import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/dialogs.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
@@ -65,7 +63,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
       membersProvider.updateMember(updatedMember);
       Navigator.pop(context);
       AppDialogs.showSnackBar(
-        text: "${updatedMember.name} updated successfully",
+        message: "${updatedMember.name} updated successfully",
         context: context,
       );
     }
@@ -97,7 +95,6 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             controller: controllers[0],
             label: "Name",
             validator: (name) => Validator.nameValidator(name),
-            // maxLength: 24,
           ),
           AppTextField.customTextField(
             controller: controllers[1],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:libry/core/widgets/text_field.dart';
-import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/widgets/dialogs.dart';
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
@@ -61,12 +61,12 @@ class _AddMembersScreenState extends State<AddMembersScreen> {
         }
       Navigator.pop(context);
       AppDialogs.showSnackBar(
-        text: "${newMember.name} successfully added",
+        message: "${newMember.name} successfully added",
         context: context,
       );
       }else{
         AppDialogs.showSnackBar(
-          text: "Error adding member: ${newMember.name}",
+          message: "Error adding member: ${newMember.name}",
           context: context,
         );
       }
