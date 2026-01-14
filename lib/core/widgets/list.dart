@@ -70,20 +70,29 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     if (_searchController.text.isNotEmpty) {
       final query = _searchController.text.toLowerCase();
       if (filtered is List<BookModel>) {
-        filtered = (filtered as List<BookModel>)
-            .where((book) =>
-        book.title.toLowerCase().contains(query) ||
-            book.author.toLowerCase().contains(query) ||
-            book.publisher.toLowerCase().contains(query))
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<BookModel>)
+                    .where(
+                      (book) =>
+                          book.title.toLowerCase().contains(query) ||
+                          book.author.toLowerCase().contains(query) ||
+                          book.publisher.toLowerCase().contains(query),
+                    )
+                    .toList()
+                as List<T>;
       } else if (filtered is List<MemberModel>) {
-        filtered = (filtered as List<MemberModel>)
-            .where((member) =>
-        member.name.toLowerCase().contains(query) ||
-            member.email.toLowerCase().contains(query) ||
-            member.phone.contains(query) ||
-            (member.memberId?.toLowerCase().contains(query) ?? false))
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<MemberModel>)
+                    .where(
+                      (member) =>
+                          member.name.toLowerCase().contains(query) ||
+                          member.email.toLowerCase().contains(query) ||
+                          member.phone.contains(query) ||
+                          (member.memberId?.toLowerCase().contains(query) ??
+                              false),
+                    )
+                    .toList()
+                as List<T>;
       }
     }
 
@@ -91,27 +100,35 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     if (filtered is List<BookModel>) {
       // Genre filter
       if (_selectedGenre != null && _selectedGenre != 'All') {
-        filtered = (filtered as List<BookModel>)
-            .where((book) => book.genre == _selectedGenre)
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<BookModel>)
+                    .where((book) => book.genre == _selectedGenre)
+                    .toList()
+                as List<T>;
       }
 
       // Language filter
       if (_selectedLanguage != null && _selectedLanguage != 'All') {
-        filtered = (filtered as List<BookModel>)
-            .where((book) => book.language == _selectedLanguage)
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<BookModel>)
+                    .where((book) => book.language == _selectedLanguage)
+                    .toList()
+                as List<T>;
       }
 
       // Availability filter
       if (_availabilityFilter == 'available') {
-        filtered = (filtered as List<BookModel>)
-            .where((book) => book.copiesAvailable > 0)
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<BookModel>)
+                    .where((book) => book.copiesAvailable > 0)
+                    .toList()
+                as List<T>;
       } else if (_availabilityFilter == 'unavailable') {
-        filtered = (filtered as List<BookModel>)
-            .where((book) => book.copiesAvailable == 0)
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<BookModel>)
+                    .where((book) => book.copiesAvailable == 0)
+                    .toList()
+                as List<T>;
       }
     }
 
@@ -120,20 +137,28 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       final now = DateTime.now();
 
       if (_membershipFilter == 'active') {
-        filtered = (filtered as List<MemberModel>)
-            .where((member) => member.expiry.isAfter(now))
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<MemberModel>)
+                    .where((member) => member.expiry.isAfter(now))
+                    .toList()
+                as List<T>;
       } else if (_membershipFilter == 'expired') {
-        filtered = (filtered as List<MemberModel>)
-            .where((member) => member.expiry.isBefore(now))
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<MemberModel>)
+                    .where((member) => member.expiry.isBefore(now))
+                    .toList()
+                as List<T>;
       } else if (_membershipFilter == 'expiring_soon') {
         final thirtyDaysFromNow = now.add(Duration(days: 30));
-        filtered = (filtered as List<MemberModel>)
-            .where((member) =>
-        member.expiry.isAfter(now) &&
-            member.expiry.isBefore(thirtyDaysFromNow))
-            .toList() as List<T>;
+        filtered =
+            (filtered as List<MemberModel>)
+                    .where(
+                      (member) =>
+                          member.expiry.isAfter(now) &&
+                          member.expiry.isBefore(thirtyDaysFromNow),
+                    )
+                    .toList()
+                as List<T>;
       }
     }
 
@@ -189,7 +214,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           ),
         ),
       ),
-      floatingActionButton: MyButton.fab(onPressed: widget.fabMethod,label: "Add ${widget.items is List<BookModel> ? "Book" : "Member"}"),
+      floatingActionButton: MyButton.fab(
+        onPressed: widget.fabMethod,
+        label: "Add ${widget.items is List<BookModel> ? "Book" : "Member"}",
+      ),
     );
   }
 
@@ -210,11 +238,11 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
               prefixIcon: Icon(Icons.search, color: AppColors.primary),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                icon: Icon(Icons.clear, color: AppColors.primary),
-                onPressed: () {
-                  _searchController.clear();
-                },
-              )
+                      icon: Icon(Icons.clear, color: AppColors.primary),
+                      onPressed: () {
+                        _searchController.clear();
+                      },
+                    )
                   : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -233,7 +261,8 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         ),
 
         // Filter Chips Row
-        if (_filteredItems is List<BookModel> || _filteredItems is List<MemberModel>)
+        if (_filteredItems is List<BookModel> ||
+            _filteredItems is List<MemberModel>)
           _buildFilterChips(),
 
         const SizedBox(height: 12),
@@ -326,7 +355,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'All',
               _availabilityFilter == 'all',
-                  () => setState(() {
+              () => setState(() {
                 _availabilityFilter = 'all';
                 _applyFilters();
               }),
@@ -335,7 +364,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'Available',
               _availabilityFilter == 'available',
-                  () => setState(() {
+              () => setState(() {
                 _availabilityFilter = 'available';
                 _applyFilters();
               }),
@@ -345,7 +374,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'Unavailable',
               _availabilityFilter == 'unavailable',
-                  () => setState(() {
+              () => setState(() {
                 _availabilityFilter = 'unavailable';
                 _applyFilters();
               }),
@@ -356,7 +385,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'All',
               _membershipFilter == 'all',
-                  () => setState(() {
+              () => setState(() {
                 _membershipFilter = 'all';
                 _applyFilters();
               }),
@@ -365,7 +394,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'Active',
               _membershipFilter == 'active',
-                  () => setState(() {
+              () => setState(() {
                 _membershipFilter = 'active';
                 _applyFilters();
               }),
@@ -375,7 +404,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'Expiring Soon',
               _membershipFilter == 'expiring_soon',
-                  () => setState(() {
+              () => setState(() {
                 _membershipFilter = 'expiring_soon';
                 _applyFilters();
               }),
@@ -385,7 +414,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             _buildChip(
               'Expired',
               _membershipFilter == 'expired',
-                  () => setState(() {
+              () => setState(() {
                 _membershipFilter = 'expired';
                 _applyFilters();
               }),
@@ -397,8 +426,12 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     );
   }
 
-  Widget _buildChip(String label, bool isSelected, VoidCallback onTap,
-      {Color? color}) {
+  Widget _buildChip(
+    String label,
+    bool isSelected,
+    VoidCallback onTap, {
+    Color? color,
+  }) {
     return FilterChip(
       label: Text(
         label,
@@ -459,7 +492,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           child: widget.tileBuilder(item),
         );
       },
-      separatorBuilder: (_, __) => const SizedBox(height: 4),
+      separatorBuilder: (_, _) => const SizedBox(height: 4),
     );
   }
 
@@ -477,16 +510,14 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           Text(
             _hasActiveFilters
                 ? "No results found"
-                : "No ${widget.items is List<BookModel> ? "book":"member"} found!",
+                : "No ${widget.items is List<BookModel> ? "book" : "member"} found!",
             style: BodyTextStyles.bodySmallStyle(Colors.black),
           ),
           if (_hasActiveFilters) ...[
             SizedBox(height: 8),
             TextButton(
               onPressed: _resetFilters,
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
               child: Text('Clear filters'),
             ),
           ],
@@ -499,9 +530,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: AppColors.white,
         title: Row(
           children: [
@@ -530,58 +559,72 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                     Navigator.pop(context);
                     _applyFilters();
                   }),
-                  _buildDialogRadio('Available Only',
-                      _availabilityFilter == 'available', () {
-                        setState(() => _availabilityFilter = 'available');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
-                  _buildDialogRadio('Unavailable Only',
-                      _availabilityFilter == 'unavailable', () {
-                        setState(() => _availabilityFilter = 'unavailable');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
+                  _buildDialogRadio(
+                    'Available Only',
+                    _availabilityFilter == 'available',
+                    () {
+                      setState(() => _availabilityFilter = 'available');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
+                  _buildDialogRadio(
+                    'Unavailable Only',
+                    _availabilityFilter == 'unavailable',
+                    () {
+                      setState(() => _availabilityFilter = 'unavailable');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
                 ]),
                 SizedBox(height: 16),
                 Divider(color: Colors.grey[300]),
                 SizedBox(height: 16),
-                _buildDialogSection('Genre', [
-                  _buildGenreDropdown(),
-                ]),
+                _buildDialogSection('Genre', [_buildGenreDropdown()]),
                 SizedBox(height: 16),
                 Divider(color: Colors.grey[300]),
                 SizedBox(height: 16),
-                _buildDialogSection('Language', [
-                  _buildLanguageDropdown(),
-                ]),
+                _buildDialogSection('Language', [_buildLanguageDropdown()]),
               ] else if (_filteredItems is List<MemberModel>) ...[
                 // Member Filters
                 _buildDialogSection('Membership Status', [
-                  _buildDialogRadio('All Member', _membershipFilter == 'all',
-                          () {
-                        setState(() => _membershipFilter = 'all');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
-                  _buildDialogRadio('Active Only',
-                      _membershipFilter == 'active', () {
-                        setState(() => _membershipFilter = 'active');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
-                  _buildDialogRadio('Expiring Soon (30 days)',
-                      _membershipFilter == 'expiring_soon', () {
-                        setState(() => _membershipFilter = 'expiring_soon');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
-                  _buildDialogRadio('Expired', _membershipFilter == 'expired',
-                          () {
-                        setState(() => _membershipFilter = 'expired');
-                        Navigator.pop(context);
-                        _applyFilters();
-                      }),
+                  _buildDialogRadio(
+                    'All Member',
+                    _membershipFilter == 'all',
+                    () {
+                      setState(() => _membershipFilter = 'all');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
+                  _buildDialogRadio(
+                    'Active Only',
+                    _membershipFilter == 'active',
+                    () {
+                      setState(() => _membershipFilter = 'active');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
+                  _buildDialogRadio(
+                    'Expiring Soon (30 days)',
+                    _membershipFilter == 'expiring_soon',
+                    () {
+                      setState(() => _membershipFilter = 'expiring_soon');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
+                  _buildDialogRadio(
+                    'Expired',
+                    _membershipFilter == 'expired',
+                    () {
+                      setState(() => _membershipFilter = 'expired');
+                      Navigator.pop(context);
+                      _applyFilters();
+                    },
+                  ),
                 ]),
               ],
             ],
@@ -613,7 +656,10 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
             ),
             child: Text(
               'Close',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -649,7 +695,9 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           width: isSelected ? 2.0 : 1.0,
         ),
       ),
-      color: isSelected ? AppColors.primary.withAlpha((0.1*255).toInt()) : Colors.white,
+      color: isSelected
+          ? AppColors.primary.withAlpha((0.1 * 255).toInt())
+          : Colors.white,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         title: Text(
@@ -674,7 +722,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     final allBooks = widget.items as List<BookModel>;
     final genres = [
       'All',
-      ...allBooks.map((b) => b.genre).toSet().toList()..sort()
+      ...allBooks.map((b) => b.genre).toSet().toList()..sort(),
     ];
 
     return Container(
@@ -693,10 +741,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         items: genres.map((genre) {
           return DropdownMenuItem(
             value: genre,
-            child: Text(
-              genre,
-              style: TextStyle(color: Colors.black87),
-            ),
+            child: Text(genre, style: TextStyle(color: Colors.black87)),
           );
         }).toList(),
         onChanged: (value) {
@@ -712,7 +757,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     final allBooks = widget.items as List<BookModel>;
     final languages = [
       'All',
-      ...allBooks.map((b) => b.language).toSet().toList()..sort()
+      ...allBooks.map((b) => b.language).toSet().toList()..sort(),
     ];
 
     return Container(
@@ -731,10 +776,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
         items: languages.map((language) {
           return DropdownMenuItem(
             value: language,
-            child: Text(
-              language,
-              style: TextStyle(color: Colors.black87),
-            ),
+            child: Text(language, style: TextStyle(color: Colors.black87)),
           );
         }).toList(),
         onChanged: (value) {
@@ -750,24 +792,20 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          'Clear All ${widget.title}',
+          'Clear ${widget.title}',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Are you sure you want to delete all ${widget.title.toLowerCase()}? This action cannot be undone.',
+          'Are you sure you want to delete ${widget.title.toLowerCase()}? This action cannot be undone.',
           style: TextStyle(color: Colors.black87),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey[700],
-            ),
-            child: Text('Cancel'),
+          MyButton.outlinedButton(
+            method: () => Navigator.pop(context, false),
+            color: AppColors.lightGrey,
+            text: 'Cancel',
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -777,7 +815,14 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text('Delete All'),
+            child: Text(
+              'Delete All',
+              style: TextStyle(
+                color: AppColors.white,
+                fontFamily: 'Livvic',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -826,10 +871,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       // Export based on type
       if (_filteredItems.isEmpty) {
         Navigator.pop(context);
-        showSnackBar(
-          text: "No data to export",
-          context: context,
-        );
+        showSnackBar(text: "No data to export", context: context);
         return;
       }
 
@@ -843,10 +885,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
       Navigator.pop(context);
 
       // Show success message
-      showSnackBar(
-        text: "PDF exported successfully!",
-        context: context,
-      );
+      showSnackBar(text: "PDF exported successfully!", context: context);
     } catch (e) {
       // Close loading dialog if still open
       if (Navigator.canPop(context)) {
