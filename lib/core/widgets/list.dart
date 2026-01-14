@@ -459,7 +459,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           child: widget.tileBuilder(item),
         );
       },
-      separatorBuilder: (_, __) => const SizedBox(height: 4),
+      separatorBuilder: (_, _) => const SizedBox(height: 4),
     );
   }
 
@@ -754,11 +754,11 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          'Clear All ${widget.title}',
+          'Clear ${widget.title}',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Are you sure you want to delete all ${widget.title.toLowerCase()}? This action cannot be undone.',
+          'Are you sure you want to delete ${widget.title.toLowerCase()}? This action cannot be undone.',
           style: TextStyle(color: Colors.black87),
         ),
         actions: [
@@ -777,7 +777,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text('Delete All'),
+            child: Text('Delete All',style: TextStyle(color: AppColors.white),),
           ),
         ],
       ),
