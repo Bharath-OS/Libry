@@ -38,7 +38,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final activeIssues = allIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allIssues.where((i) => i.isReturned).length;
     final overdueIssues = allIssues
-        .where((i) => calculateOverDue(dueDate: i.dueDate, isReturned: i.isReturned))
+        .where(
+          (i) => calculateOverDue(dueDate: i.dueDate, isReturned: i.isReturned),
+        )
         .length;
 
     return LayoutWidgets.customScaffold(
@@ -76,28 +78,25 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                       showClearFilter: _filter != 'all',
                       onClearFilter: () => setState(() => _filter = 'all'),
                     )
-                  : SizedBox(
-                      // decoration: BoxDecoration(color: AppColors.background),
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(16),
-                        itemCount: filteredIssues.length,
-                        itemBuilder: (context, index) {
-                          final issue = filteredIssues[index];
-                          final book = bookProvider.getBookById(issue.bookId!);
-                          final member = memberProvider.getMemberById(
-                            issue.memberId!,
-                          );
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 16),
-                            child: _buildIssueCard(
-                              issue,
-                              book,
-                              member,
-                              issueProvider,
-                            ),
-                          );
-                        },
-                      ),
+                  : ListView.builder(
+                      padding: EdgeInsets.all(16).copyWith(bottom: 50),
+                      itemCount: filteredIssues.length,
+                      itemBuilder: (context, index) {
+                        final issue = filteredIssues[index];
+                        final book = bookProvider.getBookById(issue.bookId!);
+                        final member = memberProvider.getMemberById(
+                          issue.memberId!,
+                        );
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 16),
+                          child: _buildIssueCard(
+                            issue,
+                            book,
+                            member,
+                            issueProvider,
+                          ),
+                        );
+                      },
                     ),
             ),
           ],
@@ -117,7 +116,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     MemberModel? member,
     IssueViewModel issueProvider,
   ) {
-    final isOverdue = calculateOverDue(dueDate: issue.dueDate, isReturned: issue.isReturned);
+    final isOverdue = calculateOverDue(
+      dueDate: issue.dueDate,
+      isReturned: issue.isReturned,
+    );
 
     // Claude changed: Use calculateFine from provider for accurate calculation
     final fine = issueProvider.calculateFine(issue);
@@ -338,7 +340,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Borrowed',
-                    value: dateFormat(date:issue.borrowDate),
+                    value: dateFormat(date: issue.borrowDate),
                     icon: Icons.calendar_today,
                   ),
                 ),
@@ -351,7 +353,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Due Date',
-                    value: dateFormat(date:issue.dueDate),
+                    value: dateFormat(date: issue.dueDate),
                     icon: Icons.event,
                   ),
                 ),
@@ -359,7 +361,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: dateFormat(date:issue.returnDate!),
+                          value: dateFormat(date: issue.returnDate!),
                           icon: Icons.check_circle,
                         )
                       : IssueHistoryWidgets.buildInfoItem(
@@ -644,9 +646,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     _buildDetailRow('Issue ID', issue.issueId),
                     _buildDetailRow(
                       'Borrow Date',
-                      dateFormat(date:issue.borrowDate),
+                      dateFormat(date: issue.borrowDate),
                     ),
-                    _buildDetailRow('Due Date', dateFormat(date:issue.dueDate)),
+                    _buildDetailRow(
+                      'Due Date',
+                      dateFormat(date: issue.dueDate),
+                    ),
                     _buildDetailRow(
                       'Status',
                       issue.isReturned ? 'Returned' : 'Active',
@@ -654,7 +659,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     if (issue.isReturned)
                       _buildDetailRow(
                         'Return Date',
-                        dateFormat(date:issue.returnDate!),
+                        dateFormat(date: issue.returnDate!),
                       ),
                     // Claude changed: Show fine with payment status
                     if (issue.fineAmount > 0)

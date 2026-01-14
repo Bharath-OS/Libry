@@ -86,7 +86,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                       onClearFilter: () => setState(() => _filter = 'all'),
                     )
                   : ListView.builder(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16).copyWith(bottom: 50),
                       itemCount: filteredIssues.length,
                       itemBuilder: (context, index) {
                         final issue = filteredIssues[index];
