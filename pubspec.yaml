@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
 
   page_transition: ^2.2.1
-  shared_preferences: ^2.5.3
   flutter_svg: ^2.2.1
   stylish_bottom_bar: ^1.1.1
   hive: ^2.2.3
