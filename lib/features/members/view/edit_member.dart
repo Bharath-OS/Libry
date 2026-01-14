@@ -97,7 +97,7 @@ class _EditMembersScreenState extends State<EditMembersScreen> {
             controller: controllers[0],
             label: "Name",
             validator: (name) => Validator.nameValidator(name),
-            maxLength: 24,
+            // maxLength: 24,
           ),
           AppTextField.customTextField(
             controller: controllers[1],

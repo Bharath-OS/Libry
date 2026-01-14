@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -570,6 +571,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
+          constraints: BoxConstraints(maxWidth: 300),
           padding: EdgeInsets.all(24),
           child: SingleChildScrollView(
             child: Column(
@@ -784,6 +786,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -811,6 +814,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 color: Colors.grey[700],
                 fontSize: 14,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           SizedBox(width: 10),
