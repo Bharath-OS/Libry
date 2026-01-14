@@ -53,53 +53,62 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            IssueHistoryWidgets.buildStatsCards(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-            ),
+        child: SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                IssueHistoryWidgets.buildStatsCards(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                ),
 
-            IssueHistoryWidgets.buildFilterChips(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-              currentFilter: _filter,
-              onFilterChanged: _setFilter,
-            ),
+                IssueHistoryWidgets.buildFilterChips(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                  currentFilter: _filter,
+                  onFilterChanged: _setFilter,
+                ),
 
-            Expanded(
-              child: filteredIssues.isEmpty
-                  ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'No transactions found',
-                      showClearFilter: _filter != 'all',
-                      onClearFilter: () => setState(() => _filter = 'all'),
+                filteredIssues.isEmpty
+                    ? SizedBox(
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: IssueHistoryWidgets.buildEmptyState(
+                          message: 'No transactions found',
+                          showClearFilter: _filter != 'all',
+                          onClearFilter: () => setState(() => _filter = 'all'),
+                        ),
                     )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(16).copyWith(bottom: 50),
-                      itemCount: filteredIssues.length,
-                      itemBuilder: (context, index) {
-                        final issue = filteredIssues[index];
-                        final book = bookProvider.getBookById(issue.bookId!);
-                        final member = memberProvider.getMemberById(
-                          issue.memberId!,
-                        );
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 16),
-                          child: _buildIssueCard(
-                            issue,
-                            book,
-                            member,
-                            issueProvider,
-                          ),
-                        );
-                      },
-                    ),
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        padding: EdgeInsets.all(16).copyWith(bottom: 50),
+                        itemCount: filteredIssues.length,
+                        itemBuilder: (context, index) {
+                          final issue = filteredIssues[index];
+                          final book = bookProvider.getBookById(issue.bookId!);
+                          final member = memberProvider.getMemberById(
+                            issue.memberId!,
+                          );
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 16),
+                            child: _buildIssueCard(
+                              issue,
+                              book,
+                              member,
+                              issueProvider,
+                            ),
+                          );
+                        },
+                      ),
+
+              ],
             ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: MyButton.fab(

@@ -56,10 +56,13 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     final activeIssues = allMemberIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allMemberIssues.where((i) => i.isReturned).length;
     final overdueIssues = allMemberIssues
-        .where((i) =>
-            !i.isReturned &&
-            DateUtils.dateOnly(DateTime.now())
-                .isAfter(DateUtils.dateOnly(i.dueDate)))
+        .where(
+          (i) =>
+              !i.isReturned &&
+              DateUtils.dateOnly(
+                DateTime.now(),
+              ).isAfter(DateUtils.dateOnly(i.dueDate)),
+        )
         .length;
 
     return LayoutWidgets.customScaffold(
@@ -68,48 +71,56 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         context: context,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Member Info Header
-            _buildMemberHeader(member, activeIssues),
+        child: SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Member Info Header
+                _buildMemberHeader(member, activeIssues),
 
-            // Stats Cards - Using Reusable Widget
-            IssueHistoryWidgets.buildStatsCards(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-            ),
+                // Stats Cards - Using Reusable Widget
+                IssueHistoryWidgets.buildStatsCards(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                ),
 
-            // Filter Chips - Using Reusable Widget
-            IssueHistoryWidgets.buildFilterChips(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-              currentFilter: _filter,
-              onFilterChanged: _setFilter,
-            ),
+                // Filter Chips - Using Reusable Widget
+                IssueHistoryWidgets.buildFilterChips(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                  currentFilter: _filter,
+                  onFilterChanged: _setFilter,
+                ),
 
-            // Issues List
-            Expanded(
-              child: filteredIssues.isEmpty
-                  ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'No transactions found',
-                      showClearFilter: _filter != 'all',
-                      onClearFilter: () => setState(() => _filter = 'all'),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(16).copyWith(bottom: 50),
-                      itemCount: filteredIssues.length,
-                      itemBuilder: (context, index) {
-                        final issue = filteredIssues[index];
-                        final book = bookProvider.getBookById(issue.bookId!);
-                        return _buildIssueCard(issue, book, issueProvider);
-                      },
-                    ),
+                // Issues List
+                filteredIssues.isEmpty
+                    ? SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: IssueHistoryWidgets.buildEmptyState(
+                          message: 'No transactions found',
+                          showClearFilter: _filter != 'all',
+                          onClearFilter: () => setState(() => _filter = 'all'),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        padding: EdgeInsets.all(16).copyWith(bottom: 50),
+                        itemCount: filteredIssues.length,
+                        itemBuilder: (context, index) {
+                          final issue = filteredIssues[index];
+                          final book = bookProvider.getBookById(issue.bookId!);
+                          return _buildIssueCard(issue, book, issueProvider);
+                        },
+                      ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -169,7 +180,10 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
     IssueViewModel issueProvider,
   ) {
     final isOverdue =
-        !issue.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(issue.dueDate));
+        !issue.isReturned &&
+        DateUtils.dateOnly(
+          DateTime.now(),
+        ).isAfter(DateUtils.dateOnly(issue.dueDate));
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -254,7 +268,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Borrowed',
-                    value: dateFormat(date:issue.borrowDate),
+                    value: dateFormat(date: issue.borrowDate),
                     icon: Icons.calendar_today,
                   ),
                 ),
@@ -266,7 +280,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Due Date',
-                    value: dateFormat(date:issue.dueDate),
+                    value: dateFormat(date: issue.dueDate),
                     icon: Icons.event,
                   ),
                 ),
@@ -274,9 +288,7 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: dateFormat(date:
-                            issue.returnDate!,
-                          ),
+                          value: dateFormat(date: issue.returnDate!),
                           icon: Icons.check_circle,
                         )
                       : IssueHistoryWidgets.buildInfoItem(
@@ -336,10 +348,13 @@ class _MemberHistoryScreenState extends State<MemberHistoryScreen> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) =>
-                !i.isReturned &&
-                DateUtils.dateOnly(DateTime.now())
-                    .isAfter(DateUtils.dateOnly(i.dueDate)))
+            .where(
+              (i) =>
+                  !i.isReturned &&
+                  DateUtils.dateOnly(
+                    DateTime.now(),
+                  ).isAfter(DateUtils.dateOnly(i.dueDate)),
+            )
             .toList();
       default: // 'all'
         return issues;
