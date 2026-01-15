@@ -1,13 +1,10 @@
 import 'dart:core';
-
 import 'package:flutter/material.dart';
-
-import 'package:libry/features/members/data/model/members_model.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../features/books/data/model/books_model.dart';
 import '../../features/books/viewmodel/book_provider.dart';
+import '../../features/members/data/model/members_model.dart';
+import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
 import '../themes/styles.dart';
 import '../utilities/helpers.dart';
@@ -459,7 +456,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           child: widget.tileBuilder(item),
         );
       },
-      separatorBuilder: (_, __) => const SizedBox(height: 4),
+      separatorBuilder: (_, _) => const SizedBox(height: 4),
     );
   }
 
@@ -754,11 +751,11 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          'Clear All ${widget.title}',
+          'Clear ${widget.title}',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Are you sure you want to delete all ${widget.title.toLowerCase()}? This action cannot be undone.',
+          'Are you sure you want to delete ${widget.title.toLowerCase()}? This action cannot be undone.',
           style: TextStyle(color: Colors.black87),
         ),
         actions: [
@@ -777,7 +774,7 @@ class _ListScreenState<T> extends State<ListScreen<T>> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text('Delete All'),
+            child: Text('Delete All',style: TextStyle(color: AppColors.white),),
           ),
         ],
       ),

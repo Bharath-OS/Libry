@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/themes/styles.dart';
 import '../constants/app_colors.dart';
+import '../themes/styles.dart';
 import '../utilities/validation.dart';
 
 class AppTextField {

@@ -1,11 +1,11 @@
-import 'package:libry/features/members/viewmodel/members_provider.dart';
-import 'package:libry/features/members/view/add_members.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/list.dart';
 import '../data/model/members_model.dart';
 import 'package:flutter/material.dart';
+import '../viewmodel/members_provider.dart';
+import 'add_members.dart';
 import 'member_details.dart';
 
 class MembersScreen extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/features/auth/data/model/user_model.dart';
-import 'package:libry/features/auth/data/model/keys.dart';
+import '../model/keys.dart';
+import '../model/user_model.dart';
 
 class UserModelService {
   static bool saveData({required UserModel user}) {

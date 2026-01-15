@@ -1,18 +1,15 @@
+import 'package:Libry/features/home/views/widget/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:libry/features/auth/data/services/userdata.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/features/home/views/widget/widgets.dart';
-import 'package:libry/features/issues/viewmodel/issue_provider.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
 import '../../../core/utilities/helpers/greeting.dart';
 import '../../../core/widgets/layout_widgets.dart';
+import '../../auth/data/services/userdata.dart';
 import '../../auth/view/profile.dart';
+import '../../books/viewmodel/book_provider.dart';
+import '../../issues/viewmodel/issue_provider.dart';
+import '../../members/viewmodel/members_provider.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -57,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    String formattedDate = dateFormat(date: time);
+    String formattedDate = dateFormat(date: time, format: 'EEEE d, MMM y');
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

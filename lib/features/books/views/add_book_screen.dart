@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/themes/styles.dart';
-import '../../../core/utilities/helpers.dart' as AppDialogs;
+import '../../../core/widgets/dialogs.dart';
 import '../../../core/utilities/validation.dart';
 import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
@@ -74,7 +73,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
       }
     } catch (e) {
       AppDialogs.showSnackBar(
-        text: "Failed to pick an image: $e",
+        message: "Failed to pick an image: $e",
         context: context,
       );
     } finally {
@@ -93,14 +92,14 @@ class _AddBookScreenState extends State<AddBookScreenView> {
     if (_formKey.currentState!.validate()) {
       if (_selectedGenre == null || _selectedGenre!.isEmpty) {
         AppDialogs.showSnackBar(
-          text: "Please select a genre",
+          message: "Please select a genre",
           context: context,
         );
         return;
       }
       if (_selectedLanguage == null || _selectedLanguage!.isEmpty) {
         AppDialogs.showSnackBar(
-          text: "Please select a language",
+          message: "Please select a language",
           context: context,
         );
         return;
@@ -125,7 +124,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
 
       Navigator.pop(context);
       AppDialogs.showSnackBar(
-        text: "${book.title} successfully added",
+        message: "${book.title} successfully added",
         context: context,
       );
     }
@@ -427,7 +426,7 @@ class _AddBookScreenState extends State<AddBookScreenView> {
                   const SizedBox(height: 40),
                   Column(
                     children: [
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () => Navigator.push(

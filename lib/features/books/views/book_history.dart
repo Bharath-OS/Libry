@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/utilities/helpers.dart';
-import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utilities/helpers.dart';
+import '../../../core/utilities/helpers/date_formater.dart';
+import '../../../core/widgets/issue_history_reusable_widgets.dart';
 import '../data/model/books_model.dart';
 import '../../issues/data/model/issue_records_model.dart';
 import '../../members/data/model/members_model.dart';
@@ -49,7 +50,15 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     final totalIssues = allBookIssues.length;
     final activeIssues = allBookIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allBookIssues.where((i) => i.isReturned).length;
-    final overdueIssues = allBookIssues.where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate))).length;
+    final overdueIssues = allBookIssues
+        .where(
+          (i) =>
+              !i.isReturned &&
+              DateUtils.dateOnly(
+                DateTime.now(),
+              ).isAfter(DateUtils.dateOnly(i.dueDate)),
+        )
+        .length;
 
     return LayoutWidgets.customScaffold(
       appBar: LayoutWidgets.appBar(
@@ -57,46 +66,55 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
         context: context,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Book Info Header
-            _buildBookHeader(book),
+        child: SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Book Info Header
+                _buildBookHeader(book),
 
-            IssueHistoryWidgets.buildStatsCards(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
+                IssueHistoryWidgets.buildStatsCards(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                ),
+                IssueHistoryWidgets.buildFilterChips(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                  currentFilter: _filter,
+                  onFilterChanged: _setFilter,
+                ),
+                // Issues List
+                filteredIssues.isEmpty
+                    ? SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: IssueHistoryWidgets.buildEmptyState(
+                          message: 'No transactions found',
+                          showClearFilter: _filter != 'all',
+                          onClearFilter: () =>
+                              setState(() => _filter = 'all'),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        padding: EdgeInsets.all(16),
+                        itemCount: filteredIssues.length,
+                        itemBuilder: (context, index) {
+                          final issue = filteredIssues[index];
+                          final member = memberProvider.getMemberById(
+                            issue.memberId!,
+                          );
+                          return _buildIssueCard(issue, member, issueProvider);
+                        },
+                      ),
+              ],
             ),
-            IssueHistoryWidgets.buildFilterChips(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-              currentFilter: _filter,
-              onFilterChanged: _setFilter,
-            ),
-            // Issues List
-            Expanded(
-              child: filteredIssues.isEmpty
-                  ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'No transactions found',
-                      showClearFilter: _filter != 'all',
-                      onClearFilter: () => setState(() => _filter = 'all'),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(16),
-                      itemCount: filteredIssues.length,
-                      itemBuilder: (context, index) {
-                        final issue = filteredIssues[index];
-                        final member = memberProvider.getMemberById(
-                          issue.memberId!,
-                        );
-                        return _buildIssueCard(issue, member, issueProvider);
-                      },
-                    ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -146,7 +164,10 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
     MemberModel? member,
     IssueViewModel issueProvider,
   ) {
-    final isOverdue = calculateOverDue(dueDate: issue.dueDate, isReturned: issue.isReturned);
+    final isOverdue = calculateOverDue(
+      dueDate: issue.dueDate,
+      isReturned: issue.isReturned,
+    );
     final fine = issueProvider.calculateFine(issue);
 
     return Card(
@@ -237,7 +258,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Borrowed',
-                    value: IssueHistoryWidgets.formatDate(issue.borrowDate),
+                    value: dateFormat(date: issue.borrowDate),
                     icon: Icons.calendar_today,
                   ),
                 ),
@@ -249,7 +270,7 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Due Date',
-                    value: IssueHistoryWidgets.formatDate(issue.dueDate),
+                    value: dateFormat(date: issue.dueDate),
                     icon: Icons.event,
                   ),
                 ),
@@ -257,15 +278,13 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: IssueHistoryWidgets.formatDate(
-                            issue.returnDate!,
-                          ),
+                          value: dateFormat(date: issue.returnDate!),
                           icon: Icons.check_circle,
                         )
                       : IssueHistoryWidgets.buildInfoItem(
                           label: 'Days Left',
                           value:
-                              '${issue.dueDate.difference(DateTime.now()).inDays}',
+                              '${isOverdue ? 0 : issue.dueDate.difference(DateTime.now()).inDays}',
                           icon: Icons.access_time,
                         ),
                 ),
@@ -319,7 +338,13 @@ class _BookHistoryScreenState extends State<BookHistoryScreenView> {
         return issues.where((i) => i.isReturned).toList();
       case 'overdue':
         return issues
-            .where((i) => !i.isReturned && DateUtils.dateOnly(DateTime.now()).isAfter(DateUtils.dateOnly(i.dueDate)))
+            .where(
+              (i) =>
+                  !i.isReturned &&
+                  DateUtils.dateOnly(
+                    DateTime.now(),
+                  ).isAfter(DateUtils.dateOnly(i.dueDate)),
+            )
             .toList();
       default:
         return issues;

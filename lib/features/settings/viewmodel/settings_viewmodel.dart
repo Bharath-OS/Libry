@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libry/features/settings/data/service/settings_service.dart';
+import '../data/service/settings_service.dart';
 
 class SettingsViewModel with ChangeNotifier {
   double _fineAmount = SettingsService.instance.fineAmount;

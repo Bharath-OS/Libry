@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:libry/features/auth/data/services/userdata.dart';
-import 'package:libry/features/books/views/add_book_screen.dart';
-import 'package:libry/core/themes/styles.dart';
-import 'package:libry/features/issues/viewmodel/issue_provider.dart';
-import 'package:libry/features/auth/view/login.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/themes/styles.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/layout_widgets.dart';
+import '../../books/views/add_book_screen.dart';
+import '../../issues/viewmodel/issue_provider.dart';
 import '../../issues/views/issue.dart';
+import '../../members/viewmodel/members_provider.dart';
 import '../data/model/user_model.dart';
+import '../data/services/userdata.dart';
 import 'edit_profile.dart';
+import 'login.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

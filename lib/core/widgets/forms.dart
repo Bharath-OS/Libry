@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libry/core/constants/app_colors.dart';
-import 'package:libry/core/themes/styles.dart';
-
+import '../constants/app_colors.dart';
+import '../themes/styles.dart';
 import 'buttons.dart';
 import 'glassmorphism.dart';
 

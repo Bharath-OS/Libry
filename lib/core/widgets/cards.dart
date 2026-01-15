@@ -1,12 +1,11 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
-import 'package:libry/features/members/viewmodel/members_provider.dart';
 import 'package:provider/provider.dart';
+import '../../features/books/viewmodel/book_provider.dart';
 import '../../features/issues/data/model/issue_records_model.dart';
 import '../../features/members/data/model/members_model.dart';
 import '../../features/books/data/model/books_model.dart';
+import '../../features/members/viewmodel/members_provider.dart';
 import '../constants/app_colors.dart';
 import 'buttons.dart';
 
@@ -47,7 +46,7 @@ class Cards {
                   width: 80,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     width: 80,
                     height: 100,
                     decoration: BoxDecoration(

@@ -1,10 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:libry/core/widgets/issue_history_reusable_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utilities/helpers.dart';
+import '../../../core/utilities/helpers/date_formater.dart';
 import '../../../core/widgets/buttons.dart';
+import '../../../core/widgets/issue_history_reusable_widgets.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../books/data/model/books_model.dart';
 import '../data/model/issue_records_model.dart';
@@ -37,7 +38,9 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     final activeIssues = allIssues.where((i) => !i.isReturned).length;
     final returnedIssues = allIssues.where((i) => i.isReturned).length;
     final overdueIssues = allIssues
-        .where((i) => calculateOverDue(dueDate: i.dueDate, isReturned: i.isReturned))
+        .where(
+          (i) => calculateOverDue(dueDate: i.dueDate, isReturned: i.isReturned),
+        )
         .length;
 
     return LayoutWidgets.customScaffold(
@@ -50,35 +53,40 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            IssueHistoryWidgets.buildStatsCards(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-            ),
+        child: SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                IssueHistoryWidgets.buildStatsCards(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                ),
 
-            IssueHistoryWidgets.buildFilterChips(
-              total: totalIssues,
-              active: activeIssues,
-              returned: returnedIssues,
-              overdue: overdueIssues,
-              currentFilter: _filter,
-              onFilterChanged: _setFilter,
-            ),
+                IssueHistoryWidgets.buildFilterChips(
+                  total: totalIssues,
+                  active: activeIssues,
+                  returned: returnedIssues,
+                  overdue: overdueIssues,
+                  currentFilter: _filter,
+                  onFilterChanged: _setFilter,
+                ),
 
-            Expanded(
-              child: filteredIssues.isEmpty
-                  ? IssueHistoryWidgets.buildEmptyState(
-                      message: 'No transactions found',
-                      showClearFilter: _filter != 'all',
-                      onClearFilter: () => setState(() => _filter = 'all'),
+                filteredIssues.isEmpty
+                    ? SizedBox(
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: IssueHistoryWidgets.buildEmptyState(
+                          message: 'No transactions found',
+                          showClearFilter: _filter != 'all',
+                          onClearFilter: () => setState(() => _filter = 'all'),
+                        ),
                     )
-                  : SizedBox(
-                      // decoration: BoxDecoration(color: AppColors.background),
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(16),
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        padding: EdgeInsets.all(16).copyWith(bottom: 50),
                         itemCount: filteredIssues.length,
                         itemBuilder: (context, index) {
                           final issue = filteredIssues[index];
@@ -97,9 +105,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                           );
                         },
                       ),
-                    ),
+
+              ],
             ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: MyButton.fab(
@@ -116,7 +125,10 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
     MemberModel? member,
     IssueViewModel issueProvider,
   ) {
-    final isOverdue = calculateOverDue(dueDate: issue.dueDate, isReturned: issue.isReturned);
+    final isOverdue = calculateOverDue(
+      dueDate: issue.dueDate,
+      isReturned: issue.isReturned,
+    );
 
     // Claude changed: Use calculateFine from provider for accurate calculation
     final fine = issueProvider.calculateFine(issue);
@@ -337,7 +349,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Borrowed',
-                    value: _formatDate(issue.borrowDate),
+                    value: dateFormat(date: issue.borrowDate),
                     icon: Icons.calendar_today,
                   ),
                 ),
@@ -350,7 +362,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 Expanded(
                   child: IssueHistoryWidgets.buildInfoItem(
                     label: 'Due Date',
-                    value: _formatDate(issue.dueDate),
+                    value: dateFormat(date: issue.dueDate),
                     icon: Icons.event,
                   ),
                 ),
@@ -358,7 +370,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                   child: issue.isReturned
                       ? IssueHistoryWidgets.buildInfoItem(
                           label: 'Returned',
-                          value: _formatDate(issue.returnDate!),
+                          value: dateFormat(date: issue.returnDate!),
                           icon: Icons.check_circle,
                         )
                       : IssueHistoryWidgets.buildInfoItem(
@@ -558,6 +570,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
+          constraints: BoxConstraints(maxWidth: 300),
           padding: EdgeInsets.all(24),
           child: SingleChildScrollView(
             child: Column(
@@ -643,9 +656,12 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     _buildDetailRow('Issue ID', issue.issueId),
                     _buildDetailRow(
                       'Borrow Date',
-                      _formatDate(issue.borrowDate),
+                      dateFormat(date: issue.borrowDate),
                     ),
-                    _buildDetailRow('Due Date', _formatDate(issue.dueDate)),
+                    _buildDetailRow(
+                      'Due Date',
+                      dateFormat(date: issue.dueDate),
+                    ),
                     _buildDetailRow(
                       'Status',
                       issue.isReturned ? 'Returned' : 'Active',
@@ -653,7 +669,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                     if (issue.isReturned)
                       _buildDetailRow(
                         'Return Date',
-                        _formatDate(issue.returnDate!),
+                        dateFormat(date: issue.returnDate!),
                       ),
                     // Claude changed: Show fine with payment status
                     if (issue.fineAmount > 0)
@@ -769,6 +785,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -796,6 +813,7 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
                 color: Colors.grey[700],
                 fontSize: 14,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           SizedBox(width: 10),
@@ -821,9 +839,5 @@ class _IssueHistoryScreenState extends State<IssueHistoryScreen> {
         ],
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }

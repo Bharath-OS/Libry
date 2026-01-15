@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:libry/features/books/viewmodel/book_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/buttons.dart';
 import '../data/model/books_model.dart';
 import '../../../core/widgets/layout_widgets.dart';
+import '../viewmodel/book_provider.dart';
 
 
 class BookInfoScreenView extends StatefulWidget {
@@ -95,6 +96,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             ),
             textAlign: TextAlign.center,
           ),
+          10.verticalSpace,
           Text(
             'by ${book.author}',
             style: TextStyle(
@@ -104,6 +106,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
             ),
             textAlign: TextAlign.center,
           ),
+          10.verticalSpace,
           Text(
             book.year,
             style: TextStyle(color: AppColors.darkGrey, fontSize: 14),
@@ -225,6 +228,7 @@ class _BookDetailScreenState extends State<BookInfoScreenView> {
     return Padding(
       padding: EdgeInsets.only(bottom: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: infoIconColor, size: 20),
           SizedBox(width: 12),

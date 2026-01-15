@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:libry/features/auth/view/login.dart';
-import 'package:libry/features/auth/view/register.dart';
 import '../../core/themes/styles.dart';
 import '../../core/utilities/helpers.dart';
 import '../../core/widgets/layout_widgets.dart';
 import '../auth/data/services/userdata.dart';
+import '../auth/view/login.dart';
+import '../auth/view/register.dart';
 import '../home/views/main_screen.dart';
 
 class SplashScreen extends StatefulWidget {

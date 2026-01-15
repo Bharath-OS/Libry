@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:libry/features/books/data/model/books_model.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/widgets/cards.dart';
 import '../../../core/widgets/list.dart';
+import '../data/model/books_model.dart';
 import '../viewmodel/book_provider.dart';
 import 'add_book_screen.dart';
 import 'books_details.dart';

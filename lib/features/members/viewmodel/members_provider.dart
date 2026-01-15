@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:libry/features/members/data/service/members_db.dart';
-import 'package:libry/features/members/data/model/members_model.dart';
-
+import '../../members/data/service/members_db.dart';
 import '../../../core/utilities/helpers/date_formater.dart';
+import '../data/model/members_model.dart';
 
 class MembersViewModel extends ChangeNotifier {
   MembersViewModel() {
