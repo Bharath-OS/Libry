@@ -11,7 +11,6 @@ import '../../books/viewmodel/book_provider.dart';
 import '../../issues/viewmodel/issue_provider.dart';
 import '../../members/viewmodel/members_provider.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -280,7 +279,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ...limitedIssues.map((issue) {
           final book = bookProvider.getBookById(issue.bookId!);
           final member = memberProvider.getMemberById(issue.memberId!);
-          final daysLeft = issue.dueDate.difference(DateTime.now()).inDays;
+
+          final now = DateTime.now();
+          final nowMidnight = DateTime(now.year, now.month, now.day);
+          final dueDateMidnight = DateTime(
+            issue.dueDate.year,
+            issue.dueDate.month,
+            issue.dueDate.day,
+          );
+          final daysLeft = dueDateMidnight.difference(nowMidnight).inDays;
           final isOverdue = daysLeft < 0;
 
           return recentIssueCard(
