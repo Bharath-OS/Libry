@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utilities/fine_calculator.dart';
 import '../../members/data/service/members_db.dart';
 import '../../settings/data/service/settings_service.dart';
 import '../data/service/issue_records_db.dart';
@@ -22,7 +23,15 @@ class IssueViewModel with ChangeNotifier {
   int get totalCount => _allIssues.length;
   int get returnedCount => _allIssues.where((i) => i.isReturned).length;
   int get activeCount => _allIssues.where((i) => !i.isReturned).length;
-  int get overDueCount => _allIssues.where((i) => !i.isReturned && DateTime.now().isAfter(i.dueDate)).length;
+  int get overDueCount {
+    final now = DateTime.now();
+    final nowMidnight = DateTime(now.year, now.month, now.day);
+    return _allIssues.where((i) {
+      if (i.isReturned) return false;
+      final dueDateMidnight = DateTime(i.dueDate.year, i.dueDate.month, i.dueDate.day);
+      return nowMidnight.isAfter(dueDateMidnight);
+    }).length;
+  }
   int get issuedTodayCount => _allIssues
       .where((i) => DateUtils.isSameDay(i.borrowDate, DateTime.now()))
       .length;
@@ -149,25 +158,17 @@ class IssueViewModel with ChangeNotifier {
 
   // 4. Calculate for Display (Includes today's unsaved fine)
   double calculateFine(IssueRecords issue) {
-    if (issue.isReturned) return 0.0;
-    final now = DateTime.now();
-    if (!now.isAfter(issue.dueDate)) return 0.0;
-
-    double totalFine = issue.fineAmount;
-    DateTime lastUpdate = issue.lastFineUpdateDate ?? issue.dueDate;
-
-    if (!DateUtils.isSameDay(lastUpdate, now)) {
-      totalFine += currentFineRate;
-    }
-    return totalFine;
+    return FineCalculator.calculate(
+      issue: issue,
+      now: DateTime.now(),
+      fineRatePerDay: currentFineRate,
+    );
   }
 
   // ========== HELPERS ==========
 
   int _calculateFullDaysPassed(DateTime from, DateTime to) {
-    final fromMidnight = DateTime(from.year, from.month, from.day);
-    final toMidnight = DateTime(to.year, to.month, to.day);
-    return toMidnight.difference(fromMidnight).inDays;
+    return FineCalculator.calculateFullDaysPassed(from, to);
   }
 
   void setFilter(String filter) {
