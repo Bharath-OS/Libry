@@ -27,7 +27,8 @@ void main() async {
   if (kIsWeb) {
     await Hive.initFlutter(); // No path needed for web, it uses IndexedDB
   } else {
-    final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+    final appDocumentDir = await path_provider
+        .getApplicationDocumentsDirectory();
     await Hive.initFlutter(appDocumentDir.path);
   }
 
@@ -43,14 +44,20 @@ void main() async {
   await IssueDBHive.initIssueBox();
   await SettingsService.instance.init();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_){
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
     runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
           ChangeNotifierProvider<BookViewModel>(create: (_) => BookViewModel()),
-          ChangeNotifierProvider<SettingsViewModel>(create: (_) => SettingsViewModel()),
-          ChangeNotifierProvider<IssueViewModel>(create: (_) => IssueViewModel()),
+          ChangeNotifierProvider<SettingsViewModel>(
+            create: (_) => SettingsViewModel(),
+          ),
+          ChangeNotifierProvider<IssueViewModel>(
+            create: (_) => IssueViewModel(),
+          ),
           ChangeNotifierProvider<MembersViewModel>(
             create: (_) => MembersViewModel(),
           ),
@@ -70,13 +77,13 @@ class LibryApp extends StatelessWidget {
       designSize: const Size(412, 915),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context,child) {
+      builder: (context, child) {
         return MaterialApp(
           theme: CustomTheme.myTheme,
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),
         );
-      }
+      },
     );
   }
 }
