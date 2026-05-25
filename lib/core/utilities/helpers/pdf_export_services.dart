@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../features/issues/data/model/issue_records_model.dart';
 import '../../../features/issues/viewmodel/issue_provider.dart';
+import '../../../features/issues/data/service/issue_records_db.dart';
 
 class PdfExportService {
   static pw.Font? _regularFont;
@@ -23,6 +24,14 @@ class PdfExportService {
 
   /// Export books to PDF
   static Future<void> exportBooksToPdf(List<dynamic> books) async {
+    // Sort books in ascending order of their book id
+    final sortedBooks = List<dynamic>.from(books);
+    sortedBooks.sort((a, b) {
+      final aId = a.id ?? '';
+      final bId = b.id ?? '';
+      return aId.compareTo(bId);
+    });
+
     // Initialize fonts first
     await _initializeFonts();
 
@@ -41,7 +50,7 @@ class PdfExportService {
       'Available',
     ];
 
-    final data = books.map((book) {
+    final data = sortedBooks.map((book) {
       return [
         (book.id ?? '').toString(),
         _truncateText(book.title, 20),
@@ -147,11 +156,19 @@ class PdfExportService {
     );
 
     // Save or share PDF
-    await _savePdf(pdf, 'books_export');
+    await _savePdf(pdf, 'books_list_${DateTime.now().millisecondsSinceEpoch}');
   }
 
   /// Export members to PDF
   static Future<void> exportMembersToPdf(List<dynamic> members) async {
+    // Sort members in ascending order of their memberId
+    final sortedMembers = List<dynamic>.from(members);
+    sortedMembers.sort((a, b) {
+      final aId = a.memberId ?? '';
+      final bId = b.memberId ?? '';
+      return aId.compareTo(bId);
+    });
+
     // Initialize fonts first
     await _initializeFonts();
 
@@ -171,7 +188,14 @@ class PdfExportService {
       'Expiry',
     ];
 
-    final data = members.map((member) {
+    final data = sortedMembers.map((member) {
+      // Calculate currently borrowing books dynamically from the Hive database to ensure it's always 100% accurate
+      int actualCurrentlyBorrow = member.currentlyBorrow;
+      if (IssueDBHive.isReady && member.memberId != null) {
+        actualCurrentlyBorrow = IssueDBHive.getActiveIssuesByMember(
+          member.memberId!,
+        ).length;
+      }
       return [
         member.memberId ?? '',
         _truncateText(member.name, 15),
@@ -179,7 +203,7 @@ class PdfExportService {
         member.phone,
         _truncateText(member.address, 15),
         member.totalBorrow.toString(),
-        member.currentlyBorrow.toString(),
+        actualCurrentlyBorrow.toString(),
         'Rs ${member.fine.toStringAsFixed(0)}', // Changed to show no decimals for currency
         _formatDate(member.joined),
         _formatDate(member.expiry),
@@ -289,7 +313,10 @@ class PdfExportService {
     );
 
     // Save or share PDF
-    await _savePdf(pdf, 'members_export');
+    await _savePdf(
+      pdf,
+      'members_list_${DateTime.now().millisecondsSinceEpoch}',
+    );
   }
 
   /// Build summary item widget
@@ -314,19 +341,34 @@ class PdfExportService {
   static Future<void> _savePdf(pw.Document pdf, String filename) async {
     try {
       final bytes = await pdf.save();
+      bool savedDirectly = false;
+
+      // Try to save directly to public Downloads folder on Android for instant downloading
+      if (Platform.isAndroid) {
+        try {
+          final downloadDir = Directory('/storage/emulated/0/Download');
+          if (await downloadDir.exists()) {
+            final downloadFile = File('${downloadDir.path}/$filename.pdf');
+            await downloadFile.writeAsBytes(bytes);
+            savedDirectly = true;
+            debugPrint(
+              'Saved PDF directly to public downloads: ${downloadFile.path}',
+            );
+          }
+        } catch (e) {
+          debugPrint('Could not save directly to Downloads directory: $e');
+        }
+      }
 
       // Save to temporary directory first
       final dir = await getTemporaryDirectory();
-      final file = File(
-        '${dir.path}/${filename}_${_formatFilename(DateTime.now())}.pdf',
-      );
+      final file = File('${dir.path}/$filename.pdf');
       await file.writeAsBytes(bytes);
 
-      // Share the PDF
-      await Printing.sharePdf(
-        bytes: bytes,
-        filename: '${filename}_${_formatFilename(DateTime.now())}.pdf',
-      );
+      if (!savedDirectly) {
+        // Fallback to Share sheet if we couldn't save directly
+        await Printing.sharePdf(bytes: bytes, filename: '$filename.pdf');
+      }
     } catch (e) {
       debugPrint('Error saving PDF: $e');
       rethrow;
@@ -513,16 +555,35 @@ class PdfExportService {
             pw.Text('Issue Records', style: pw.TextStyle(fontSize: 18)),
             pw.SizedBox(height: 12),
             pw.TableHelper.fromTextArray(
-              headers: ['Book', 'Member', 'Issued', 'Due', 'Returned', 'Fine', 'Paid'],
-              data: issues.map((i) => [
-                i.bookName ?? '',
-                i.memberName ?? '',
-                i.borrowDate.toLocal().toString().split(' ').first,
-                i.dueDate.toLocal().toString().split(' ').first,
-                i.isReturned ? (i.returnDate?.toLocal().toString().split(' ').first ?? '') : 'No',
-                i.fineAmount.toStringAsFixed(2),
-                i.isFinePaid != null && i.isFinePaid! ? 'Yes' : 'No',
-              ]).toList(),
+              headers: [
+                'Book',
+                'Member',
+                'Issued',
+                'Due',
+                'Returned',
+                'Fine',
+                'Paid',
+              ],
+              data: issues
+                  .map(
+                    (i) => [
+                      i.bookName ?? '',
+                      i.memberName ?? '',
+                      i.borrowDate.toLocal().toString().split(' ').first,
+                      i.dueDate.toLocal().toString().split(' ').first,
+                      i.isReturned
+                          ? (i.returnDate
+                                    ?.toLocal()
+                                    .toString()
+                                    .split(' ')
+                                    .first ??
+                                '')
+                          : 'No',
+                      i.fineAmount.toStringAsFixed(2),
+                      i.isFinePaid != null && i.isFinePaid! ? 'Yes' : 'No',
+                    ],
+                  )
+                  .toList(),
             ),
           ],
         ),
