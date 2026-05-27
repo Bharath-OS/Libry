@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/utilities/helpers.dart';
 import '../../../core/utilities/validation.dart';
-import '../../../core/widgets/buttons.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/layout_widgets.dart';
 import '../../../core/widgets/text_field.dart';
@@ -75,7 +74,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             controller: _passwordController,
             validator: (password) => Validator.passwordValidator(password),
           ),
-          FormWidgets.formActionButtons(context: context, saveMethod: _editUserData),
+          FormWidgets.formActionButtons(
+            context: context,
+            saveMethod: _editUserData,
+          ),
         ],
       ),
     );

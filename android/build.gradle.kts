@@ -22,3 +22,8 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = java.util.Properties().apply {
+    load(java.io.FileInputStream(keystorePropertiesFile))
+}

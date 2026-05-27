@@ -10,7 +10,7 @@ class SettingsService {
 
   SettingsService._internal();
 
-  static late final SettingsService _instance = SettingsService._internal();
+  static final SettingsService _instance = SettingsService._internal();
 
   factory SettingsService() => _instance;
 
@@ -34,11 +34,11 @@ class SettingsService {
     }
   }
 
-  bool editGenre({required int index, required String newGenre}){
-    try{
+  bool editGenre({required int index, required String newGenre}) {
+    try {
       _genreBox.putAt(index, newGenre);
       return true;
-    }catch(_){
+    } catch (_) {
       return false;
     }
   }
@@ -52,11 +52,11 @@ class SettingsService {
     }
   }
 
-  bool editLanguage({required int index, required String newLanguage}){
-    try{
+  bool editLanguage({required int index, required String newLanguage}) {
+    try {
       _languageBox.putAt(index, newLanguage);
       return true;
-    }catch(_){
+    } catch (_) {
       return false;
     }
   }
@@ -102,11 +102,11 @@ class SettingsService {
   }
 
   int get borrowLimit => _appSettingsBox.get(_maxBorrow, defaultValue: 5);
-  bool setBorrowLimit(int count){
-    try{
+  bool setBorrowLimit(int count) {
+    try {
       _appSettingsBox.put(_maxBorrow, count);
       return true;
-    }catch(_){
+    } catch (_) {
       return false;
     }
   }

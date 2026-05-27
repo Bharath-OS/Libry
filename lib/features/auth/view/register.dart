@@ -86,7 +86,8 @@ class _RegisterViewState extends State<RegisterView> {
               return Validator.passwordValidator(value);
             },
             suffixIcon: IconButton(
-              onPressed: () => setState(() => shouldNotVisible = !shouldNotVisible),
+              onPressed: () =>
+                  setState(() => shouldNotVisible = !shouldNotVisible),
               icon: Icon(
                 !shouldNotVisible
                     ? Icons.visibility_off_outlined
@@ -97,7 +98,7 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           Selector<AuthViewModel, bool>(
             selector: (_, auth) => auth.isLoading,
-            builder: (_, isLoading, __) {
+            builder: (_, isLoading, _) {
               return MyButton.primaryButton(
                 method: () {
                   userValidation(
